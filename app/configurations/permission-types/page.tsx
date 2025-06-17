@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown, ChevronUp, Filter } from "lucide-react"
 
 // Permission data structure based on the screenshot
+// Permissions are read-only standard data
 const permissionData = [
   {
     id: "claims",
