@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { Search, ArrowUpDown, Filter, MoreHorizontal } from "lucide-react"
+import { Search, ArrowUpDown, Filter, MoreHorizontal, ChevronUp, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -725,6 +725,8 @@ export default function ClaimsPage() {
   const [searchBy, setSearchBy] = useState("claimNumber")
   const [selectedClaims, setSelectedClaims] = useState<number[]>([])
   const [successMessage, setSuccessMessage] = useState("")
+  const [sortField, setSortField] = useState<string>("")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   // In the component, add router
   const router = useRouter()
@@ -783,12 +785,50 @@ export default function ClaimsPage() {
     { value: "practitionerNPI", label: "NPI" }
   ]
 
-  const filteredData = getCurrentData().filter((claim: any) => {
+  // Function to handle sorting
+  const handleSort = (field: string) => {
+    if (activeTab !== "not-paid") return // Only sort for not-paid tab
+    
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortDirection("asc")
+    }
+  }
+
+  // Function to sort data
+  const sortData = (data: any[]) => {
+    if (!sortField || activeTab !== "not-paid") return data
+    
+    return [...data].sort((a, b) => {
+      let aValue = a[sortField]
+      let bValue = b[sortField]
+      
+      // Handle different data types
+      if (sortField === "serviceDate") {
+        aValue = new Date(aValue)
+        bValue = new Date(bValue)
+      } else if (sortField === "billedAmount") {
+        aValue = parseFloat(aValue.replace(/[$,]/g, ""))
+        bValue = parseFloat(bValue.replace(/[$,]/g, ""))
+      } else if (typeof aValue === "string") {
+        aValue = aValue.toLowerCase()
+        bValue = bValue.toLowerCase()
+      }
+      
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+      return 0
+    })
+  }
+
+  const filteredData = sortData(getCurrentData().filter((claim: any) => {
     if (searchTerm === "") return true
     
     const fieldValue = claim[searchBy as keyof typeof claim]
     return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-  })
+  }))
 
   const handleSelectClaim = (index: number) => {
     setSelectedClaims((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
@@ -802,21 +842,111 @@ export default function ClaimsPage() {
     }
   }
 
+  // Function to render sort icon
+  const renderSortIcon = (field: string) => {
+    if (activeTab !== "not-paid" || sortField !== field) {
+      return <ArrowUpDown className="w-4 h-4 text-gray-400" />
+    }
+    return sortDirection === "asc" ? 
+      <ChevronUp className="w-4 h-4 text-blue-600" /> : 
+      <ChevronDown className="w-4 h-4 text-blue-600" />
+  }
+
   const renderTableHeaders = () => {
     switch (activeTab) {
       case "not-paid":
         return (
           <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Status</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Service Date</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Batch #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Claim #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Practitioner</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Student Name</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Carelon ID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Billed Amount</th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("status")}
+            >
+              <div className="flex items-center gap-2">
+                Status
+                {renderSortIcon("status")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("serviceDate")}
+            >
+              <div className="flex items-center gap-2">
+                Service Date
+                {renderSortIcon("serviceDate")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("batchNumber")}
+            >
+              <div className="flex items-center gap-2">
+                Batch #
+                {renderSortIcon("batchNumber")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("claimNumber")}
+            >
+              <div className="flex items-center gap-2">
+                Claim #
+                {renderSortIcon("claimNumber")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("practitioner")}
+            >
+              <div className="flex items-center gap-2">
+                Practitioner
+                {renderSortIcon("practitioner")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("district")}
+            >
+              <div className="flex items-center gap-2">
+                District
+                {renderSortIcon("district")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("ssid")}
+            >
+              <div className="flex items-center gap-2">
+                SSID
+                {renderSortIcon("ssid")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("studentName")}
+            >
+              <div className="flex items-center gap-2">
+                Student Name
+                {renderSortIcon("studentName")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("carelonId")}
+            >
+              <div className="flex items-center gap-2">
+                Carelon ID
+                {renderSortIcon("carelonId")}
+              </div>
+            </th>
+            <th 
+              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
+              onClick={() => handleSort("billedAmount")}
+            >
+              <div className="flex items-center gap-2">
+                Billed Amount
+                {renderSortIcon("billedAmount")}
+              </div>
+            </th>
           </tr>
         )
       case "paid":
