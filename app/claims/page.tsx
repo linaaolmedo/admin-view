@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Mock claims data for different tabs
 const mockClaims = {
@@ -722,7 +723,7 @@ export default function ClaimsPage() {
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState("not-paid")
   const [searchTerm, setSearchTerm] = useState("")
-  const [searchBy, setSearchBy] = useState("claimNumber")
+
   const [selectedClaims, setSelectedClaims] = useState<number[]>([])
   const [successMessage, setSuccessMessage] = useState("")
   const [sortField, setSortField] = useState<string>("")
@@ -775,15 +776,7 @@ export default function ClaimsPage() {
     return data
   }
 
-  // Search options based on the fields available in claims
-  const searchOptions = [
-    { value: "claimNumber", label: "Claim #" },
-    { value: "serviceDate", label: "Service Date" },
-    { value: "carelonId", label: "Carelon ID" },
-    { value: "bicNumber", label: "BIC #" },
-    { value: "district", label: "District" },
-    { value: "practitionerNPI", label: "NPI" }
-  ]
+
 
   // Function to handle sorting
   const handleSort = (field: string) => {
@@ -826,8 +819,12 @@ export default function ClaimsPage() {
   const filteredData = sortData(getCurrentData().filter((claim: any) => {
     if (searchTerm === "") return true
     
-    const fieldValue = claim[searchBy as keyof typeof claim]
-    return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    // Search across all relevant fields
+    const searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
+    return searchableFields.some(field => {
+      const fieldValue = claim[field]
+      return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    })
   }))
 
   const handleSelectClaim = (index: number) => {
@@ -1171,102 +1168,97 @@ export default function ClaimsPage() {
     router.push("/claims/submit-confirmation")
   }
 
+  const getTabCount = (tabKey: string) => {
+    switch (tabKey) {
+      case "not-paid":
+        return mockClaims["not-paid"].length
+      case "paid":
+        return mockClaims.paid.length
+      case "ready-to-submit":
+        return mockClaims["ready-to-submit"].length
+      case "incomplete":
+        return mockClaims.incomplete.length
+      default:
+        return 0
+    }
+  }
+
   return (
-    <div>
+    <div className="p-6">
       {/* Page Header */}
-      <h1 className="text-2xl font-bold text-[#000000] mb-6">Claims</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Claims</h1>
 
       {successMessage && (
         <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">{successMessage}</div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-8 mb-6 border-b">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabClick(tab.key)}
-            className={`pb-2 px-1 font-medium transition-colors ${
-              activeTab === tab.key
-                ? "text-[#4286f4] border-b-2 border-[#4286f4]"
-                : "text-[#787878] hover:text-[#4286f4]"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Action Buttons for Ready to Submit */}
-      {activeTab === "ready-to-submit" && (
-        <div className="flex justify-end gap-2 mb-4">
-          <Button
-            variant="outline"
-            className="text-[#4286f4] border-[#4286f4]"
-            onClick={handleApproveClaims}
-            disabled={selectedClaims.length === 0}
-          >
-            Approve claims
-          </Button>
-          <Button className="bg-[#4286f4] hover:bg-[#2f3a83] text-white">Submit approved claims for billing</Button>
-        </div>
-      )}
-
-      {/* Search and Filter Controls */}
-      <div className="flex items-center gap-4 mb-6">
-        {/* Search By Dropdown */}
-        <Select value={searchBy} onValueChange={setSearchBy}>
-          <SelectTrigger className="w-48">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <div className="px-2 py-1.5 text-xs font-medium text-gray-600 border-b">
-              Search options
+      <Tabs value={activeTab} onValueChange={handleTabClick} className="w-full">
+        <TabsList className="grid grid-cols-4 w-auto">
+          <TabsTrigger value="not-paid" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Not Paid ({getTabCount("not-paid")})
+          </TabsTrigger>
+          <TabsTrigger value="paid" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Paid ({getTabCount("paid")})
+          </TabsTrigger>
+          <TabsTrigger value="ready-to-submit" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Ready to Submit ({getTabCount("ready-to-submit")})
+          </TabsTrigger>
+          <TabsTrigger value="incomplete" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Incomplete ({getTabCount("incomplete")})
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="mt-6">
+          {/* Action Buttons for Ready to Submit */}
+          {activeTab === "ready-to-submit" && (
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant="outline"
+                className="text-teal-600 border-teal-600 hover:bg-teal-50"
+                onClick={handleApproveClaims}
+                disabled={selectedClaims.length === 0}
+              >
+                Approve claims
+              </Button>
+              <Button className="bg-teal-600 hover:bg-teal-700 text-white">Submit approved claims for billing</Button>
             </div>
-            {searchOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          )}
 
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+          {/* Search and Filter Controls */}
+          <div className="flex items-center justify-end gap-4 mb-6">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
 
-        <Button variant="outline" className="flex items-center gap-2">
-          <ArrowUpDown className="w-4 h-4" />
-          Order by
-        </Button>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Filter className="w-4 h-4" />
+              Filter
+            </Button>
+          </div>
 
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="w-4 h-4" />
-          Filter
-        </Button>
-      </div>
+          {/* Claims Table */}
+          <div className="bg-white rounded-lg border overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>{renderTableHeaders()}</thead>
+                <tbody>{filteredData.map((item, index) => renderTableRow(item, index))}</tbody>
+              </table>
+            </div>
+          </div>
 
-      {/* Claims Table */}
-      <div className="bg-white rounded-lg border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>{renderTableHeaders()}</thead>
-            <tbody>{filteredData.map((item, index) => renderTableRow(item, index))}</tbody>
-          </table>
-        </div>
-      </div>
-
-      {filteredData.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#787878]">No claims found matching your criteria.</p>
-        </div>
-      )}
+          {filteredData.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No claims found matching your criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

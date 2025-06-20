@@ -123,7 +123,7 @@ const mockUserHistory = [
 export default function UserHistoryPage() {
   const [activeTab, setActiveTab] = useState("user-history")
   const [searchTerm, setSearchTerm] = useState("")
-  const [districtFilter, setDistrictFilter] = useState("all")
+  const [districtFilter, setDistrictFilter] = useState("district-1")
   const [orderBy, setOrderBy] = useState("date-desc")
 
   // Filter the data based on search and filters
@@ -166,18 +166,18 @@ export default function UserHistoryPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-transparent border-b rounded-none h-auto p-0">
+        <TabsList className="grid grid-cols-2 w-auto">
           <TabsTrigger 
             value="claims" 
-            className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none px-4 py-2"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Claims
           </TabsTrigger>
           <TabsTrigger 
             value="user-history"
-            className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none px-4 py-2"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
-            User history
+            User History
           </TabsTrigger>
         </TabsList>
 
@@ -193,37 +193,28 @@ export default function UserHistoryPage() {
         {/* User History Tab Content */}
         <TabsContent value="user-history" className="mt-6 space-y-6">
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <Select value={districtFilter} onValueChange={setDistrictFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="District" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Districts</SelectItem>
-                  <SelectItem value="district-1">District 1</SelectItem>
-                  <SelectItem value="district-2">District 2</SelectItem>
-                  <SelectItem value="district-3">District 3</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex justify-end gap-4 items-end">
+            <Select value={districtFilter} onValueChange={setDistrictFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="District" />
+              </SelectTrigger>
+              <SelectContent>
+  
+                <SelectItem value="district-1">District 1</SelectItem>
+                <SelectItem value="district-2">District 2</SelectItem>
+                <SelectItem value="district-3">District 3</SelectItem>
+              </SelectContent>
+            </Select>
             
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
-
-            <Button variant="outline" className="flex items-center">
-              <Settings2 className="w-4 h-4 mr-2" />
-              Order by
-            </Button>
 
             <Button variant="outline" className="flex items-center">
               <Filter className="w-4 h-4 mr-2" />

@@ -120,9 +120,9 @@ const mockQualificationsData = [
 
 export default function QualificationsReportPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("all")
-  const [selectedStatus, setSelectedStatus] = useState("all")
-  const [selectedType, setSelectedType] = useState("all")
+  const [selectedDistrict, setSelectedDistrict] = useState("Fruitvale School District")
+  const [selectedStatus, setSelectedStatus] = useState("Active")
+  const [selectedType, setSelectedType] = useState("Speech-Language Pathologist")
   const router = useRouter()
 
   const filteredData = mockQualificationsData.filter((item) => {
@@ -133,9 +133,9 @@ export default function QualificationsReportPage() {
       item.qualificationCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.npi.includes(searchTerm)
 
-    const matchesDistrict = selectedDistrict === "all" || item.district === selectedDistrict
-    const matchesStatus = selectedStatus === "all" || item.status === selectedStatus
-    const matchesType = selectedType === "all" || item.qualificationType === selectedType
+    const matchesDistrict = item.district === selectedDistrict
+    const matchesStatus = item.status === selectedStatus
+    const matchesType = item.qualificationType === selectedType
 
     return matchesSearch && matchesDistrict && matchesStatus && matchesType
   })
@@ -280,7 +280,7 @@ export default function QualificationsReportPage() {
             <SelectValue placeholder="District" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Districts</SelectItem>
+            
             <SelectItem value="Fruitvale School District">Fruitvale School District</SelectItem>
             <SelectItem value="Arvin School District">Arvin School District</SelectItem>
             <SelectItem value="Kern County District">Kern County District</SelectItem>
@@ -292,7 +292,7 @@ export default function QualificationsReportPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
+            
             <SelectItem value="Active">Active</SelectItem>
             <SelectItem value="Expiring Soon">Expiring Soon</SelectItem>
             <SelectItem value="Expired">Expired</SelectItem>
@@ -304,7 +304,7 @@ export default function QualificationsReportPage() {
             <SelectValue placeholder="Qualification Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
+            
             <SelectItem value="Speech-Language Pathologist">Speech-Language Pathologist</SelectItem>
             <SelectItem value="Occupational Therapist">Occupational Therapist</SelectItem>
             <SelectItem value="Physical Therapist">Physical Therapist</SelectItem>

@@ -34,7 +34,6 @@ const mockStudents = [
 
 export default function ManageStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("all")
   const [sortBy, setSortBy] = useState("lastName")
   const [sortOrder, setSortOrder] = useState("asc")
   const router = useRouter()
@@ -49,9 +48,7 @@ export default function ManageStudentsPage() {
       student.school.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.contactNumber.includes(searchTerm)
 
-    const matchesDistrict = selectedDistrict === "all" || student.district.toLowerCase() === selectedDistrict.toLowerCase()
-
-    return matchesSearch && matchesDistrict
+    return matchesSearch
   }).sort((a, b) => {
     const aValue = a[sortBy as keyof typeof a]
     const bValue = b[sortBy as keyof typeof b]
@@ -67,7 +64,7 @@ export default function ManageStudentsPage() {
     return (
       <Badge 
         variant={status === "Active" ? "default" : "secondary"}
-        className={status === "Active" ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
+        className={status === "Active" ? "bg-teal-100 text-teal-800 hover:bg-teal-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
       >
         {status}
       </Badge>
@@ -107,12 +104,12 @@ export default function ManageStudentsPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#000000]">Manage Students</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Manage Students</h1>
         <div className="flex gap-3">
-          <Button onClick={handleIndividualAdd} variant="outline" className="border-[#4286f4] text-[#4286f4] hover:bg-[#4286f4] hover:text-white">
+          <Button onClick={handleIndividualAdd} variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white">
             Individually Add
           </Button>
-          <Button onClick={handleBulkAdd} className="bg-[#4286f4] hover:bg-[#3275e3]">
+          <Button onClick={handleBulkAdd} className="bg-teal-600 hover:bg-teal-700">
             <Upload className="w-4 h-4 mr-2" />
             Bulk Add
           </Button>
@@ -122,46 +119,28 @@ export default function ManageStudentsPage() {
       {/* Tab-like header */}
       <div className="border-b border-gray-200 mb-6">
         <div className="flex">
-          <div className="px-4 py-2 text-[#4286f4] border-b-2 border-[#4286f4] font-medium">
+          <div className="px-4 py-2 text-teal-600 border-b-2 border-teal-600 font-medium">
             Students
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-4">
-          <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="District" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="fruitvale">Fruitvale</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-80"
-            />
-          </div>
+      <div className="flex justify-end items-center gap-4 mb-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 w-80"
+          />
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <ArrowUpDown className="w-4 h-4 mr-2" />
-            Order by
-          </Button>
-          <Button variant="outline" size="sm">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
-        </div>
+        <Button variant="outline" size="sm">
+          <Filter className="w-4 h-4 mr-2" />
+          Filter
+        </Button>
       </div>
 
       {/* Students Table */}
@@ -204,7 +183,7 @@ export default function ManageStudentsPage() {
                 <TableCell className="font-medium">
                   <button 
                     onClick={() => handleStudentClick(student.id)}
-                    className="text-[#4286f4] hover:text-[#3275e3] hover:underline cursor-pointer"
+                    className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
                   >
                     {student.lastName}
                   </button>
@@ -212,7 +191,7 @@ export default function ManageStudentsPage() {
                 <TableCell>
                   <button 
                     onClick={() => handleStudentClick(student.id)}
-                    className="text-[#4286f4] hover:text-[#3275e3] hover:underline cursor-pointer"
+                    className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
                   >
                     {student.firstName}
                   </button>
@@ -233,23 +212,14 @@ export default function ManageStudentsPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
-                        Edit
-                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleStudentAction("view", student.id)}>
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleStudentAction("services", student.id)}>
-                        View Services
+                      <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
+                        Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleStudentAction("deactivate", student.id)}>
                         {student.status === "Active" ? "Deactivate" : "Activate"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => handleStudentAction("delete", student.id)}
-                        className="text-red-600"
-                      >
-                        Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

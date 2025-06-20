@@ -101,7 +101,7 @@ export default function BulkAddStudentsPage() {
           className={`
             relative border-2 border-dashed rounded-lg p-12 text-center transition-colors
             ${dragActive 
-              ? "border-[#4286f4] bg-blue-50" 
+              ? "border-teal-600 bg-teal-50" 
               : uploadedFile 
                 ? "border-green-400 bg-green-50" 
                 : "border-gray-300 bg-gray-50"
@@ -168,7 +168,7 @@ export default function BulkAddStudentsPage() {
             <Button
               onClick={handleUpload}
               disabled={isUploading}
-              className="bg-[#4286f4] hover:bg-[#3275e3] px-8"
+              className="bg-teal-600 hover:bg-teal-700 px-8"
             >
               {isUploading ? (
                 <>
@@ -186,7 +186,7 @@ export default function BulkAddStudentsPage() {
         )}
 
         {/* Instructions */}
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+                    <div className="mt-8 p-4 bg-teal-50 rounded-lg">
           <h4 className="font-semibold text-gray-900 mb-2">File Format Requirements:</h4>
           <ul className="text-sm text-gray-700 space-y-1">
             <li>• Supported formats: Excel (.xls, .xlsx) or CSV (.csv)</li>

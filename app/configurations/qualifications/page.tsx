@@ -231,7 +231,7 @@ const AddQualificationModal = ({ isOpen, onClose, onSave }: AddQualificationModa
           <div className="flex justify-end">
             <Button 
               onClick={handleSave}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-teal-600 hover:bg-teal-700"
               disabled={!formData.type || !formData.code || !formData.description}
             >
               Save
@@ -276,7 +276,7 @@ export default function QualificationsPage() {
       <div className="flex justify-end mb-4">
         <Button 
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-teal-600 hover:bg-teal-700"
         >
           Add Qualification
         </Button>

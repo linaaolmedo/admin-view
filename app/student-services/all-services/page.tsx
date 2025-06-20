@@ -131,17 +131,7 @@ const mockServices = [
   }
 ]
 
-const searchOptions = [
-  { value: "all", label: "All" },
-  { value: "firstName", label: "First Name" },
-  { value: "lastName", label: "Last Name" },
-  { value: "ssid", label: "SSID" },
-  { value: "localId", label: "Local ID" },
-  { value: "district", label: "District" },
-  { value: "school", label: "School" },
-  { value: "bicNumber", label: "BIC #" },
-  { value: "careionId", label: "Careion ID" }
-]
+
 
 const orderOptions = [
   { value: "serviceDate", label: "Most Recent" },
@@ -162,7 +152,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "UPCOMING":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-teal-100 text-teal-800 border-teal-200"
       case "INCOMPLETE":
         return "bg-orange-100 text-orange-800 border-orange-200"
       case "CANCELLED":
@@ -183,23 +173,18 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 export default function AllServicesPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [searchBy, setSearchBy] = useState("all")
+
   const [orderBy, setOrderBy] = useState("serviceDate")
 
   const filteredAndSortedServices = useMemo(() => {
     let filtered = mockServices
 
-    // Filter based on search
+    // Filter based on search across all fields
     if (searchTerm) {
       filtered = mockServices.filter((service) => {
-        if (searchBy === "all") {
-          return Object.values(service).some((value) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-          )
-        } else {
-          const fieldValue = service[searchBy as keyof typeof service]
-          return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        }
+        return Object.values(service).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
       })
     }
 
@@ -221,62 +206,31 @@ export default function AllServicesPage() {
     })
 
     return filtered
-  }, [searchTerm, searchBy, orderBy])
+  }, [searchTerm, orderBy])
 
   return (
-    <div>
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">All Services</h1>
+      </div>
+
       {/* Search and Controls */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4 flex-1">
-          {/* Search Bar */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-
-          {/* Search By Dropdown */}
-          <Select value={searchBy} onValueChange={setSearchBy}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {searchOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="flex items-center justify-end gap-4 mb-6">
+        {/* Search Bar */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
-
-        {/* Order By and Filter */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <ArrowUpDown className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-600">Order by</span>
-            <Select value={orderBy} onValueChange={setOrderBy}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {orderOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <Button variant="outline" size="sm">
-            Filter
-          </Button>
-        </div>
+        
+        <Button variant="outline" size="sm">
+          Filter
+        </Button>
       </div>
 
       {/* Services Table */}

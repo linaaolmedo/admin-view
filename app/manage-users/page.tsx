@@ -1,14 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { MoreHorizontal, Search, Filter, Plus } from "lucide-react"
+import { MoreHorizontal, Search, Filter, ArrowUpDown, UserPlus } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,56 +18,71 @@ import {
 
 // Mock data for users
 const mockUsers = [
-  { id: 1, lastName: "Brown", firstName: "Bradley", npi: "59249790", role: "Practitioner", status: "Active" },
-  { id: 2, lastName: "Casper", firstName: "Susan", npi: "75976866", role: "Practitioner", status: "Active" },
-  { id: 3, lastName: "McCullough", firstName: "Elijah", npi: "79129150", role: "Practitioner", status: "Active" },
-  { id: 4, lastName: "Skiles", firstName: "Paul", npi: "29043835", role: "Supervisor", status: "Inactive" },
-  { id: 5, lastName: "Thiel", firstName: "Grady", npi: "54867978", role: "Practitioner", status: "Active" },
-  { id: 6, lastName: "Considine", firstName: "Eva", npi: "55111094", role: "Billing Administrator", status: "Active" },
-  { id: 7, lastName: "Lebsack", firstName: "Angie", npi: "30180062", role: "Supervisor", status: "Active" },
-  { id: 8, lastName: "DuBuque", firstName: "Rolando", npi: "96924843", role: "Practitioner", status: "Active" },
-  { id: 9, lastName: "Kessler", firstName: "Alexander", npi: "07989949", role: "Practitioner", status: "Active" },
-  { id: 10, lastName: "Harris", firstName: "Antonia", npi: "24137967", role: "Practitioner", status: "Inactive" },
-  { id: 11, lastName: "Buckridge", firstName: "Dom", npi: "87189350", role: "Member Support", status: "Active" },
-  { id: 12, lastName: "Wuckert", firstName: "Naomi", npi: "27571147", role: "Practitioner", status: "Active" },
-  { id: 13, lastName: "Rice", firstName: "Susie", npi: "01071202", role: "Practitioner", status: "Active" },
+  { id: 1, name: "Bradley Brown", email: "bbrown@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  { id: 2, name: "Luis Hayes", email: "lhayes@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  { id: 3, name: "Teri Lakin", email: "tlakin@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  { id: 4, name: "Sarah Johnson", email: "sjohnson@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "5/1/2025" },
+  { id: 5, name: "Michael Davis", email: "mdavis@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "4/30/2025" },
+  { id: 6, name: "Jennifer Wilson", email: "jwilson@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "5/1/2025" },
+  { id: 7, name: "Robert Martinez", email: "rmartinez@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "4/29/2025" },
+  { id: 8, name: "Lisa Anderson", email: "landerson@email.com", role: "Practitioner", permissions: "Standard", status: "Inactive", lastLogin: "4/25/2025" },
+  { id: 9, name: "David Thompson", email: "dthompson@email.com", role: "Supervisor", permissions: "Advanced", status: "Inactive", lastLogin: "4/20/2025" },
 ]
 
 export default function ManageUsersPage() {
-  const [searchTerm, setSearchTerm] = useState("")
   const [activeTab, setActiveTab] = useState("all")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedRole, setSelectedRole] = useState("practitioner")
+  const [sortBy, setSortBy] = useState("name")
+  const [sortOrder, setSortOrder] = useState("asc")
   const router = useRouter()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    const tab = searchParams.get("tab")
-    if (tab && ["all", "practitioners", "supervisors", "administrators"].includes(tab)) {
-      setActiveTab(tab)
-    }
-  }, [searchParams])
 
   const filteredUsers = mockUsers.filter((user) => {
     const matchesSearch = 
-      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.npi.includes(searchTerm) ||
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.role.toLowerCase().includes(searchTerm.toLowerCase())
 
-    if (activeTab === "all") return matchesSearch
-    if (activeTab === "practitioners") return matchesSearch && user.role === "Practitioner"
-    if (activeTab === "supervisors") return matchesSearch && user.role === "Supervisor"
-    if (activeTab === "administrators") return matchesSearch && (user.role === "Billing Administrator" || user.role === "Member Support")
+    const matchesRole = user.role.toLowerCase() === selectedRole.toLowerCase()
+
+    const matchesTab = activeTab === "all" || user.role.toLowerCase() === activeTab.toLowerCase()
+
+    return matchesSearch && matchesRole && matchesTab
+  }).sort((a, b) => {
+    const aValue = a[sortBy as keyof typeof a]
+    const bValue = b[sortBy as keyof typeof b]
     
-    return matchesSearch
+    if (sortOrder === "asc") {
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
+    } else {
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+    }
   })
 
   const getStatusBadge = (status: string) => {
     return (
       <Badge 
         variant={status === "Active" ? "default" : "secondary"}
-        className={status === "Active" ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
+        className={status === "Active" ? "bg-teal-100 text-teal-800 hover:bg-teal-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
       >
         {status}
+      </Badge>
+    )
+  }
+
+  const getPermissionsBadge = (permissions: string) => {
+    const colors = {
+      "Standard": "bg-teal-100 text-teal-800 border-teal-200",
+      "Advanced": "bg-purple-100 text-purple-800 border-purple-200",
+      "Full": "bg-red-100 text-red-800 border-red-200"
+    }
+    
+    return (
+      <Badge 
+        variant="outline"
+        className={colors[permissions as keyof typeof colors] || "bg-gray-100 text-gray-800 border-gray-200"}
+      >
+        {permissions}
       </Badge>
     )
   }
@@ -77,38 +92,74 @@ export default function ManageUsersPage() {
   }
 
   const handleUserAction = (action: string, userId: number) => {
-    // TODO: Implement user actions
-    console.log(`${action} user ${userId}`)
+    if (action === "view") {
+      router.push(`/manage-users/${userId}`)
+    } else {
+      // TODO: Implement other user actions
+      console.log(`${action} user ${userId}`)
+    }
+  }
+
+  const handleUserClick = (userId: number) => {
+    router.push(`/manage-users/${userId}`)
+  }
+
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+    } else {
+      setSortBy(column)
+      setSortOrder("asc")
+    }
+  }
+
+  const getTabCount = (role: string) => {
+    if (role === "all") return mockUsers.length
+    return mockUsers.filter(user => user.role.toLowerCase() === role.toLowerCase()).length
   }
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#000000]">Manage Users</h1>
-        <Button onClick={handleAddUser} className="bg-[#4286f4] hover:bg-[#3275e3]">
-          <Plus className="w-4 h-4 mr-2" />
-          Add
+        <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
+        <Button onClick={handleAddUser} className="bg-teal-600 hover:bg-teal-700">
+          <UserPlus className="w-4 h-4 mr-2" />
+          Add User
         </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
-          <TabsTrigger value="all" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
-            All Users
+        <TabsList className="grid grid-cols-4 w-auto">
+          <TabsTrigger value="all" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            All Users ({getTabCount("all")})
           </TabsTrigger>
-          <TabsTrigger value="practitioners" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
-            Practitioners
+          <TabsTrigger value="practitioners" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Practitioners ({getTabCount("practitioner")})
           </TabsTrigger>
-          <TabsTrigger value="supervisors" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
-            Supervisors
+          <TabsTrigger value="supervisors" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Supervisors ({getTabCount("supervisor")})
           </TabsTrigger>
-          <TabsTrigger value="administrators" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
-            Administrators
+          <TabsTrigger value="administrators" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Administrators ({getTabCount("administrator")})
           </TabsTrigger>
         </TabsList>
-
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-2">
+        
+        <TabsContent value={activeTab} className="mt-6">
+          {/* Filters and Search */}
+          <div className="flex justify-end items-center gap-4 mb-4">
+            {activeTab === "all" && (
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="practitioner">Practitioner</SelectItem>
+                  <SelectItem value="supervisor">Supervisor</SelectItem>
+                  <SelectItem value="administrator">Administrator</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+            
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -118,22 +169,40 @@ export default function ManageUsersPage() {
                 className="pl-10 w-80"
               />
             </div>
-            <Button variant="outline" size="icon">
-              <Filter className="w-4 h-4" />
+
+            <Button variant="outline" size="sm">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
             </Button>
           </div>
-        </div>
 
-        <TabsContent value="all" className="mt-0">
+          {/* Users Table */}
           <div className="border rounded-lg">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">Last Name</TableHead>
-                  <TableHead className="font-semibold">First Name</TableHead>
-                  <TableHead className="font-semibold">NPI</TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("name")}
+                  >
+                    <div className="flex items-center">
+                      Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("email")}
+                  >
+                    <div className="flex items-center">
+                      Email
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
                   <TableHead className="font-semibold">Role</TableHead>
+                  <TableHead className="font-semibold">Permissions</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Last Login</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -141,24 +210,18 @@ export default function ManageUsersPage() {
                 {filteredUsers.map((user) => (
                   <TableRow key={user.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                      <button 
+                        onClick={() => handleUserClick(user.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
                       >
-                        {user.lastName}
-                      </Link>
+                        {user.name}
+                      </button>
                     </TableCell>
-                    <TableCell>
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.firstName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{user.npi}</TableCell>
+                    <TableCell>{user.email}</TableCell>
                     <TableCell>{user.role}</TableCell>
+                    <TableCell>{getPermissionsBadge(user.permissions)}</TableCell>
                     <TableCell>{getStatusBadge(user.status)}</TableCell>
+                    <TableCell>{user.lastLogin}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -167,224 +230,17 @@ export default function ManageUsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleUserAction("edit", user.id)}>
-                            Edit
-                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleUserAction("view", user.id)}>
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("deactivate", user.id)}>
-                            {user.status === "Active" ? "Deactivate" : "Activate"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction("delete", user.id)}
-                            className="text-red-600"
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="practitioners" className="mt-0">
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">Last Name</TableHead>
-                  <TableHead className="font-semibold">First Name</TableHead>
-                  <TableHead className="font-semibold">NPI</TableHead>
-                  <TableHead className="font-semibold">Role</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.lastName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.firstName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{user.npi}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleUserAction("edit", user.id)}>
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("view", user.id)}>
-                            View Details
+                          <DropdownMenuItem onClick={() => handleUserAction("permissions", user.id)}>
+                            Manage Permissions
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleUserAction("deactivate", user.id)}>
                             {user.status === "Active" ? "Deactivate" : "Activate"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction("delete", user.id)}
-                            className="text-red-600"
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="supervisors" className="mt-0">
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">Last Name</TableHead>
-                  <TableHead className="font-semibold">First Name</TableHead>
-                  <TableHead className="font-semibold">NPI</TableHead>
-                  <TableHead className="font-semibold">Role</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.lastName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.firstName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{user.npi}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleUserAction("edit", user.id)}>
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("view", user.id)}>
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("deactivate", user.id)}>
-                            {user.status === "Active" ? "Deactivate" : "Activate"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction("delete", user.id)}
-                            className="text-red-600"
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="administrators" className="mt-0">
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead className="font-semibold">Last Name</TableHead>
-                  <TableHead className="font-semibold">First Name</TableHead>
-                  <TableHead className="font-semibold">NPI</TableHead>
-                  <TableHead className="font-semibold">Role</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.lastName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link 
-                        href={`/manage-users/${user.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {user.firstName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{user.npi}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleUserAction("edit", user.id)}>
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("view", user.id)}>
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUserAction("deactivate", user.id)}>
-                            {user.status === "Active" ? "Deactivate" : "Activate"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction("delete", user.id)}
-                            className="text-red-600"
-                          >
-                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

@@ -70,13 +70,13 @@ export default function ScheduleServicePage() {
           <TabsList className="grid grid-cols-2 w-auto mb-8">
             <TabsTrigger 
               value="student" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
             >
               Student
             </TabsTrigger>
             <TabsTrigger 
               value="group" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
             >
               Group
             </TabsTrigger>
@@ -112,7 +112,7 @@ export default function ScheduleServicePage() {
                         variant={selectedDate === date ? "default" : "outline"}
                         className={`h-12 rounded-full ${
                           selectedDate === date 
-                            ? "bg-[#4286f4] text-white hover:bg-[#3275e3]" 
+                            ? "bg-teal-600 text-white hover:bg-teal-700" 
                             : "hover:bg-gray-100"
                         }`}
                         onClick={() => setSelectedDate(date)}
@@ -134,7 +134,7 @@ export default function ScheduleServicePage() {
                       !slot.available 
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
                         : selectedTime === slot.time
-                          ? "bg-[#4286f4] text-white hover:bg-[#3275e3]"
+                          ? "bg-teal-600 text-white hover:bg-teal-700"
                           : "hover:bg-gray-50"
                     }`}
                     disabled={!slot.available}
@@ -149,9 +149,9 @@ export default function ScheduleServicePage() {
             {/* Appointment Form */}
             <div className="space-y-6">
               {/* Appointment Information */}
-              <Card className="bg-blue-100">
+              <Card className="bg-teal-50">
                 <CardHeader>
-                  <CardTitle className="text-[#4286f4]">Appointment Information</CardTitle>
+                  <CardTitle className="text-teal-600">Appointment Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -190,9 +190,9 @@ export default function ScheduleServicePage() {
               </Card>
 
               {/* Student Information */}
-              <Card className="bg-blue-100">
+              <Card className="bg-teal-50">
                 <CardHeader>
-                  <CardTitle className="text-[#4286f4]">Student Information</CardTitle>
+                  <CardTitle className="text-teal-600">Student Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div>
@@ -216,9 +216,9 @@ export default function ScheduleServicePage() {
               </Card>
 
               {/* Service Information */}
-              <Card className="bg-blue-100">
+              <Card className="bg-teal-50">
                 <CardHeader>
-                  <CardTitle className="text-[#4286f4]">Service Information</CardTitle>
+                  <CardTitle className="text-teal-600">Service Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">

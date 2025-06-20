@@ -49,8 +49,8 @@ export default function AddUserPage() {
       <div className="p-6">
         <div className="max-w-6xl mx-auto">
           {/* Blue Question Section */}
-          <div className="bg-blue-100 rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-medium text-blue-900 mb-6">
+          <div className="bg-teal-100 rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-medium text-teal-900 mb-6">
               What type of user would you like to add?
             </h2>
             
@@ -96,7 +96,7 @@ export default function AddUserPage() {
               Cancel
             </Button>
             <Button
-              className="bg-[#4286f4] hover:bg-[#3275e3] px-6"
+              className="bg-teal-600 hover:bg-teal-700 px-6"
               disabled={!selectedRole}
             >
               Continue

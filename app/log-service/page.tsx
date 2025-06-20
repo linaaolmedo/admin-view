@@ -70,24 +70,23 @@ export default function LogServicePage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-6">
-        <ChevronLeft className="h-6 w-6" />
-        <h1 className="text-2xl font-semibold">Log Service</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Log a Service</h1>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-transparent border-b rounded-none h-auto p-0 mb-6">
+        <TabsList className="grid grid-cols-2 w-auto mb-6">
           <TabsTrigger 
             value="student" 
-            className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none px-4 py-2"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Student
           </TabsTrigger>
           <TabsTrigger 
             value="group"
-            className="border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent rounded-none px-4 py-2"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Group
           </TabsTrigger>
@@ -96,7 +95,7 @@ export default function LogServicePage() {
         <TabsContent value="student" className="mt-0 space-y-6">
           {/* Student Information Section */}
           <div className="bg-white rounded-lg border">
-            <div className="bg-blue-400 text-white px-4 py-3 rounded-t-lg">
+            <div className="bg-teal-600 text-white px-4 py-3 rounded-t-lg">
               <h2 className="font-medium">Student Information</h2>
             </div>
             <div className="p-6">
@@ -122,7 +121,7 @@ export default function LogServicePage() {
 
           {/* Service Information Section */}
           <div className="bg-white rounded-lg border">
-            <div className="bg-blue-400 text-white px-4 py-3 rounded-t-lg">
+            <div className="bg-teal-600 text-white px-4 py-3 rounded-t-lg">
               <h2 className="font-medium">Service Information</h2>
             </div>
             <div className="p-6 space-y-4">
@@ -230,7 +229,7 @@ export default function LogServicePage() {
         <TabsContent value="group" className="mt-0 space-y-6">
           {/* Service Information Section */}
           <div className="bg-white rounded-lg border">
-            <div className="bg-blue-400 text-white px-4 py-3 rounded-t-lg">
+            <div className="bg-teal-600 text-white px-4 py-3 rounded-t-lg">
               <h2 className="font-medium">Service Information</h2>
             </div>
             <div className="p-6 space-y-4">
@@ -322,7 +321,7 @@ export default function LogServicePage() {
 
           {/* Group Information Section */}
           <div className="bg-white rounded-lg border">
-            <div className="bg-blue-400 text-white px-4 py-3 rounded-t-lg">
+            <div className="bg-teal-600 text-white px-4 py-3 rounded-t-lg">
               <h2 className="font-medium">Group Information</h2>
             </div>
             <div className="p-6">

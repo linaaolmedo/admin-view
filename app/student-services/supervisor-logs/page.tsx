@@ -118,8 +118,8 @@ const mockLogs: SupervisorLog[] = [
 export default function SupervisorLogsPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [practitionerFilter, setPractitionerFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("pending")
+  const [practitionerFilter, setPractitionerFilter] = useState("Dr. Sarah Johnson")
   const [selectedLog, setSelectedLog] = useState<SupervisorLog | null>(null)
 
   // Filter logs based on active tab and filters
@@ -129,8 +129,8 @@ export default function SupervisorLogsPage() {
       log.student.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.practitioner.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.serviceType.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || log.status === statusFilter
-    const matchesPractitioner = practitionerFilter === "all" || log.practitioner === practitionerFilter
+    const matchesStatus = log.status === statusFilter
+    const matchesPractitioner = log.practitioner === practitionerFilter
 
     return matchesTab && matchesSearch && matchesStatus && matchesPractitioner
   })
@@ -229,7 +229,7 @@ export default function SupervisorLogsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
+
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
@@ -243,7 +243,7 @@ export default function SupervisorLogsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Practitioners</SelectItem>
+
                   <SelectItem value="Dr. Sarah Johnson">Dr. Sarah Johnson</SelectItem>
                   <SelectItem value="Dr. Michael Chen">Dr. Michael Chen</SelectItem>
                   <SelectItem value="Dr. Emily Rodriguez">Dr. Emily Rodriguez</SelectItem>
@@ -265,11 +265,19 @@ export default function SupervisorLogsPage() {
 
       {/* Tabs and Logs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All ({counts.all})</TabsTrigger>
-          <TabsTrigger value="pending">Pending ({counts.pending})</TabsTrigger>
-          <TabsTrigger value="approved">Approved ({counts.approved})</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected ({counts.rejected})</TabsTrigger>
+        <TabsList className="grid grid-cols-4 w-auto">
+          <TabsTrigger value="all" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            All ({counts.all})
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Pending ({counts.pending})
+          </TabsTrigger>
+          <TabsTrigger value="approved" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Approved ({counts.approved})
+          </TabsTrigger>
+          <TabsTrigger value="rejected" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Rejected ({counts.rejected})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="space-y-4 mt-6">

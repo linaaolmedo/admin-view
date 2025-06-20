@@ -133,7 +133,7 @@ const mockAppointments: Appointment[] = [
     time: '11:30', 
     title: 'Greenfield, Samantha', 
     type: 'individual', 
-    color: 'bg-blue-200 text-blue-800',
+    color: 'bg-teal-200 text-teal-800',
     status: 'upcoming',
     duration: '30 min',
     serviceType: 'Individual - Health behavior intervention',
@@ -177,7 +177,7 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
       incomplete: { label: 'INCOMPLETE', className: 'bg-yellow-100 text-yellow-800 border border-yellow-300' },
       complete: { label: 'COMPLETE', className: 'bg-green-100 text-green-800 border border-green-300' },
       cancelled: { label: 'CANCELLED', className: 'bg-red-100 text-red-800 border border-red-300' },
-      upcoming: { label: 'UPCOMING', className: 'bg-blue-100 text-blue-800 border border-blue-300' }
+      upcoming: { label: 'UPCOMING', className: 'bg-teal-100 text-teal-800 border border-teal-300' }
     }
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.incomplete
   }
@@ -198,10 +198,10 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
             <h2 className="text-xl font-semibold">Service Log Details</h2>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+            <Button variant="outline" className="text-teal-600 border-teal-600 hover:bg-teal-50">
               Mark as cancelled
             </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-teal-600 hover:bg-teal-700">
               Modify appointment
             </Button>
           </div>
@@ -209,8 +209,8 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
 
         <div className="p-6 space-y-6">
           {/* Appointment Information */}
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="bg-blue-100 text-blue-900 font-medium px-3 py-1 rounded mb-4 inline-block">
+          <div className="bg-teal-50 rounded-lg p-4">
+            <div className="bg-teal-100 text-teal-900 font-medium px-3 py-1 rounded mb-4 inline-block">
               Appointment Information
             </div>
             
@@ -276,8 +276,8 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
           </div>
 
           {/* Service Information */}
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="bg-blue-100 text-blue-900 font-medium px-3 py-1 rounded mb-4 inline-block">
+          <div className="bg-teal-50 rounded-lg p-4">
+            <div className="bg-teal-100 text-teal-900 font-medium px-3 py-1 rounded mb-4 inline-block">
               Service Information
             </div>
             
@@ -295,8 +295,8 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
 
           {/* Group Information (only for group appointments) */}
           {appointment.type === 'group' && appointment.groupName && (
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="bg-blue-100 text-blue-900 font-medium px-3 py-1 rounded mb-4 inline-block">
+            <div className="bg-teal-50 rounded-lg p-4">
+              <div className="bg-teal-100 text-teal-900 font-medium px-3 py-1 rounded mb-4 inline-block">
                 Group Information
               </div>
               
@@ -336,8 +336,8 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
 
           {/* Past Service History */}
           {appointment.pastServices && appointment.pastServices.length > 0 && (
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="bg-blue-100 text-blue-900 font-medium px-3 py-1 rounded mb-4 inline-block">
+            <div className="bg-teal-50 rounded-lg p-4">
+              <div className="bg-teal-100 text-teal-900 font-medium px-3 py-1 rounded mb-4 inline-block">
                 Past Service History
               </div>
               
@@ -399,7 +399,7 @@ export default function MyCalendarPage() {
           case 'complete': return 'bg-green-200 text-green-800'
           case 'incomplete': return 'bg-yellow-200 text-yellow-800'
           case 'cancelled': return 'bg-red-200 text-red-800'
-          case 'upcoming': return 'bg-blue-200 text-blue-800'
+          case 'upcoming': return 'bg-teal-200 text-teal-800'
           default: return 'bg-gray-200 text-gray-800'
         }
       })()
@@ -433,12 +433,12 @@ export default function MyCalendarPage() {
         <div 
           key={day} 
           className={`h-32 p-1 border-r border-b cursor-pointer hover:bg-gray-50 ${
-            isSelected ? 'bg-blue-50' : 'bg-white'
+            isSelected ? 'bg-teal-50' : 'bg-white'
           }`}
           onClick={() => setSelectedDate(day)}
         >
           <div className={`text-sm font-medium mb-1 ${
-            isSelected ? 'text-blue-600' : isToday ? 'font-bold' : 'text-gray-900'
+            isSelected ? 'text-teal-600' : isToday ? 'font-bold' : 'text-gray-900'
           }`}>
             {day}
           </div>
@@ -477,8 +477,14 @@ export default function MyCalendarPage() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Color indicators */}
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">My Calendar</h1>
+      </div>
+
+      <div className="space-y-4">
+        {/* Color indicators */}
       <div className="bg-white border rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-2">
@@ -486,7 +492,7 @@ export default function MyCalendarPage() {
             <span className="text-sm text-gray-700">Past appointment - needs notes</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-blue-200 border border-blue-300"></div>
+            <div className="w-4 h-4 rounded bg-teal-200 border border-teal-300"></div>
             <span className="text-sm text-gray-700">Upcoming appointment</span>
           </div>
           <div className="flex items-center gap-2">
@@ -541,13 +547,14 @@ export default function MyCalendarPage() {
         </div>
       </div>
 
-      {/* Service Log Details Modal */}
-      {selectedAppointment && (
-        <ServiceLogDetails 
-          appointment={selectedAppointment} 
-          onClose={() => setSelectedAppointment(null)} 
-        />
-      )}
+        {/* Service Log Details Modal */}
+        {selectedAppointment && (
+          <ServiceLogDetails 
+            appointment={selectedAppointment} 
+            onClose={() => setSelectedAppointment(null)} 
+          />
+        )}
+      </div>
     </div>
   )
 }

@@ -123,16 +123,16 @@ export default function UserProfilePage() {
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="about" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
+            <TabsList className="grid grid-cols-3 w-auto mb-6">
+              <TabsTrigger value="about" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <User className="w-4 h-4 mr-2" />
                 About
               </TabsTrigger>
-              <TabsTrigger value="qualifications" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
+              <TabsTrigger value="qualifications" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <Award className="w-4 h-4 mr-2" />
                 Qualifications & Services
               </TabsTrigger>
-              <TabsTrigger value="caseload" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
+              <TabsTrigger value="caseload" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
                 <Users className="w-4 h-4 mr-2" />
                 Caseload Management
               </TabsTrigger>

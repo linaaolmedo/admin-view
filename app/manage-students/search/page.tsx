@@ -21,7 +21,6 @@ const mockSearchResults = [
 ]
 
 export default function SearchStudentsPage() {
-  const [searchBy, setSearchBy] = useState("all")
   const [searchTerm, setSearchTerm] = useState("Fruitvale")
   const [searchResults, setSearchResults] = useState(mockSearchResults)
   const [selectedStudents, setSelectedStudents] = useState<string[]>([])
@@ -64,22 +63,9 @@ export default function SearchStudentsPage() {
       {/* Search Form */}
       <div className="bg-white rounded-lg border p-6 mb-6">
         <div className="flex items-center gap-4 mb-4">
-          <Select value={searchBy} onValueChange={setSearchBy}>
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="ssid">SSID</SelectItem>
-              <SelectItem value="localId">Local ID</SelectItem>
-              <SelectItem value="district">District</SelectItem>
-            </SelectContent>
-          </Select>
-          
           <div className="flex-1 relative">
             <Input
-              placeholder="Enter search term..."
+              placeholder="Search students by name, SSID, local ID, district, or school..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pr-12"
@@ -87,7 +73,7 @@ export default function SearchStudentsPage() {
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
           
-          <Button onClick={handleSearch} className="bg-[#4286f4] hover:bg-[#3275e3]">
+          <Button onClick={handleSearch} className="bg-[#14B8A6] hover:bg-[#0F9488]">
             Search
           </Button>
         </div>
@@ -95,14 +81,14 @@ export default function SearchStudentsPage() {
 
       {/* Search Results */}
       {searchResults.length > 0 && (
-        <div className="bg-blue-50 rounded-lg p-6">
+        <div className="bg-teal-50 rounded-lg p-6">
           <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Search Results</h2>
             {selectedStudents.length > 0 && (
               <div className="flex justify-end">
                 <Button 
                   onClick={handleAddSelectedStudents}
-                  className="bg-[#4286f4] hover:bg-[#3275e3]"
+                  className="bg-[#14B8A6] hover:bg-[#0F9488]"
                 >
                   Add Selected Students ({selectedStudents.length})
                 </Button>
@@ -112,7 +98,7 @@ export default function SearchStudentsPage() {
           
           <Table>
             <TableHeader>
-              <TableRow className="bg-blue-100">
+              <TableRow className="bg-teal-100">
                 <TableHead className="font-semibold">SSID</TableHead>
                 <TableHead className="font-semibold">Local ID</TableHead>
                 <TableHead className="font-semibold">Name</TableHead>
@@ -124,7 +110,7 @@ export default function SearchStudentsPage() {
             </TableHeader>
             <TableBody>
               {searchResults.map((student, index) => (
-                <TableRow key={index} className="hover:bg-blue-100">
+                <TableRow key={index} className="hover:bg-teal-100">
                   <TableCell className="font-medium">{student.ssid}</TableCell>
                   <TableCell>{student.localId}</TableCell>
                   <TableCell>{student.name}</TableCell>
@@ -137,8 +123,8 @@ export default function SearchStudentsPage() {
                       variant={selectedStudents.includes(student.ssid) ? "default" : "outline"}
                       onClick={() => handleSelectStudent(student.ssid)}
                       className={selectedStudents.includes(student.ssid) 
-                        ? "bg-[#4286f4] hover:bg-[#3275e3] text-white" 
-                        : "border-[#4286f4] text-[#4286f4] hover:bg-[#4286f4] hover:text-white"
+                        ? "bg-[#14B8A6] hover:bg-[#0F9488] text-white" 
+                        : "border-[#14B8A6] text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white"
                       }
                     >
                       {selectedStudents.includes(student.ssid) ? "Selected" : "Select"}

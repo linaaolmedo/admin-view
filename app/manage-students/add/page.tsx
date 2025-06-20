@@ -149,14 +149,14 @@ export default function AddStudentPage() {
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger 
               value="individual" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white flex items-center gap-2"
             >
               <User className="w-4 h-4" />
               Individual Add
             </TabsTrigger>
             <TabsTrigger 
               value="bulk" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white flex items-center gap-2"
+              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white flex items-center gap-2"
             >
               <Users className="w-4 h-4" />
               Bulk Add
@@ -288,7 +288,7 @@ export default function AddStudentPage() {
                     </Button>
                     <Button 
                       type="submit" 
-                      className="bg-[#4286f4] hover:bg-[#3275e3]"
+                      className="bg-teal-600 hover:bg-teal-700"
                     >
                       Add Student
                     </Button>
@@ -316,7 +316,7 @@ export default function AddStudentPage() {
                   className={`
                     relative border-2 border-dashed rounded-lg p-12 text-center transition-colors mb-6
                     ${dragActive 
-                      ? "border-[#4286f4] bg-blue-50" 
+                      ? "border-teal-600 bg-teal-50" 
                       : uploadedFile 
                         ? "border-green-400 bg-green-50" 
                         : "border-gray-300 bg-gray-50"
@@ -383,7 +383,7 @@ export default function AddStudentPage() {
                     <Button
                       onClick={handleUpload}
                       disabled={isUploading}
-                      className="bg-[#4286f4] hover:bg-[#3275e3] px-8"
+                      className="bg-teal-600 hover:bg-teal-700 px-8"
                     >
                       {isUploading ? (
                         <>

@@ -165,7 +165,7 @@ export default function BillingCodesPage() {
   const getTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
       case "treatment":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-200"
+        return "bg-teal-100 text-teal-800 hover:bg-teal-200"
       case "assessment":
         return "bg-green-100 text-green-800 hover:bg-green-200"
       default:
@@ -180,7 +180,10 @@ export default function BillingCodesPage() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Billing Codes</h1>
+      </div>
       <div className="bg-white rounded-lg border">
         <Table>
           <TableHeader>

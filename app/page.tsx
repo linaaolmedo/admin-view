@@ -35,37 +35,37 @@ export default function HomePage() {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-[#2f3a83] text-white min-h-screen">
+        <aside className="w-64 bg-teal-700 text-white min-h-screen">
           <nav className="p-4 space-y-2">
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <FileText className="w-5 h-5" />
               <span>Claims</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <Users className="w-5 h-5" />
               <span>Manage Users</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <GraduationCap className="w-5 h-5" />
               <span>Manage Students</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <ClipboardList className="w-5 h-5" />
               <span>Log a Service</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <Briefcase className="w-5 h-5" />
               <span>Caseload</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <Users className="w-5 h-5" />
               <span>Student Services</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <BarChart3 className="w-5 h-5" />
               <span>Reports</span>
             </div>
-            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#4286f4] cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-teal-600 cursor-pointer">
               <Settings className="w-5 h-5" />
               <span>Configurations</span>
             </div>

@@ -87,7 +87,6 @@ export default function CaseloadPage() {
   const [activeTab, setActiveTab] = useState("caseload")
   const [selectedStudents, setSelectedStudents] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("all")
   const [expandedGroups, setExpandedGroups] = useState<number[]>([1, 2])
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false)
   const [isAddToCaseloadOpen, setIsAddToCaseloadOpen] = useState(false)
@@ -115,9 +114,7 @@ export default function CaseloadPage() {
       student.ssid.includes(searchTerm) ||
       student.practitioner.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesDistrict = selectedDistrict === "all" || student.district.toLowerCase() === selectedDistrict.toLowerCase()
-
-    return matchesSearch && matchesDistrict
+    return matchesSearch
   })
 
   const dismissNotification = () => {
@@ -144,7 +141,7 @@ export default function CaseloadPage() {
     return (
       <Badge 
         variant={status === "Active" ? "default" : "secondary"}
-        className={status === "Active" ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
+        className={status === "Active" ? "bg-teal-100 text-teal-800 hover:bg-teal-200" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}
       >
         {status}
       </Badge>
@@ -152,18 +149,12 @@ export default function CaseloadPage() {
   }
 
   const handleCreateGroup = () => {
-    if (selectedStudents.length === 0) {
-      alert("Please select at least one student to create a group")
-      return
-    }
+    // Pre-populate with currently selected students if any
+    setGroupParticipants(selectedStudents)
     setIsCreateGroupOpen(true)
   }
 
   const handleScheduleService = () => {
-    if (selectedStudents.length === 0) {
-      alert("Please select at least one student to schedule a service")
-      return
-    }
     router.push("/caseload/schedule-service")
   }
 
@@ -200,11 +191,22 @@ export default function CaseloadPage() {
       alert("Please enter a group name")
       return
     }
-    // TODO: Implement group creation
-    console.log("Creating group:", newGroupName, "with participants:", groupParticipants)
-    setIsCreateGroupOpen(false)
+    if (groupParticipants.length === 0) {
+      alert("Please select at least one student for the group")
+      return
+    }
+
+    // Create the group (in a real app, this would call an API)
+    console.log("Creating group:", { name: newGroupName, participants: groupParticipants })
+    
+    // Reset form
     setNewGroupName("")
     setGroupParticipants([])
+    setIsCreateGroupOpen(false)
+    
+    // Show success notification
+    setNotificationMessage(`Group "${newGroupName}" created successfully!`)
+    setShowSuccessNotification(true)
   }
 
   const addStudentsToCaseload = () => {
@@ -212,73 +214,48 @@ export default function CaseloadPage() {
       alert("Please select at least one student to add to caseload")
       return
     }
+
+    // Add students to caseload (in a real app, this would call an API)
+    console.log("Adding students to caseload:", caseloadStudents)
     
-    // Add selected students to the actual caseload
-    const studentsToAdd = mockAvailableStudents.filter(student => 
-      caseloadStudents.includes(student.ssid)
-    )
-    
-    const newCaseloadEntries = studentsToAdd.map((student, index) => ({
-      id: actualCaseload.length + index + 1,
-      ssid: student.ssid,
-      lastName: student.name.split(' ').slice(-1)[0],
-      firstName: student.name.split(' ').slice(0, -1).join(' '),
-      practitioner: "Bradley Brown", // Default practitioner
-      district: student.district,
-      birthdate: student.dob,
-      gender: "Unknown", // Would need to be determined
-      status: "Active"
-    }))
-    
-    // Update the actual caseload
-    setActualCaseload(prev => [...prev, ...newCaseloadEntries])
+    // Reset form
+    setCaseloadStudents([])
+    setIsAddToCaseloadOpen(false)
     
     // Show success notification
-    const studentCount = caseloadStudents.length
-    const message = studentCount === 1 
-      ? `1 student successfully added to caseload!`
-      : `${studentCount} students successfully added to caseload!`
-    
-    setNotificationMessage(message)
+    setNotificationMessage(`${caseloadStudents.length} student(s) added to caseload successfully!`)
     setShowSuccessNotification(true)
-    
-    // Auto-hide notification after 5 seconds
-    setTimeout(() => {
-      setShowSuccessNotification(false)
-    }, 5000)
-    
-    // Close dialog and reset state
-    setIsAddToCaseloadOpen(false)
-    setCaseloadStudents([])
   }
 
   return (
     <div className="p-6">
-      {/* Success Notification Banner */}
+      {/* Success Notification */}
       {showSuccessNotification && (
-        <div className="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 rounded-lg shadow-lg p-4 flex items-center gap-3 max-w-md">
-          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-          <div className="flex-1">
-            <p className="text-green-800 font-medium">{notificationMessage}</p>
+        <div className="fixed top-4 right-4 z-50">
+          <div className="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded relative shadow-lg">
+            <div className="flex items-center">
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <span>{notificationMessage}</span>
+              <button
+                onClick={dismissNotification}
+                className="absolute top-0 bottom-0 right-0 px-4 py-3"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-          <button 
-            onClick={dismissNotification}
-            className="text-green-600 hover:text-green-800 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-[#000000] mb-6">Caseload</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Caseload</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-between items-center mb-6">
           <TabsList className="grid grid-cols-2 w-auto">
-            <TabsTrigger value="caseload" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
+            <TabsTrigger value="caseload" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
               Caseload
             </TabsTrigger>
-            <TabsTrigger value="groups" className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white">
+            <TabsTrigger value="groups" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
               Groups
             </TabsTrigger>
           </TabsList>
@@ -287,8 +264,7 @@ export default function CaseloadPage() {
             <Button 
               onClick={handleCreateGroup}
               variant="outline" 
-              className="border-[#4286f4] text-[#4286f4] hover:bg-[#4286f4] hover:text-white"
-              disabled={activeTab === "caseload" && selectedStudents.length === 0}
+              className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white"
             >
               <Users className="w-4 h-4 mr-2" />
               Create a group
@@ -296,57 +272,38 @@ export default function CaseloadPage() {
             <Button 
               onClick={handleScheduleService}
               variant="outline" 
-              className="border-[#4286f4] text-[#4286f4] hover:bg-[#4286f4] hover:text-white"
-              disabled={activeTab === "caseload" && selectedStudents.length === 0}
+              className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white"
             >
               <Calendar className="w-4 h-4 mr-2" />
               Schedule service
             </Button>
             <Button 
               onClick={handleAddToCaseload}
-              className="bg-[#4286f4] hover:bg-[#3275e3]"
+              className="bg-teal-600 hover:bg-teal-700"
             >
               <UserPlus className="w-4 h-4 mr-2" />
               Add to caseload
             </Button>
           </div>
         </div>
-
+        
         <TabsContent value="caseload" className="mt-0">
           {/* Filters and Search */}
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center space-x-4">
-              <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="District" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="fruitvale">Fruitvale</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-80"
-                />
-              </div>
+          <div className="flex justify-end items-center gap-4 mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-80"
+              />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <ArrowUpDown className="w-4 h-4 mr-2" />
-                Order by
-              </Button>
-              <Button variant="outline" size="sm">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-              </Button>
-            </div>
+            <Button variant="outline" size="sm">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
           </div>
 
           {/* Students Table */}
@@ -413,17 +370,17 @@ export default function CaseloadPage() {
         <TabsContent value="groups" className="mt-0">
           <div className="space-y-4">
             {mockGroups.map((group) => (
-              <Card key={group.id} className="border">
+              <Card key={group.id} className="border border-teal-200">
                 <CardHeader 
-                  className="cursor-pointer bg-blue-50 hover:bg-blue-100 transition-colors"
+                  className="cursor-pointer bg-teal-50 hover:bg-teal-100 transition-colors"
                   onClick={() => toggleGroupExpansion(group.id)}
                 >
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold">{group.name}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-teal-800">{group.name}</CardTitle>
                     {expandedGroups.includes(group.id) ? (
-                      <ChevronUp className="w-5 h-5" />
+                      <ChevronUp className="w-5 h-5 text-teal-600" />
                     ) : (
-                      <ChevronDown className="w-5 h-5" />
+                      <ChevronDown className="w-5 h-5 text-teal-600" />
                     )}
                   </div>
                 </CardHeader>
@@ -431,10 +388,10 @@ export default function CaseloadPage() {
                   <CardContent className="pt-4">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-blue-100">
-                          <TableHead className="font-semibold">SSID</TableHead>
-                          <TableHead className="font-semibold">Student Name</TableHead>
-                          <TableHead className="font-semibold">District</TableHead>
+                        <TableRow className="bg-teal-50">
+                          <TableHead className="font-semibold text-teal-800">SSID</TableHead>
+                          <TableHead className="font-semibold text-teal-800">Student Name</TableHead>
+                          <TableHead className="font-semibold text-teal-800">District</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -457,95 +414,46 @@ export default function CaseloadPage() {
 
       {/* Create Group Dialog */}
       <Dialog open={isCreateGroupOpen} onOpenChange={setIsCreateGroupOpen}>
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create group</DialogTitle>
+            <DialogTitle>Create New Group</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="groupName">Group Name *</Label>
+              <Label htmlFor="groupName">Group Name</Label>
               <Input
                 id="groupName"
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
                 placeholder="Enter group name"
-                className="mt-1"
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Caseload</h3>
-                <div className="border rounded-lg bg-blue-50 max-h-64 overflow-y-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-blue-100">
-                        <TableHead className="font-semibold">SSID</TableHead>
-                        <TableHead className="font-semibold">Name</TableHead>
-                        <TableHead className="font-semibold">District</TableHead>
-                        <TableHead className="w-16"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {availableStudentsForGroup.map((student, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">{student.ssid}</TableCell>
-                          <TableCell>{student.name}</TableCell>
-                          <TableCell>{student.district}</TableCell>
-                          <TableCell>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleAddToGroup(student.ssid)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              Add
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-4">Group Participants</h3>
-                <div className="border rounded-lg bg-blue-50 max-h-64 overflow-y-auto">
-                  {groupParticipants.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      No Participants
+            <div>
+              <Label>Add Students to Group</Label>
+              <div className="mt-2 max-h-60 overflow-y-auto border rounded p-2">
+                {availableStudentsForGroup.map((student) => (
+                  <div key={student.ssid} className="flex items-center space-x-2 p-2 hover:bg-gray-50">
+                    <Checkbox
+                      checked={groupParticipants.includes(student.ssid)}
+                      onCheckedChange={() => handleAddToGroup(student.ssid)}
+                    />
+                    <div className="flex-1">
+                      <span className="font-medium">{student.name}</span>
+                      <span className="text-sm text-gray-500 ml-2">SSID: {student.ssid}</span>
                     </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-blue-100">
-                          <TableHead className="font-semibold">SSID</TableHead>
-                          <TableHead className="font-semibold">Name</TableHead>
-                          <TableHead className="font-semibold">District</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {groupParticipants.map((ssid) => {
-                          const student = availableStudentsForGroup.find(s => s.ssid === ssid)
-                          return student ? (
-                            <TableRow key={ssid}>
-                              <TableCell className="font-medium">{student.ssid}</TableCell>
-                              <TableCell>{student.name}</TableCell>
-                              <TableCell>{student.district}</TableCell>
-                            </TableRow>
-                          ) : null
-                        })}
-                      </TableBody>
-                    </Table>
-                  )}
-                </div>
+                    <Badge variant="outline">{student.district}</Badge>
+                  </div>
+                ))}
               </div>
             </div>
             
-            <div className="flex justify-end">
-              <Button onClick={createGroup} className="bg-[#4286f4] hover:bg-[#3275e3]">
-                Create
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsCreateGroupOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={createGroup} className="bg-teal-600 hover:bg-teal-700">
+                Create Group
               </Button>
             </div>
           </div>
@@ -554,125 +462,36 @@ export default function CaseloadPage() {
 
       {/* Add to Caseload Dialog */}
       <Dialog open={isAddToCaseloadOpen} onOpenChange={setIsAddToCaseloadOpen}>
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Add to Caseload</DialogTitle>
+            <DialogTitle>Add Students to Caseload</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-4">Search for student</h3>
-                <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <Select defaultValue="district">
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="district">District</SelectItem>
-                        <SelectItem value="name">Name</SelectItem>
-                        <SelectItem value="ssid">SSID</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div className="flex-1 relative">
-                      <Input placeholder="Search" className="pr-12" />
-                      <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="space-y-4">
+            <div>
+              <Label>Select Students to Add</Label>
+              <div className="mt-2 max-h-60 overflow-y-auto border rounded p-2">
+                {mockAvailableStudents.map((student) => (
+                  <div key={student.ssid} className="flex items-center space-x-2 p-2 hover:bg-gray-50">
+                    <Checkbox
+                      checked={caseloadStudents.includes(student.ssid)}
+                      onCheckedChange={() => handleAddToCaseloadStudent(student.ssid)}
+                    />
+                    <div className="flex-1">
+                      <span className="font-medium">{student.name}</span>
+                      <span className="text-sm text-gray-500 ml-2">SSID: {student.ssid}</span>
                     </div>
-                    <Button className="bg-[#4286f4] hover:bg-[#3275e3]">Search</Button>
+                    <Badge variant="outline">{student.district}</Badge>
                   </div>
-                  
-                  <div className="border rounded-lg max-h-64 overflow-y-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-gray-50">
-                          <TableHead className="font-semibold">SSID</TableHead>
-                          <TableHead className="font-semibold">Local ID</TableHead>
-                          <TableHead className="font-semibold">Name</TableHead>
-                          <TableHead className="font-semibold">District</TableHead>
-                          <TableHead className="font-semibold">School</TableHead>
-                          <TableHead className="font-semibold">DOB</TableHead>
-                          <TableHead className="w-16"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {mockAvailableStudents.map((student, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="font-medium">{student.ssid}</TableCell>
-                            <TableCell>{student.localId}</TableCell>
-                            <TableCell>{student.name}</TableCell>
-                            <TableCell>{student.district}</TableCell>
-                            <TableCell>{student.school}</TableCell>
-                            <TableCell>{student.dob}</TableCell>
-                            <TableCell>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleAddToCaseloadStudent(student.ssid)}
-                                className="text-red-600 hover:text-red-800"
-                              >
-                                Add
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold mb-4">Current Caseload</h3>
-                <div className="border rounded-lg max-h-64 overflow-y-auto">
-                  {caseloadStudents.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      No students selected
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-gray-50">
-                          <TableHead className="font-semibold">SSID</TableHead>
-                          <TableHead className="font-semibold">Name</TableHead>
-                          <TableHead className="font-semibold">District</TableHead>
-                          <TableHead className="w-16"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {caseloadStudents.map((ssid) => {
-                          const student = mockAvailableStudents.find(s => s.ssid === ssid)
-                          return student ? (
-                            <TableRow key={ssid}>
-                              <TableCell className="font-medium">{student.ssid}</TableCell>
-                              <TableCell>{student.name}</TableCell>
-                              <TableCell>{student.district}</TableCell>
-                              <TableCell>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => handleAddToCaseloadStudent(student.ssid)}
-                                  className="text-red-600 hover:text-red-800"
-                                >
-                                  Remove
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ) : null
-                        })}
-                      </TableBody>
-                    </Table>
-                  )}
-                </div>
+                ))}
               </div>
             </div>
             
-            <div className="flex justify-end pt-4 border-t">
-              <Button 
-                onClick={addStudentsToCaseload} 
-                className="bg-[#4286f4] hover:bg-[#3275e3]"
-                disabled={caseloadStudents.length === 0}
-              >
-                Save ({caseloadStudents.length} student{caseloadStudents.length !== 1 ? 's' : ''})
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsAddToCaseloadOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={addStudentsToCaseload} className="bg-teal-600 hover:bg-teal-700">
+                Add to Caseload
               </Button>
             </div>
           </div>
