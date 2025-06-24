@@ -7,10 +7,15 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
+import { Shield, User, Users } from "lucide-react"
+
+type AccountType = "administrator" | "practitioner" | "supervisor"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [accountType, setAccountType] = useState<AccountType>("practitioner")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
@@ -26,9 +31,10 @@ export default function LoginPage() {
 
       // Accept any non-empty username and password
       if (email.trim() && password.trim()) {
-        // Set a simple auth flag in localStorage (in a real app, use proper auth tokens)
+        // Set authentication and account type in localStorage
         localStorage.setItem("isAuthenticated", "true")
         localStorage.setItem("userEmail", email)
+        localStorage.setItem("accountType", accountType)
 
         // Redirect to dashboard
         router.push("/dashboard")
@@ -46,6 +52,7 @@ export default function LoginPage() {
     // Simulate Google sign in
     localStorage.setItem("isAuthenticated", "true")
     localStorage.setItem("userEmail", "user@google.com")
+    localStorage.setItem("accountType", accountType)
     router.push("/dashboard")
   }
 
@@ -53,8 +60,33 @@ export default function LoginPage() {
     // Simulate Microsoft sign in
     localStorage.setItem("isAuthenticated", "true")
     localStorage.setItem("userEmail", "user@microsoft.com")
+    localStorage.setItem("accountType", accountType)
     router.push("/dashboard")
   }
+
+  const accountTypeOptions = [
+    {
+      type: "administrator" as AccountType,
+      label: "Administrator",
+      description: "Full system access and management",
+      icon: Shield,
+      color: "border-red-200 bg-red-50 hover:bg-red-100"
+    },
+    {
+      type: "practitioner" as AccountType,
+      label: "Practitioner",
+      description: "Clinical services and student management",
+      icon: User,
+      color: "border-cyan-200 bg-cyan-50 hover:bg-cyan-100"
+    },
+    {
+      type: "supervisor" as AccountType,
+      label: "Supervisor",
+      description: "Oversight and approval workflows",
+      icon: Users,
+      color: "border-emerald-200 bg-emerald-50 hover:bg-emerald-100"
+    }
+  ]
 
   return (
     <div className="min-h-screen flex">
@@ -62,10 +94,81 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center bg-white px-8 py-12">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <h1 className="text-4xl font-normal text-black mb-8">Login</h1>
+            <h1 className="text-4xl font-normal text-black mb-2">Login</h1>
+            <p className="text-gray-600">Select your account type and sign in to continue</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Account Type Selection */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-black">Account Type</Label>
+              <div className="grid gap-3">
+                {accountTypeOptions.map((option) => {
+                  const IconComponent = option.icon
+                  return (
+                    <Card
+                      key={option.type}
+                      className={`cursor-pointer transition-all duration-200 ${
+                        accountType === option.type
+                          ? `${option.color} border-2`
+                          : "border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50"
+                      }`}
+                      onClick={() => setAccountType(option.type)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${
+                            accountType === option.type
+                              ? option.type === "administrator" 
+                                ? "bg-red-200" 
+                                : option.type === "practitioner"
+                                ? "bg-cyan-200"
+                                : "bg-emerald-200"
+                              : "bg-gray-100"
+                          }`}>
+                            <IconComponent className={`w-5 h-5 ${
+                              accountType === option.type
+                                ? option.type === "administrator" 
+                                  ? "text-red-700" 
+                                  : option.type === "practitioner"
+                                  ? "text-cyan-700"
+                                  : "text-emerald-700"
+                                : "text-gray-600"
+                            }`} />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className={`font-medium ${
+                              accountType === option.type ? "text-gray-900" : "text-gray-700"
+                            }`}>
+                              {option.label}
+                            </h3>
+                            <p className={`text-sm ${
+                              accountType === option.type ? "text-gray-600" : "text-gray-500"
+                            }`}>
+                              {option.description}
+                            </p>
+                          </div>
+                          <div className={`w-4 h-4 rounded-full border-2 ${
+                            accountType === option.type
+                              ? option.type === "administrator" 
+                                ? "border-red-500 bg-red-500" 
+                                : option.type === "practitioner"
+                                ? "border-cyan-500 bg-cyan-500"
+                                : "border-emerald-500 bg-emerald-500"
+                              : "border-gray-300"
+                          }`}>
+                            {accountType === option.type && (
+                              <div className="w-full h-full rounded-full bg-white transform scale-[0.4]"></div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-normal text-black">
                 Username or Email
@@ -76,7 +179,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 border-gray-300 rounded-md focus:border-gray-400 focus:ring-0"
+                className="h-12 border-gray-300 rounded-md focus:border-cyan-400 focus:ring-cyan-400"
               />
             </div>
 
@@ -90,7 +193,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-12 border-gray-300 rounded-md focus:border-gray-400 focus:ring-0"
+                className="h-12 border-gray-300 rounded-md focus:border-cyan-400 focus:ring-cyan-400"
               />
             </div>
 
@@ -99,7 +202,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 bg-gray-800 hover:bg-gray-900 text-white font-normal rounded-md"
+              className="w-full h-12 bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700 text-white font-normal rounded-md transition-all duration-200"
             >
               {isLoading ? "Logging in..." : "Log In"}
             </Button>
@@ -165,7 +268,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Branding */}
-      <div className="flex-1 bg-gray-100 relative overflow-hidden">
+      <div className="flex-1 bg-gradient-to-br from-cyan-50 to-teal-100 relative overflow-hidden">
         {/* Background Pattern */}
         <div
           className="absolute inset-0 opacity-10"
@@ -179,19 +282,19 @@ export default function LoginPage() {
           {/* Decorative Elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Large subtle circles */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/30 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-white/20 rounded-full blur-2xl"></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/40 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-cyan-200/30 rounded-full blur-2xl"></div>
 
             {/* Geometric shapes with shadows */}
-            <div className="absolute top-20 right-20 w-16 h-16 bg-white/40 rounded-lg rotate-12 shadow-lg"></div>
-            <div className="absolute bottom-32 left-16 w-12 h-12 bg-white/30 rounded-full shadow-md"></div>
-            <div className="absolute top-1/2 left-8 w-8 h-20 bg-white/25 rounded-full rotate-45 shadow-sm"></div>
+            <div className="absolute top-20 right-20 w-16 h-16 bg-cyan-200/60 rounded-lg rotate-12 shadow-lg"></div>
+            <div className="absolute bottom-32 left-16 w-12 h-12 bg-teal-200/50 rounded-full shadow-md"></div>
+            <div className="absolute top-1/2 left-8 w-8 h-20 bg-cyan-300/40 rounded-full rotate-45 shadow-sm"></div>
 
             {/* Subtle grid pattern overlay */}
             <div
               className="absolute inset-0 opacity-5"
               style={{
-                backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+                backgroundImage: `linear-gradient(rgba(0,188,212,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,188,212,0.1) 1px, transparent 1px)`,
                 backgroundSize: "40px 40px",
               }}
             ></div>
@@ -199,19 +302,23 @@ export default function LoginPage() {
 
           {/* Logo Container with enhanced styling */}
           <div className="relative z-10 text-center">
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-12 shadow-2xl border border-white/20">
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-12 shadow-2xl border border-white/30">
               <img
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-xI1JVw1XUPMjYaP97M5YxAhZtvxSeU.png"
                 alt="EDUclaim - Kern Integrated Data Systems"
                 className="w-80 h-auto mx-auto drop-shadow-lg"
               />
+              <div className="mt-6 text-center">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-2">Welcome to EDUclaim</h2>
+                <p className="text-gray-600">Streamlined educational service management</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Contact Us Footer */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-          <button className="text-gray-600 hover:text-gray-800 font-medium">Contact us</button>
+          <button className="text-gray-600 hover:text-gray-800 font-medium transition-colors">Contact us</button>
         </div>
       </div>
     </div>

@@ -81,14 +81,19 @@ export default function ProfilePage() {
     setAccountType(randomType)
   }, [])
 
-  // Smooth scroll to section
+  // Smooth scroll to section with offset
   const scrollToSection = (sectionId: string) => {
+    // Immediately set active section for instant visual feedback
     setActiveSection(sectionId)
+    
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+      const yOffset = -80 // Offset to account for sticky header height
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
       })
     }
   }
@@ -97,13 +102,19 @@ export default function ProfilePage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
-        })
+        // Find the section that is most visible
+        const visibleEntries = entries.filter(entry => entry.isIntersecting)
+        
+        if (visibleEntries.length > 0) {
+          // Sort by intersection ratio to get the most visible section
+          const mostVisible = visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+          setActiveSection(mostVisible.target.id)
+        }
       },
-      { threshold: 0.5 }
+      { 
+        threshold: [0.1, 0.3, 0.5, 0.7],
+        rootMargin: '-80px 0px -50% 0px' // Account for sticky header height
+      }
     )
 
     navigationSections.forEach((section) => {
@@ -159,9 +170,9 @@ export default function ProfilePage() {
 
   const getAccountTypeBadge = (type: AccountType) => {
     const variants = {
-      practitioner: "bg-teal-100 text-teal-800",
-      admin: "bg-red-100 text-red-800",
-      supervisor: "bg-green-100 text-green-800",
+      practitioner: "bg-cyan-100 text-cyan-700",
+      admin: "bg-red-100 text-red-700",
+      supervisor: "bg-emerald-100 text-emerald-700",
     }
     return variants[type]
   }
@@ -180,13 +191,13 @@ export default function ProfilePage() {
   const getQualificationStatusBadge = (status: string) => {
     switch (status) {
       case "Active":
-        return "bg-green-100 text-green-800"
+        return "bg-emerald-100 text-emerald-700"
       case "Expiring Soon":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-amber-100 text-amber-700"
       case "Expired":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-700"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-700"
     }
   }
 
@@ -234,293 +245,298 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex h-full bg-white">
-      {/* Sticky Left Navigation */}
-      <div className="w-64 bg-white border-r border-gray-200 sticky top-0 h-screen">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-8">Profile</h1>
-          <nav className="space-y-2">
+    <div className="min-h-screen bg-white">
+      {/* Profile Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+      </div>
+
+      {/* Horizontal Navigation */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex space-x-8 overflow-x-auto">
             {navigationSections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => scrollToSection(section.id)}
-                className={`w-full flex items-center px-3 py-2 text-left rounded-lg transition-colors ${
+                className={`flex items-center gap-2 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
                   activeSection === section.id
-                    ? 'bg-teal-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-teal-600 border-b-2 border-teal-600'
+                    : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
                 }`}
               >
-                <section.icon className="w-5 h-5 mr-3" />
+                <section.icon className="w-4 h-4" />
                 {section.label}
               </button>
             ))}
-          </nav>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-8 space-y-8">
-          
-          {/* About Section */}
-          <section id="about" className="min-h-screen">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">About</h2>
-              <p className="text-gray-600">Your personal information and account details.</p>
-            </div>
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-16">
+        
+        {/* About Section */}
+        <section id="about" className="mt-0 scroll-mt-20">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">About</h2>
+            <p className="text-gray-600">Your personal information and account details.</p>
+          </div>
 
+          <Card className="border-teal-200">
+            <CardHeader className="bg-teal-50">
+              <CardTitle className="text-teal-800">Personal Information</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" defaultValue="Bradley" disabled className="bg-gray-50" />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" defaultValue="Brown" disabled className="bg-gray-50" />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" defaultValue="bbrown@email.com" disabled className="bg-gray-50" />
+                </div>
+                <div>
+                  <Label htmlFor="accountType">Account Type</Label>
+                  <Input id="accountType" defaultValue="Practitioner" disabled className="bg-gray-50" />
+                </div>
+              </div>
+              <div className="text-sm text-gray-500 italic">
+                Personal information is managed by your administrator and cannot be changed here.
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Qualifications & Services Section */}
+        <section id="qualifications" className="mt-0 scroll-mt-20">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Qualifications & Services</h2>
+            <p className="text-gray-600">Manage your professional qualifications and service offerings.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="border-teal-200">
               <CardHeader className="bg-teal-50">
-                <CardTitle className="text-teal-800">Personal Information</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" defaultValue="Bradley" />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" defaultValue="Brown" />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue="bbrown@email.com" />
-                  </div>
-                  <div>
-                    <Label htmlFor="accountType">Account Type</Label>
-                    <Input id="accountType" defaultValue="Practitioner" disabled />
-                  </div>
-                </div>
-                <Button className="bg-teal-600 hover:bg-teal-700">Save Changes</Button>
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* Qualifications & Services Section */}
-          <section id="qualifications" className="min-h-screen">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Qualifications & Services</h2>
-              <p className="text-gray-600">Manage your professional qualifications and service offerings.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-teal-200">
-                <CardHeader className="bg-teal-50">
-                  <CardTitle className="text-teal-800">Qualifications</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {mockQualifications.map((qual) => (
-                      <div key={qual.id} className="p-4 border rounded-lg">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-900">{qual.name}</h4>
-                          {getStatusBadge(qual.status)}
-                        </div>
-                        <p className="text-sm text-gray-600">Issued by: {qual.issuer}</p>
-                        <p className="text-sm text-gray-600">Expires: {qual.expiry}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
-                    Add Qualification
-                  </Button>
-                </CardContent>
-              </Card>
-
-                          <Card className="border-teal-200">
-              <CardHeader className="bg-teal-50">
-                <CardTitle className="text-teal-800">Services Offered</CardTitle>
-              </CardHeader>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {mockServices.map((service) => (
-                      <div key={service.id} className="p-4 border rounded-lg">
-                        <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                          <span className="text-sm font-medium text-teal-600">{service.rate}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">Code: {service.code}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
-                    Add Service
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-
-          {/* Caseload Management Section */}
-          <section id="caseload" className="min-h-screen">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Caseload Management</h2>
-              <p className="text-gray-600">Overview of your current caseload and student management.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              <Card className="border-teal-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Total Students</p>
-                      <p className="text-3xl font-bold text-gray-900">{mockCaseload.length}</p>
-                    </div>
-                    <Users className="w-8 h-8 text-teal-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-green-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Active Students</p>
-                      <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "Active").length}</p>
-                    </div>
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-teal-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Scheduled This Week</p>
-                      <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.nextSession.startsWith(new Date().toISOString().split('T')[0])).length}</p>
-                    </div>
-                    <Calendar className="w-8 h-8 text-teal-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-orange-200">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Pending Assessments</p>
-                      <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "On Hold").length}</p>
-                    </div>
-                    <AlertCircle className="w-8 h-8 text-orange-600" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="border-teal-200">
-              <CardHeader className="bg-teal-50">
-                <CardTitle className="text-teal-800">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button className="bg-teal-600 hover:bg-teal-700">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Schedule Service
-                  </Button>
-                  <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
-                    <Users className="w-4 h-4 mr-2" />
-                    View Caseload
-                  </Button>
-                  <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Generate Report
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* Settings Section */}
-          <section id="settings" className="min-h-screen">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Settings</h2>
-              <p className="text-gray-600">Manage your account preferences and notifications.</p>
-            </div>
-
-            <div className="space-y-6">
-              <Card className="border-gray-200">
-                <CardHeader>
-                  <CardTitle>Notification Preferences</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="email-notifications">Email Notifications</Label>
-                      <p className="text-sm text-gray-600">Receive email updates about your account</p>
-                    </div>
-                    <Switch id="email-notifications" defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="claim-alerts">Claim Status Alerts</Label>
-                      <p className="text-sm text-gray-600">Get notified when claim status changes</p>
-                    </div>
-                    <Switch id="claim-alerts" defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="schedule-reminders">Schedule Reminders</Label>
-                      <p className="text-sm text-gray-600">Receive reminders about upcoming appointments</p>
-                    </div>
-                    <Switch id="schedule-reminders" defaultChecked />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-gray-200">
-                <CardHeader>
-                  <CardTitle>Security Settings</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                  <Button variant="outline">Change Password</Button>
-                  <Button variant="outline">Enable Two-Factor Authentication</Button>
-                  <Button variant="outline">Download Account Data</Button>
-                </CardContent>
-              </Card>
-            </div>
-          </section>
-
-          {/* Recent Activity Section */}
-          <section id="activity" className="min-h-screen">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Activity</h2>
-              <p className="text-gray-600">Your recent actions and system updates.</p>
-            </div>
-
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle>Activity Timeline</CardTitle>
+                <CardTitle className="text-teal-800">Qualifications</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {mockUserHistory.map((entry, index) => (
-                    <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg">
-                      <div className="flex-shrink-0 mt-1">
-                        {getActivityIcon(entry.action.toLowerCase())}
+                  {mockQualifications.map((qual) => (
+                    <div key={qual.id} className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold text-gray-900">{qual.name}</h4>
+                        {getStatusBadge(qual.status)}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">{entry.action}</p>
-                        <div className="flex items-center mt-1 space-x-2">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          <span className="text-xs text-gray-500">{entry.time}</span>
-                        </div>
-                      </div>
+                      <p className="text-sm text-gray-600">Issued by: {qual.issuer}</p>
+                      <p className="text-sm text-gray-600">Expires: {qual.expiry}</p>
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4">
-                  View All Activity
+                <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
+                  Add Qualification
                 </Button>
               </CardContent>
             </Card>
-          </section>
 
-        </div>
+            <Card className="border-teal-200">
+              <CardHeader className="bg-teal-50">
+                <CardTitle className="text-teal-800">Services Offered</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {mockServices.map((service) => (
+                    <div key={service.id} className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold text-gray-900">{service.name}</h4>
+                        <span className="text-sm font-medium text-teal-600">{service.rate}</span>
+                      </div>
+                      <p className="text-sm text-gray-600">Code: {service.code}</p>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
+                  Add Service
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Caseload Management Section */}
+        <section id="caseload" className="mt-0 scroll-mt-20">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Caseload Management</h2>
+            <p className="text-gray-600">Overview of your current caseload and student management.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <Card className="border-teal-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Students</p>
+                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.length}</p>
+                  </div>
+                  <Users className="w-8 h-8 text-teal-600" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Active Students</p>
+                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "Active").length}</p>
+                  </div>
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-teal-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Scheduled This Week</p>
+                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.nextSession.startsWith(new Date().toISOString().split('T')[0])).length}</p>
+                  </div>
+                  <Calendar className="w-8 h-8 text-teal-600" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-orange-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Pending Assessments</p>
+                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "On Hold").length}</p>
+                  </div>
+                  <AlertCircle className="w-8 h-8 text-orange-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="border-teal-200">
+            <CardHeader className="bg-teal-50">
+              <CardTitle className="text-teal-800">Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button className="bg-teal-600 hover:bg-teal-700">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Schedule Service
+                </Button>
+                <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
+                  <Users className="w-4 h-4 mr-2" />
+                  View Caseload
+                </Button>
+                <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Generate Report
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Settings Section */}
+        <section id="settings" className="mt-0 scroll-mt-20">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Settings</h2>
+            <p className="text-gray-600">Manage your account preferences and notifications.</p>
+          </div>
+
+          <div className="space-y-6">
+            <Card className="border-gray-200">
+              <CardHeader>
+                <CardTitle>Notification Preferences</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="email-notifications">Email Notifications</Label>
+                    <p className="text-sm text-gray-600">Receive email updates about your account</p>
+                  </div>
+                  <Switch id="email-notifications" defaultChecked />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="claim-alerts">Claim Status Alerts</Label>
+                    <p className="text-sm text-gray-600">Get notified when claim status changes</p>
+                  </div>
+                  <Switch id="claim-alerts" defaultChecked />
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="schedule-reminders">Schedule Reminders</Label>
+                    <p className="text-sm text-gray-600">Receive reminders about upcoming appointments</p>
+                  </div>
+                  <Switch id="schedule-reminders" defaultChecked />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-gray-200">
+              <CardHeader>
+                <CardTitle>Security Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <Button variant="outline">Change Password</Button>
+                <Button variant="outline">Enable Two-Factor Authentication</Button>
+                <Button variant="outline">Download Account Data</Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Recent Activity Section */}
+        <section id="activity" className="mt-0 scroll-mt-20">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Activity</h2>
+            <p className="text-gray-600">Your recent actions and system updates.</p>
+          </div>
+
+          <Card className="border-gray-200">
+            <CardHeader>
+              <CardTitle>Activity Timeline</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {mockUserHistory.map((entry, index) => (
+                  <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg">
+                    <div className="flex-shrink-0 mt-1">
+                      {getActivityIcon(entry.action.toLowerCase())}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">{entry.action}</p>
+                      <div className="flex items-center mt-1 space-x-2">
+                        <Clock className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">{entry.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button variant="outline" className="w-full mt-4">
+                View All Activity
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
       </div>
     </div>
   )
 }
+

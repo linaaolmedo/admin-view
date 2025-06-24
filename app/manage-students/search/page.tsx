@@ -73,7 +73,7 @@ export default function SearchStudentsPage() {
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
           
-          <Button onClick={handleSearch} className="bg-[#14B8A6] hover:bg-[#0F9488]">
+          <Button onClick={handleSearch} className="bg-cyan-500 hover:bg-cyan-600">
             Search
           </Button>
         </div>
@@ -81,14 +81,14 @@ export default function SearchStudentsPage() {
 
       {/* Search Results */}
       {searchResults.length > 0 && (
-        <div className="bg-teal-50 rounded-lg p-6">
+        <div className="bg-cyan-50 rounded-lg p-6">
           <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Search Results</h2>
             {selectedStudents.length > 0 && (
               <div className="flex justify-end">
                 <Button 
                   onClick={handleAddSelectedStudents}
-                  className="bg-[#14B8A6] hover:bg-[#0F9488]"
+                  className="bg-cyan-500 hover:bg-cyan-600"
                 >
                   Add Selected Students ({selectedStudents.length})
                 </Button>
@@ -98,7 +98,7 @@ export default function SearchStudentsPage() {
           
           <Table>
             <TableHeader>
-              <TableRow className="bg-teal-100">
+              <TableRow className="bg-cyan-100">
                 <TableHead className="font-semibold">SSID</TableHead>
                 <TableHead className="font-semibold">Local ID</TableHead>
                 <TableHead className="font-semibold">Name</TableHead>
@@ -110,7 +110,7 @@ export default function SearchStudentsPage() {
             </TableHeader>
             <TableBody>
               {searchResults.map((student, index) => (
-                <TableRow key={index} className="hover:bg-teal-100">
+                <TableRow key={index} className="hover:bg-cyan-100">
                   <TableCell className="font-medium">{student.ssid}</TableCell>
                   <TableCell>{student.localId}</TableCell>
                   <TableCell>{student.name}</TableCell>
@@ -123,8 +123,8 @@ export default function SearchStudentsPage() {
                       variant={selectedStudents.includes(student.ssid) ? "default" : "outline"}
                       onClick={() => handleSelectStudent(student.ssid)}
                       className={selectedStudents.includes(student.ssid) 
-                        ? "bg-[#14B8A6] hover:bg-[#0F9488] text-white" 
-                        : "border-[#14B8A6] text-[#14B8A6] hover:bg-[#14B8A6] hover:text-white"
+                        ? "bg-cyan-500 hover:bg-cyan-600 text-white" 
+                        : "border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
                       }
                     >
                       {selectedStudents.includes(student.ssid) ? "Selected" : "Select"}

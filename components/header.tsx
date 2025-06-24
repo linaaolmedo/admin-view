@@ -26,7 +26,7 @@ export function Header() {
     typeof window !== "undefined" ? localStorage.getItem("userEmail") || "Cassandra Beck" : "Cassandra Beck"
 
   return (
-    <header className="bg-[#14B8A6] text-white px-6 py-4 flex items-center justify-between w-full shadow-sm">
+    <header className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white px-6 py-4 flex items-center justify-between w-full shadow-sm">
       <Link href="/dashboard" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
         <Image
           src="/educlaim-logo.png"
@@ -39,7 +39,7 @@ export function Header() {
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-2 text-white hover:bg-[#0F9488]">
+          <Button variant="ghost" className="flex items-center gap-2 text-white hover:bg-white/20">
             <User className="w-5 h-5" />
             <span>{userEmail}</span>
           </Button>

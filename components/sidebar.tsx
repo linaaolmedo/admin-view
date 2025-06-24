@@ -96,14 +96,14 @@ export function Sidebar() {
   }
 
   return (
-    <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-[#0F766E] text-white min-h-screen flex flex-col transition-all duration-300 shadow-lg`}>
+    <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-cyan-500 to-teal-600 text-white min-h-screen flex flex-col transition-all duration-300 shadow-lg`}>
       {/* Toggle Button */}
       <div className="flex justify-end p-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-white hover:bg-[#14B8A6] hover:text-white p-1"
+          className="text-white hover:bg-white/20 hover:text-white p-1"
         >
           <PanelLeft className="w-4 h-4" />
         </Button>
@@ -116,7 +116,7 @@ export function Sidebar() {
             <Link
               href="/claims"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/claims") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/claims") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Claims"
             >
@@ -128,7 +128,7 @@ export function Sidebar() {
                 <Link
                   href="/claims"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/claims") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/claims") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <FileText className="w-5 h-5" />
@@ -137,7 +137,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsClaimsOpen(!isClaimsOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/claims") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/claims") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isClaimsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -153,7 +153,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -172,7 +172,7 @@ export function Sidebar() {
             <Link
               href="/manage-users"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/manage-users") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/manage-users") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Manage Users"
             >
@@ -184,7 +184,7 @@ export function Sidebar() {
                 <Link
                   href="/manage-users"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-users") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-users") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Users2 className="w-5 h-5" />
@@ -193,7 +193,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsManageUsersOpen(!isManageUsersOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-users") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-users") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isManageUsersOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -209,7 +209,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -228,7 +228,7 @@ export function Sidebar() {
             <Link
               href="/manage-students"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/manage-students") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/manage-students") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Manage Students"
             >
@@ -240,7 +240,7 @@ export function Sidebar() {
                 <Link
                   href="/manage-students"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-students") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-students") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Clipboard className="w-5 h-5" />
@@ -249,7 +249,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsManageStudentsOpen(!isManageStudentsOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-students") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-students") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isManageStudentsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -265,7 +265,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -283,7 +283,7 @@ export function Sidebar() {
           <Link
             href="/log-service"
             className={`${isCollapsed ? 'flex items-center justify-center p-3' : 'flex items-center gap-3 px-3 py-2'} rounded transition-colors ${
-              pathname === "/log-service" ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+              pathname === "/log-service" ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
             }`}
             title={isCollapsed ? "Log a Service" : undefined}
           >
@@ -298,7 +298,7 @@ export function Sidebar() {
             <Link
               href="/caseload"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/caseload") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/caseload") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Caseload"
             >
@@ -310,7 +310,7 @@ export function Sidebar() {
                 <Link
                   href="/caseload"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/caseload") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/caseload") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Briefcase className="w-5 h-5" />
@@ -319,7 +319,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsCaseloadOpen(!isCaseloadOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/caseload") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/caseload") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isCaseloadOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -335,7 +335,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -354,7 +354,7 @@ export function Sidebar() {
             <Link
               href="/student-services"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/student-services") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/student-services") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Student Services"
             >
@@ -366,7 +366,7 @@ export function Sidebar() {
                 <Link
                   href="/student-services"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/student-services") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/student-services") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Calendar className="w-5 h-5" />
@@ -375,7 +375,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsStudentServicesOpen(!isStudentServicesOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/student-services") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/student-services") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isStudentServicesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -391,7 +391,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -410,7 +410,7 @@ export function Sidebar() {
             <Link
               href="/reports"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/reports") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/reports") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Reports"
             >
@@ -422,7 +422,7 @@ export function Sidebar() {
                 <Link
                   href="/reports"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/reports") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/reports") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Download className="w-5 h-5" />
@@ -431,7 +431,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsReportsOpen(!isReportsOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/reports") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/reports") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isReportsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -447,7 +447,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -466,7 +466,7 @@ export function Sidebar() {
             <Link
               href="/configurations"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/configurations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Configurations"
             >
@@ -478,7 +478,7 @@ export function Sidebar() {
                 <Link
                   href="/configurations"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/configurations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Settings className="w-5 h-5" />
@@ -487,7 +487,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsConfigurationsOpen(!isConfigurationsOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/configurations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isConfigurationsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -503,7 +503,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -522,7 +522,7 @@ export function Sidebar() {
             <Link
               href="/manage-organizations"
               className={`flex items-center justify-center p-3 rounded transition-colors ${
-                pathname.startsWith("/manage-organizations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
               }`}
               title="Manage Organizations"
             >
@@ -534,7 +534,7 @@ export function Sidebar() {
                 <Link
                   href="/manage-organizations"
                   className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-organizations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   <Building2 className="w-5 h-5" />
@@ -543,7 +543,7 @@ export function Sidebar() {
                 <button
                   onClick={() => setIsManageOrganizationsOpen(!isManageOrganizationsOpen)}
                   className={`px-2 py-2 rounded transition-colors ${
-                    pathname.startsWith("/manage-organizations") ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                    pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                   }`}
                 >
                   {isManageOrganizationsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -559,7 +559,7 @@ export function Sidebar() {
                         key={item.href}
                         href={item.href}
                         className={`block px-3 py-2 rounded text-sm transition-colors ${
-                          isActive ? "bg-[#14B8A6] text-white" : "text-white hover:bg-[#14B8A6]"
+                          isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -573,16 +573,16 @@ export function Sidebar() {
         </div>
       </nav>
 
-      {/* Logout Button - Fixed at bottom */}
-      <div className={`${isCollapsed ? 'px-2' : 'px-4'} pb-4 pt-2 border-t border-[#14B8A6]/20`}>
+      {/* Logout Button */}
+      <div className={`${isCollapsed ? 'px-2' : 'px-4'} pb-4`}>
         <Button
-          variant="ghost"
-          className={`${isCollapsed ? 'w-full p-3' : 'w-full flex items-center gap-2'} text-white hover:bg-[#14B8A6] hover:text-white transition-colors`}
           onClick={handleLogout}
+          variant="ghost"
+          className={`${isCollapsed ? 'w-full p-3' : 'w-full flex items-center gap-2'} text-white hover:bg-white/20 hover:text-white transition-colors`}
           title={isCollapsed ? "Logout" : undefined}
         >
-          <LogOut className="w-4 h-4" />
-          {!isCollapsed && "Logout"}
+          <LogOut className="w-5 h-5" />
+          {!isCollapsed && <span>Logout</span>}
         </Button>
       </div>
     </aside>
