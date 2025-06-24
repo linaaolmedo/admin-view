@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { MoreHorizontal, Search, Filter, ArrowUpDown, Plus, Upload } from "lucide-react"
@@ -33,6 +34,7 @@ const mockStudents = [
 ]
 
 export default function ManageStudentsPage() {
+  const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("lastName")
   const [sortOrder, setSortOrder] = useState("asc")
@@ -48,7 +50,9 @@ export default function ManageStudentsPage() {
       student.school.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.contactNumber.includes(searchTerm)
 
-    return matchesSearch
+    const matchesTab = activeTab === "all" || student.status.toLowerCase() === activeTab.toLowerCase()
+
+    return matchesSearch && matchesTab
   }).sort((a, b) => {
     const aValue = a[sortBy as keyof typeof a]
     const bValue = b[sortBy as keyof typeof b]
@@ -101,6 +105,11 @@ export default function ManageStudentsPage() {
     }
   }
 
+  const getTabCount = (status: string) => {
+    if (status === "all") return mockStudents.length
+    return mockStudents.filter(student => student.status.toLowerCase() === status.toLowerCase()).length
+  }
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -116,119 +125,132 @@ export default function ManageStudentsPage() {
         </div>
       </div>
 
-      {/* Tab-like header */}
-      <div className="border-b border-gray-200 mb-6">
-        <div className="flex">
-          <div className="px-4 py-2 text-teal-600 border-b-2 border-teal-600 font-medium">
-            Students
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-3 w-auto">
+          <TabsTrigger value="all" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            All Students ({getTabCount("all")})
+          </TabsTrigger>
+          <TabsTrigger value="active" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Active ({getTabCount("active")})
+          </TabsTrigger>
+          <TabsTrigger value="inactive" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            Inactive ({getTabCount("inactive")})
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value={activeTab} className="mt-6">
+          {/* Filters and Search */}
+          <div className="flex justify-end items-center gap-4 mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-80"
+              />
+            </div>
+
+            <Button variant="outline" size="sm">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
           </div>
-        </div>
-      </div>
 
-      {/* Filters and Search */}
-      <div className="flex justify-end items-center gap-4 mb-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-80"
-          />
-        </div>
-
-        <Button variant="outline" size="sm">
-          <Filter className="w-4 h-4 mr-2" />
-          Filter
-        </Button>
-      </div>
-
-      {/* Students Table */}
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50">
-              <TableHead 
-                className="font-semibold cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort("lastName")}
-              >
-                <div className="flex items-center">
-                  Last Name
-                  <ArrowUpDown className="w-4 h-4 ml-1" />
-                </div>
-              </TableHead>
-              <TableHead 
-                className="font-semibold cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort("firstName")}
-              >
-                <div className="flex items-center">
-                  First Name
-                  <ArrowUpDown className="w-4 h-4 ml-1" />
-                </div>
-              </TableHead>
-              <TableHead className="font-semibold">SSID</TableHead>
-              <TableHead className="font-semibold">Local ID</TableHead>
-              <TableHead className="font-semibold">District</TableHead>
-              <TableHead className="font-semibold">School</TableHead>
-              <TableHead className="font-semibold">Birthdate</TableHead>
-              <TableHead className="font-semibold">Contact Number</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold">Modified Date</TableHead>
-              <TableHead className="w-12"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredStudents.map((student) => (
-              <TableRow key={student.id} className="hover:bg-gray-50">
-                <TableCell className="font-medium">
-                  <button 
-                    onClick={() => handleStudentClick(student.id)}
-                    className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+          {/* Students Table */}
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("lastName")}
                   >
-                    {student.lastName}
-                  </button>
-                </TableCell>
-                <TableCell>
-                  <button 
-                    onClick={() => handleStudentClick(student.id)}
-                    className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                    <div className="flex items-center">
+                      Last Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("firstName")}
                   >
-                    {student.firstName}
-                  </button>
-                </TableCell>
-                <TableCell>{student.ssid}</TableCell>
-                <TableCell>{student.localId}</TableCell>
-                <TableCell>{student.district}</TableCell>
-                <TableCell>{student.school}</TableCell>
-                <TableCell>{student.birthdate}</TableCell>
-                <TableCell>{student.contactNumber}</TableCell>
-                <TableCell>{getStatusBadge(student.status)}</TableCell>
-                <TableCell>{student.modifiedDate}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleStudentAction("view", student.id)}>
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleStudentAction("deactivate", student.id)}>
-                        {student.status === "Active" ? "Deactivate" : "Activate"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+                    <div className="flex items-center">
+                      First Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold">SSID</TableHead>
+                  <TableHead className="font-semibold">Local ID</TableHead>
+                  <TableHead className="font-semibold">District</TableHead>
+                  <TableHead className="font-semibold">School</TableHead>
+                  <TableHead className="font-semibold">Birthdate</TableHead>
+                  <TableHead className="font-semibold">Contact Number</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudents.map((student) => (
+                  <TableRow key={student.id} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.lastName}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.firstName}
+                      </button>
+                    </TableCell>
+                    <TableCell>{student.ssid}</TableCell>
+                    <TableCell>{student.localId}</TableCell>
+                    <TableCell>{student.district}</TableCell>
+                    <TableCell>{student.school}</TableCell>
+                    <TableCell>{student.birthdate}</TableCell>
+                    <TableCell>{student.contactNumber}</TableCell>
+                    <TableCell>{getStatusBadge(student.status)}</TableCell>
+                    <TableCell>{student.modifiedDate}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleStudentAction("view", student.id)}>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("deactivate", student.id)}>
+                            {student.status === "Active" ? "Deactivate" : "Activate"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {filteredStudents.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No students found matching your criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -862,7 +862,7 @@ export default function StudentProfilePage() {
         </div>
         <Button 
           onClick={handleScheduleService}
-          className="bg-[#4286f4] hover:bg-[#3275e3]"
+          className="bg-teal-600 hover:bg-teal-700"
         >
           <Calendar className="w-4 h-4 mr-2" />
           Schedule service
@@ -870,7 +870,7 @@ export default function StudentProfilePage() {
       </div>
 
       <div className="flex items-center mb-6">
-        <div className="w-12 h-12 bg-[#4286f4] rounded-full flex items-center justify-center mr-4">
+        <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center mr-4">
           <User className="w-6 h-6 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-[#000000]">
@@ -882,32 +882,32 @@ export default function StudentProfilePage() {
         <TabsList className="grid grid-cols-4 w-auto mb-8">
           <TabsTrigger 
             value="demographic" 
-            className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Demographic
           </TabsTrigger>
           <TabsTrigger 
             value="medical" 
-            className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Medical
           </TabsTrigger>
           <TabsTrigger 
             value="service-log" 
-            className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Service Log History
           </TabsTrigger>
           <TabsTrigger 
             value="enrollment" 
-            className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
+            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
           >
             Enrollment History
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="demographic" className="space-y-6">
-          <Card className="bg-[#4286f4] text-white">
+          <Card className="bg-teal-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Demographic</CardTitle>
             </CardHeader>
@@ -962,7 +962,7 @@ export default function StudentProfilePage() {
                 <div className="text-sm opacity-80">Status</div>
                 <Badge 
                   variant="secondary"
-                  className="bg-white text-[#4286f4] hover:bg-gray-100"
+                  className="bg-white text-teal-600 hover:bg-gray-100"
                 >
                   {student.demographic.status}
                 </Badge>
@@ -970,7 +970,7 @@ export default function StudentProfilePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[#4286f4] text-white">
+          <Card className="bg-teal-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Billing</CardTitle>
             </CardHeader>
@@ -1016,7 +1016,7 @@ export default function StudentProfilePage() {
         </TabsContent>
 
         <TabsContent value="medical" className="space-y-6">
-          <Card className="bg-[#4286f4] text-white">
+          <Card className="bg-teal-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Medical</CardTitle>
             </CardHeader>
@@ -1037,7 +1037,7 @@ export default function StudentProfilePage() {
                   <div className="flex items-center gap-2">
                     <Badge 
                       variant="secondary"
-                      className="bg-white text-[#4286f4] hover:bg-gray-100"
+                      className="bg-white text-teal-600 hover:bg-gray-100"
                     >
                       Consented
                     </Badge>
@@ -1049,7 +1049,7 @@ export default function StudentProfilePage() {
                   <div className="flex items-center gap-2">
                     <Badge 
                       variant="secondary"
-                      className="bg-white text-[#4286f4] hover:bg-gray-100"
+                      className="bg-white text-teal-600 hover:bg-gray-100"
                     >
                       Consented
                     </Badge>
@@ -1062,7 +1062,7 @@ export default function StudentProfilePage() {
         </TabsContent>
 
         <TabsContent value="service-log" className="space-y-6">
-          <Card className="bg-[#4286f4] text-white">
+          <Card className="bg-teal-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Service Log History</CardTitle>
             </CardHeader>
@@ -1098,7 +1098,7 @@ export default function StudentProfilePage() {
         </TabsContent>
 
         <TabsContent value="enrollment" className="space-y-6">
-          <Card className="bg-[#4286f4] text-white">
+          <Card className="bg-teal-600 text-white">
             <CardHeader>
               <CardTitle className="text-white">Enrollment History</CardTitle>
             </CardHeader>

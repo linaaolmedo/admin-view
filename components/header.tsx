@@ -29,11 +29,11 @@ export function Header() {
     <header className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white px-6 py-4 flex items-center justify-between w-full shadow-sm">
       <Link href="/dashboard" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
         <Image
-          src="/educlaim-logo.png"
+          src="/EDUClaim_Horz_White.png"
           alt="EDUclaim - Powered by Kern Integrated Data Systems"
-          width={200}
-          height={60}
-          className="h-12 w-auto"
+          width={400}
+          height={100}
+          className="h-16 w-auto"
           priority
         />
       </Link>

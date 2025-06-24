@@ -751,8 +751,8 @@ export default function ClaimsPage() {
 
   const getStatusBadge = (status: string) => {
     const statusStyles = {
-      SUBMITTED: "bg-blue-500 text-white",
-      REJECTED: "bg-red-500 text-white",
+      SUBMITTED: "bg-teal-500 text-white",
+      REJECTED: "bg-orange-500 text-white",
       PAID: "bg-green-500 text-white",
       "NEEDS APPROVAL": "bg-yellow-600 text-white",
       APPROVED: "bg-green-500 text-white",
@@ -845,8 +845,8 @@ export default function ClaimsPage() {
       return <ArrowUpDown className="w-4 h-4 text-gray-400" />
     }
     return sortDirection === "asc" ? 
-      <ChevronUp className="w-4 h-4 text-blue-600" /> : 
-      <ChevronDown className="w-4 h-4 text-blue-600" />
+      <ChevronUp className="w-4 h-4 text-teal-600" /> : 
+      <ChevronDown className="w-4 h-4 text-teal-600" />
   }
 
   const renderTableHeaders = () => {
@@ -1030,7 +1030,7 @@ export default function ClaimsPage() {
             <td className="py-3 px-4">
               <Link 
                 href={`/claims/${item.claimNumber}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
               >
                 {item.claimNumber}
               </Link>
@@ -1055,7 +1055,7 @@ export default function ClaimsPage() {
             <td className="py-3 px-4">
               <Link 
                 href={`/claims/${item.claimNumber}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
               >
                 {item.claimNumber}
               </Link>
@@ -1082,7 +1082,7 @@ export default function ClaimsPage() {
             <td className="py-3 px-4">
               <Link 
                 href={`/claims/${item.claimNumber}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
               >
                 {item.claimNumber}
               </Link>
@@ -1110,7 +1110,7 @@ export default function ClaimsPage() {
             <td className="py-3 px-4">
               <Link 
                 href={`/claims/${item.claimNumber}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
               >
                 {item.claimNumber}
               </Link>

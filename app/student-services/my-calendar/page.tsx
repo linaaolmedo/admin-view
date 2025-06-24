@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter, ArrowLeft } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter, ArrowLeft, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type Appointment = {
   id: number
@@ -371,6 +372,7 @@ export default function MyCalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 3, 22)) // April 2025, 22nd selected
   const [selectedDate, setSelectedDate] = useState(22)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [hideWeekends, setHideWeekends] = useState(false)
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -412,19 +414,51 @@ export default function MyCalendarPage() {
 
   const renderCalendarDays = () => {
     const days = []
+    const colsPerWeek = hideWeekends ? 5 : 7
     
     // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      const prevMonthDay = new Date(year, month, 0).getDate() - startingDayOfWeek + i + 1
-      days.push(
-        <div key={`prev-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
-          <div className="text-sm">{prevMonthDay}</div>
-        </div>
-      )
+    if (!hideWeekends) {
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        const prevMonthDay = new Date(year, month, 0).getDate() - startingDayOfWeek + i + 1
+        days.push(
+          <div key={`prev-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+            <div className="text-sm">{prevMonthDay}</div>
+          </div>
+        )
+      }
+    } else {
+      // For weekdays only, adjust starting position (0=Mon, 1=Tue, etc.)
+      const adjustedStartingDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1
+      const weekdayStartingDay = adjustedStartingDay > 4 ? 0 : adjustedStartingDay
+      for (let i = 0; i < weekdayStartingDay; i++) {
+        const prevMonthDate = new Date(year, month, 0)
+        let prevMonthDay = prevMonthDate.getDate() - weekdayStartingDay + i + 1
+        
+        // Find the corresponding weekday in the previous month
+        const prevMonthDayOfWeek = new Date(year, month - 1, prevMonthDay).getDay()
+        if (prevMonthDayOfWeek === 0 || prevMonthDayOfWeek === 6) {
+          // Skip weekends, adjust to previous weekday
+          if (prevMonthDayOfWeek === 0) prevMonthDay -= 2 // Sunday -> Friday
+          if (prevMonthDayOfWeek === 6) prevMonthDay -= 1 // Saturday -> Friday
+        }
+        
+        days.push(
+          <div key={`prev-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+            <div className="text-sm">{prevMonthDay}</div>
+          </div>
+        )
+      }
     }
 
     // Add days of the current month
     for (let day = 1; day <= daysInMonth; day++) {
+      const currentDayOfWeek = new Date(year, month, day).getDay()
+      
+      // Skip weekends if hideWeekends is true
+      if (hideWeekends && (currentDayOfWeek === 0 || currentDayOfWeek === 6)) {
+        continue
+      }
+
       const appointments = getAppointmentsForDate(day)
       const isSelected = day === selectedDate
       const isToday = day === 22 // Mock today as 22nd
@@ -461,52 +495,64 @@ export default function MyCalendarPage() {
       )
     }
 
-    // Fill remaining cells if needed
-    const totalCells = Math.ceil((startingDayOfWeek + daysInMonth) / 7) * 7
-    const remainingCells = totalCells - (startingDayOfWeek + daysInMonth)
-    
-    for (let i = 1; i <= remainingCells; i++) {
-      days.push(
-        <div key={`next-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
-          <div className="text-sm">{i}</div>
-        </div>
-      )
+    // Fill remaining cells if needed (only for standard 7-day view)
+    if (!hideWeekends) {
+      const totalCells = Math.ceil((startingDayOfWeek + daysInMonth) / 7) * 7
+      const remainingCells = totalCells - (startingDayOfWeek + daysInMonth)
+      
+      for (let i = 1; i <= remainingCells; i++) {
+        days.push(
+          <div key={`next-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+            <div className="text-sm">{i}</div>
+          </div>
+        )
+      }
     }
 
     return days
   }
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Calendar</h1>
-      </div>
-
-      <div className="space-y-4">
-        {/* Color indicators */}
-      <div className="bg-white border rounded-lg p-4">
-        <div className="grid grid-cols-2 gap-4">
+    <TooltipProvider>
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-yellow-200 border border-yellow-300"></div>
-            <span className="text-sm text-gray-700">Past appointment - needs notes</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-teal-200 border border-teal-300"></div>
-            <span className="text-sm text-gray-700">Upcoming appointment</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-green-200 border border-green-300"></div>
-            <span className="text-sm text-gray-700">Past appointment - completed</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-200 border border-red-300"></div>
-            <span className="text-sm text-gray-700">Past appointment - cancelled</span>
+            <h1 className="text-2xl font-bold text-gray-900">My Calendar</h1>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="sm" className="p-1 h-6 w-6">
+                  <Info className="h-4 w-4 text-gray-500" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs">
+                <div className="space-y-2">
+                  <div className="grid gap-1">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-yellow-200 border border-yellow-300"></div>
+                      <span className="text-xs">Past appointment - needs notes</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-teal-200 border border-teal-300"></div>
+                      <span className="text-xs">Upcoming appointment</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-green-200 border border-green-300"></div>
+                      <span className="text-xs">Past appointment - completed</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded bg-red-200 border border-red-300"></div>
+                      <span className="text-xs">Past appointment - cancelled</span>
+                    </div>
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
-      </div>
 
-      {/* Calendar */}
+        <div className="space-y-4">
+          {/* Calendar */}
       <div className="border rounded-lg bg-white">
         {/* Calendar Header */}
         <div className="flex items-center justify-between p-4 border-b">
@@ -526,6 +572,14 @@ export default function MyCalendarPage() {
           </div>
           
           <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setHideWeekends(!hideWeekends)}
+              className={hideWeekends ? "bg-teal-50 border-teal-300 text-teal-700" : ""}
+            >
+              {hideWeekends ? "Show Weekends" : "Hide Weekends"}
+            </Button>
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filter
@@ -534,9 +588,9 @@ export default function MyCalendarPage() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7">
+        <div className={`grid ${hideWeekends ? 'grid-cols-5' : 'grid-cols-7'}`}>
           {/* Day headers */}
-          {dayNames.map((day) => (
+          {(hideWeekends ? dayNames.slice(1, 6) : dayNames).map((day) => (
             <div key={day} className="p-3 text-center font-medium text-gray-600 border-b bg-gray-50">
               {day}
             </div>
@@ -547,14 +601,15 @@ export default function MyCalendarPage() {
         </div>
       </div>
 
-        {/* Service Log Details Modal */}
-        {selectedAppointment && (
-          <ServiceLogDetails 
-            appointment={selectedAppointment} 
-            onClose={() => setSelectedAppointment(null)} 
-          />
-        )}
+          {/* Service Log Details Modal */}
+          {selectedAppointment && (
+            <ServiceLogDetails 
+              appointment={selectedAppointment} 
+              onClose={() => setSelectedAppointment(null)} 
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }

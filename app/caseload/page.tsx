@@ -430,7 +430,21 @@ export default function CaseloadPage() {
             </div>
             
             <div>
-              <Label>Add Students to Group</Label>
+              <div className="flex items-center justify-between mb-2">
+                <Label>Add Students to Group</Label>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    const allCaseloadSSIDs = actualCaseload.map(student => student.ssid)
+                    setGroupParticipants(allCaseloadSSIDs)
+                  }}
+                  className="text-teal-600 border-teal-300 hover:bg-teal-50"
+                >
+                  <Users className="w-4 h-4 mr-1" />
+                  Add Current Caseload
+                </Button>
+              </div>
               <div className="mt-2 max-h-60 overflow-y-auto border rounded p-2">
                 {availableStudentsForGroup.map((student) => (
                   <div key={student.ssid} className="flex items-center space-x-2 p-2 hover:bg-gray-50">
@@ -440,6 +454,20 @@ export default function CaseloadPage() {
                     />
                     <div className="flex-1">
                       <span className="font-medium">{student.name}</span>
+                      <span className="text-sm text-gray-500 ml-2">SSID: {student.ssid}</span>
+                    </div>
+                    <Badge variant="outline">{student.district}</Badge>
+                  </div>
+                ))}
+                {/* Add current caseload students */}
+                {actualCaseload.map((student) => (
+                  <div key={student.ssid} className="flex items-center space-x-2 p-2 hover:bg-gray-50">
+                    <Checkbox
+                      checked={groupParticipants.includes(student.ssid)}
+                      onCheckedChange={() => handleAddToGroup(student.ssid)}
+                    />
+                    <div className="flex-1">
+                      <span className="font-medium">{student.firstName} {student.lastName}</span>
                       <span className="text-sm text-gray-500 ml-2">SSID: {student.ssid}</span>
                     </div>
                     <Badge variant="outline">{student.district}</Badge>
