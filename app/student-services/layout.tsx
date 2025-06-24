@@ -2,13 +2,21 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MoreHorizontal } from "lucide-react"
 
-const navigation = [
-  { name: "My calendar", href: "/student-services/my-calendar" },
-  { name: "All services", href: "/student-services/all-services" },
-  { name: "Supervisor Logs", href: "/student-services/supervisor-logs" },
+type AccountType = "administrator" | "practitioner" | "supervisor"
+
+const baseNavigation = [
+  { name: "My calendar", href: "/student-services/my-calendar", value: "my-calendar" },
+  { name: "All services", href: "/student-services/all-services", value: "all-services" },
+]
+
+const supervisorOnlyNavigation = [
+  { name: "Supervisor Logs", href: "/student-services/supervisor-logs", value: "supervisor-logs" },
 ]
 
 export default function StudentServicesLayout({
@@ -17,10 +25,44 @@ export default function StudentServicesLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [accountType, setAccountType] = useState<AccountType | null>(null)
+
+  // Get account type from localStorage on component mount
+  useEffect(() => {
+    const storedAccountType = localStorage.getItem("accountType") as AccountType
+    setAccountType(storedAccountType || "practitioner") // Default to practitioner if not set
+  }, [])
 
   // Don't show layout for the main redirect page
   if (pathname === "/student-services") {
     return children
+  }
+
+  // Build navigation based on account type
+  const getNavigation = () => {
+    let navigation = [...baseNavigation]
+    
+    // Only add supervisor-only items for supervisors
+    if (accountType === "supervisor") {
+      navigation = [...navigation, ...supervisorOnlyNavigation]
+    }
+    
+    return navigation
+  }
+
+  const navigation = getNavigation()
+
+  const getActiveTab = () => {
+    const activeNav = navigation.find(nav => pathname === nav.href)
+    return activeNav?.value || "my-calendar"
+  }
+
+  const handleTabChange = (value: string) => {
+    const selectedNav = navigation.find(nav => nav.value === value)
+    if (selectedNav) {
+      router.push(selectedNav.href)
+    }
   }
 
   return (
@@ -48,29 +90,23 @@ export default function StudentServicesLayout({
         </div>
       </div>
 
-      {/* Navigation tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="flex space-x-8">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-teal-600 text-teal-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                {item.name}
-              </Link>
-            )
-          })}
-        </nav>
-      </div>
-
-      {children}
+      <Tabs value={getActiveTab()} onValueChange={handleTabChange} className="w-full">
+        <TabsList className={`grid w-auto ${navigation.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+          {navigation.map((item) => (
+            <TabsTrigger 
+              key={item.value}
+              value={item.value} 
+              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
+            >
+              {item.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        
+        <div className="mt-6">
+          {children}
+        </div>
+      </Tabs>
     </div>
   )
 } 

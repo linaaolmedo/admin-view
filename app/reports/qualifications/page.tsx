@@ -120,12 +120,16 @@ const mockQualificationsData = [
 
 export default function QualificationsReportPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedDistrict, setSelectedDistrict] = useState("Fruitvale School District")
-  const [selectedStatus, setSelectedStatus] = useState("Active")
-  const [selectedType, setSelectedType] = useState("Speech-Language Pathologist")
+  const [selectedDistrict, setSelectedDistrict] = useState("All Districts")
+  const [selectedType, setSelectedType] = useState("All Types")
   const router = useRouter()
 
-  const filteredData = mockQualificationsData.filter((item) => {
+  // Filter to only show qualifications that are expiring soon (within 60 days) or already expired
+  const expiringQualifications = mockQualificationsData.filter((item) => {
+    return item.daysToExpiration <= 60 // Show qualifications expiring within 60 days or already expired
+  })
+
+  const filteredData = expiringQualifications.filter((item) => {
     const matchesSearch = 
       item.practitioner.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,20 +137,19 @@ export default function QualificationsReportPage() {
       item.qualificationCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.npi.includes(searchTerm)
 
-    const matchesDistrict = item.district === selectedDistrict
-    const matchesStatus = item.status === selectedStatus
-    const matchesType = item.qualificationType === selectedType
+    const matchesDistrict = selectedDistrict === "All Districts" || item.district === selectedDistrict
+    const matchesType = selectedType === "All Types" || item.qualificationType === selectedType
 
-    return matchesSearch && matchesDistrict && matchesStatus && matchesType
+    return matchesSearch && matchesDistrict && matchesType
   })
 
   const getStatusBadge = (status: string, daysToExpiration: number) => {
-    if (status === "Expired") {
+    if (status === "Expired" || daysToExpiration < 0) {
       return <Badge variant="destructive" className="bg-red-100 text-red-800 hover:bg-red-200">Expired</Badge>
     } else if (status === "Expiring Soon" || daysToExpiration <= 30) {
       return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Expiring Soon</Badge>
     } else {
-      return <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">Active</Badge>
+      return <Badge variant="default" className="bg-orange-100 text-orange-800 hover:bg-orange-200">Needs Attention</Badge>
     }
   }
 
@@ -163,28 +166,28 @@ export default function QualificationsReportPage() {
       return (
         <div className="flex items-center gap-1 text-red-600">
           <AlertTriangle className="w-4 h-4" />
-          <span className="text-sm">Expired {Math.abs(daysToExpiration)} days ago</span>
+          <span className="text-sm font-medium">Expired {Math.abs(daysToExpiration)} days ago</span>
         </div>
       )
     } else if (daysToExpiration <= 30) {
       return (
         <div className="flex items-center gap-1 text-yellow-600">
           <Calendar className="w-4 h-4" />
-          <span className="text-sm">{daysToExpiration} days remaining</span>
+          <span className="text-sm font-medium">{daysToExpiration} days remaining</span>
         </div>
       )
     } else {
       return (
-        <div className="flex items-center gap-1 text-green-600">
+        <div className="flex items-center gap-1 text-orange-600">
           <Calendar className="w-4 h-4" />
-          <span className="text-sm">{daysToExpiration} days remaining</span>
+          <span className="text-sm font-medium">{daysToExpiration} days remaining</span>
         </div>
       )
     }
   }
 
   const exportToCSV = () => {
-    const headers = ["Practitioner", "Email", "NPI", "State", "Qualification Type", "Code", "Expiration Date", "Status", "District"]
+    const headers = ["Practitioner", "Email", "NPI", "State", "Qualification Type", "Code", "Expiration Date", "Status", "Days to Expiration", "District"]
     const csvContent = [
       headers.join(","),
       ...filteredData.map(item => [
@@ -196,6 +199,7 @@ export default function QualificationsReportPage() {
         item.qualificationCode,
         item.expirationDate,
         item.status,
+        item.daysToExpiration,
         item.district
       ].join(","))
     ].join("\n")
@@ -204,16 +208,16 @@ export default function QualificationsReportPage() {
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "qualifications-report.csv"
+    a.download = "expiring-qualifications-report.csv"
     a.click()
     window.URL.revokeObjectURL(url)
   }
 
-  // Calculate summary statistics
-  const totalQualifications = filteredData.length
-  const expiredCount = filteredData.filter(item => item.status === "Expired").length
-  const expiringSoonCount = filteredData.filter(item => item.status === "Expiring Soon" || (item.daysToExpiration <= 30 && item.daysToExpiration > 0)).length
-  const activeCount = filteredData.filter(item => item.status === "Active" && item.daysToExpiration > 30).length
+  // Calculate summary statistics for expiring qualifications only
+  const totalExpiringQualifications = filteredData.length
+  const expiredCount = filteredData.filter(item => item.daysToExpiration < 0).length
+  const expiringSoonCount = filteredData.filter(item => item.daysToExpiration <= 30 && item.daysToExpiration >= 0).length
+  const needsAttentionCount = filteredData.filter(item => item.daysToExpiration > 30 && item.daysToExpiration <= 60).length
 
   return (
     <div className="p-6">
@@ -227,7 +231,10 @@ export default function QualificationsReportPage() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-2xl font-bold text-[#000000]">Qualifications Report</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-[#000000]">Expiring Qualifications Report</h1>
+            <p className="text-sm text-[#787878] mt-1">Qualifications expiring within 60 days or already expired</p>
+          </div>
         </div>
         <Button onClick={exportToCSV} variant="outline" className="flex items-center gap-2">
           <Download className="w-4 h-4" />
@@ -239,26 +246,26 @@ export default function QualificationsReportPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-[#000000]">{totalQualifications}</div>
-            <div className="text-sm text-[#787878]">Total Qualifications</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-green-600">{activeCount}</div>
-            <div className="text-sm text-[#787878]">Active</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-yellow-600">{expiringSoonCount}</div>
-            <div className="text-sm text-[#787878]">Expiring Soon</div>
+            <div className="text-2xl font-bold text-[#000000]">{totalExpiringQualifications}</div>
+            <div className="text-sm text-[#787878]">Total Expiring</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-red-600">{expiredCount}</div>
-            <div className="text-sm text-[#787878]">Expired</div>
+            <div className="text-sm text-[#787878]">Already Expired</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-yellow-600">{expiringSoonCount}</div>
+            <div className="text-sm text-[#787878]">Expiring Soon (≤30 days)</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-orange-600">{needsAttentionCount}</div>
+            <div className="text-sm text-[#787878]">Needs Attention (31-60 days)</div>
           </CardContent>
         </Card>
       </div>
@@ -280,22 +287,10 @@ export default function QualificationsReportPage() {
             <SelectValue placeholder="District" />
           </SelectTrigger>
           <SelectContent>
-            
+            <SelectItem value="All Districts">All Districts</SelectItem>
             <SelectItem value="Fruitvale School District">Fruitvale School District</SelectItem>
             <SelectItem value="Arvin School District">Arvin School District</SelectItem>
             <SelectItem value="Kern County District">Kern County District</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            
-            <SelectItem value="Active">Active</SelectItem>
-            <SelectItem value="Expiring Soon">Expiring Soon</SelectItem>
-            <SelectItem value="Expired">Expired</SelectItem>
           </SelectContent>
         </Select>
 
@@ -304,7 +299,7 @@ export default function QualificationsReportPage() {
             <SelectValue placeholder="Qualification Type" />
           </SelectTrigger>
           <SelectContent>
-            
+            <SelectItem value="All Types">All Types</SelectItem>
             <SelectItem value="Speech-Language Pathologist">Speech-Language Pathologist</SelectItem>
             <SelectItem value="Occupational Therapist">Occupational Therapist</SelectItem>
             <SelectItem value="Physical Therapist">Physical Therapist</SelectItem>
@@ -312,6 +307,25 @@ export default function QualificationsReportPage() {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Alert banner for urgent attention */}
+      {(expiredCount > 0 || expiringSoonCount > 0) && (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-yellow-600" />
+            <div>
+              <p className="font-medium text-yellow-800">
+                Urgent Attention Required
+              </p>
+              <p className="text-sm text-yellow-700">
+                {expiredCount > 0 && `${expiredCount} qualification${expiredCount === 1 ? ' has' : 's have'} already expired`}
+                {expiredCount > 0 && expiringSoonCount > 0 && ' and '}
+                {expiringSoonCount > 0 && `${expiringSoonCount} qualification${expiringSoonCount === 1 ? ' expires' : 's expire'} within 30 days`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Qualifications Table */}
       <div className="border rounded-lg">
@@ -330,7 +344,9 @@ export default function QualificationsReportPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredData.map((item) => (
+            {filteredData
+              .sort((a, b) => a.daysToExpiration - b.daysToExpiration) // Sort by most urgent first
+              .map((item) => (
               <TableRow key={item.id} className="hover:bg-gray-50">
                 <TableCell className="font-medium">{item.practitioner}</TableCell>
                 <TableCell className="text-sm text-gray-600">{item.email}</TableCell>
@@ -354,7 +370,8 @@ export default function QualificationsReportPage() {
 
       {filteredData.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-[#787878]">No qualifications found matching your criteria.</p>
+          <p className="text-[#787878]">No expiring qualifications found matching your criteria.</p>
+          <p className="text-sm text-[#787878] mt-2">This is good news - no immediate action required!</p>
         </div>
       )}
     </div>

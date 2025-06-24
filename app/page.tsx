@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge"
 import { redirect } from "next/navigation"
 
 export default function HomePage() {
-  redirect("/login")
+  redirect("/dashboard")
 
   return (
     <div className="min-h-screen bg-[#ffffff]">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,8 +14,14 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  FileText
+  FileText,
+  Settings,
+  Clipboard,
+  Users2,
+  Briefcase
 } from "lucide-react"
+
+type AccountType = "administrator" | "practitioner" | "supervisor"
 
 // Mock data for the chart
 const chartData = [
@@ -41,329 +47,439 @@ const sections = [
 ]
 
 export default function DashboardPage() {
-  const [showSupervisorLanding, setShowSupervisorLanding] = useState(false)
+  const [accountType, setAccountType] = useState<AccountType | null>(null)
+
+  // Get account type from localStorage on component mount
+  useEffect(() => {
+    const storedAccountType = localStorage.getItem("accountType") as AccountType
+    setAccountType(storedAccountType || "practitioner") // Default to practitioner if not set
+  }, [])
 
   // Calculate max value for chart scaling
   const maxValue = Math.max(...chartData.map((d) => d.rejected + d.pending + d.paid))
   const chartHeight = 200
 
+  // Quick access cards for each account type
+  const getQuickAccessCards = () => {
+    switch (accountType) {
+      case "administrator":
+        return [
+          {
+            title: "Claims Management",
+            description: "View, process, and manage all claims",
+            icon: FileText,
+            href: "/claims",
+            color: "bg-blue-50 border-blue-200",
+            iconColor: "text-blue-600",
+            headerColor: "bg-blue-50 text-blue-800"
+          },
+          {
+            title: "User Management",
+            description: "Manage practitioners, supervisors, and administrators",
+            icon: Users2,
+            href: "/manage-users",
+            color: "bg-green-50 border-green-200", 
+            iconColor: "text-green-600",
+            headerColor: "bg-green-50 text-green-800"
+          },
+          {
+            title: "Student Management",
+            description: "Add, search, and manage student records",
+            icon: Clipboard,
+            href: "/manage-students",
+            color: "bg-purple-50 border-purple-200",
+            iconColor: "text-purple-600", 
+            headerColor: "bg-purple-50 text-purple-800"
+          },
+          {
+            title: "System Configuration",
+            description: "Configure billing codes, qualifications, and permissions",
+            icon: Settings,
+            href: "/configurations",
+            color: "bg-orange-50 border-orange-200",
+            iconColor: "text-orange-600",
+            headerColor: "bg-orange-50 text-orange-800"
+          }
+        ]
+
+      case "supervisor":
+        return [
+          {
+            title: "Service Logs Pending Approval",
+            description: "Review and approve practitioner service logs",
+            icon: CheckCircle2,
+            href: "/student-services/supervisor-logs",
+            color: "bg-blue-50 border-blue-200",
+            iconColor: "text-blue-600",
+            headerColor: "bg-blue-50 text-blue-800"
+          },
+          {
+            title: "Log a Service",
+            description: "Record new service sessions",
+            icon: Calendar,
+            href: "/log-service",
+            color: "bg-teal-50 border-teal-200",
+            iconColor: "text-teal-600",
+            headerColor: "bg-teal-50 text-teal-800"
+          },
+          {
+            title: "Caseload Management",
+            description: "View and manage your assigned caseload",
+            icon: Briefcase,
+            href: "/caseload",
+            color: "bg-green-50 border-green-200",
+            iconColor: "text-green-600",
+            headerColor: "bg-green-50 text-green-800"
+          },
+          {
+            title: "My Calendar",
+            description: "View scheduled appointments and services",
+            icon: Calendar,
+            href: "/student-services/my-calendar",
+            color: "bg-purple-50 border-purple-200",
+            iconColor: "text-purple-600",
+            headerColor: "bg-purple-50 text-purple-800"
+          }
+        ]
+
+      case "practitioner":
+        return [
+          {
+            title: "Log a Service",
+            description: "Record new service sessions",
+            icon: Calendar,
+            href: "/log-service", 
+            color: "bg-teal-50 border-teal-200",
+            iconColor: "text-teal-600",
+            headerColor: "bg-teal-50 text-teal-800"
+          },
+          {
+            title: "My Calendar",
+            description: "View scheduled appointments and services",
+            icon: Calendar,
+            href: "/student-services/my-calendar",
+            color: "bg-blue-50 border-blue-200",
+            iconColor: "text-blue-600",
+            headerColor: "bg-blue-50 text-blue-800"
+          },
+          {
+            title: "Caseload Management", 
+            description: "View and manage your assigned caseload",
+            icon: Briefcase,
+            href: "/caseload",
+            color: "bg-green-50 border-green-200",
+            iconColor: "text-green-600",
+            headerColor: "bg-green-50 text-green-800"
+          },
+          {
+            title: "All Services",
+            description: "View all your service records and history",
+            icon: Users,
+            href: "/student-services/all-services",
+            color: "bg-purple-50 border-purple-200",
+            iconColor: "text-purple-600",
+            headerColor: "bg-purple-50 text-purple-800"
+          }
+        ]
+
+      default:
+        return []
+    }
+  }
+
+  const quickAccessCards = getQuickAccessCards()
+
+  if (!accountType) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-gray-500">Loading dashboard...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {showSupervisorLanding ? "Supervisor Landing" : "Dashboard"}
-        </h1>
-        <Button 
-          onClick={() => setShowSupervisorLanding(!showSupervisorLanding)}
-          className="bg-teal-600 hover:bg-teal-700 text-white"
-        >
-          {showSupervisorLanding ? "Back to Dashboard" : "Supervisor Landing"}
-        </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {accountType === "administrator" ? "Administrator Dashboard" : 
+             accountType === "supervisor" ? "Supervisor Dashboard" : 
+             "Practitioner Dashboard"}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Welcome back! Here's an overview of your activities and quick access to key features.
+          </p>
+        </div>
       </div>
 
-      {showSupervisorLanding ? (
-        // Supervisor Landing Section
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-teal-600 text-white">
-            <CardTitle className="text-lg font-semibold">Supervisor Landing</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Today's Schedule */}
-              <Card className="overflow-hidden border-teal-200">
-                <CardHeader className="bg-teal-50 border-b border-teal-200">
-                  <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
+      {/* Quick Access Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {quickAccessCards.map((card, index) => {
+          const IconComponent = card.icon
+          return (
+            <Link key={index} href={card.href}>
+              <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${card.color}`}>
+                <CardHeader className={`${card.headerColor} border-b`}>
+                  <div className="flex items-center space-x-2">
+                    <IconComponent className={`w-5 h-5 ${card.iconColor}`} />
+                    <CardTitle className="text-base">{card.title}</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent className="p-6 space-y-3">
-                  <div className="flex justify-between items-center text-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-sm font-medium">Samantha Greenfield</span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <span>8:00</span>
-                      <span className="ml-4">1h</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-sm font-medium">Nicole Walker</span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <span>9:30</span>
-                      <span className="ml-4">30min</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-sm font-medium">Zachary Gulgowski</span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <span>10:00</span>
-                      <span className="ml-4">1h</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center text-gray-900">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                      <span className="text-sm font-medium">Leonard Reynolds</span>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      <span>1:00</span>
-                      <span className="ml-4">1h</span>
-                    </div>
-                  </div>
+                <CardContent className="p-4">
+                  <p className="text-sm text-gray-600">{card.description}</p>
                 </CardContent>
               </Card>
+            </Link>
+          )
+        })}
+      </div>
 
-              {/* Upcoming Appointments */}
-              <Card className="overflow-hidden border-teal-200">
-                <CardHeader className="bg-teal-50 border-b border-teal-200">
-                  <CardTitle className="text-base text-teal-800">Upcoming Appointments - This Week</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="bg-gray-50 rounded p-3 border">
-                    <div className="grid grid-cols-3 gap-2 text-gray-900 text-xs font-semibold mb-3 border-b pb-2">
-                      <div>Date</div>
-                      <div>Time</div>
-                      <div>Student</div>
-                    </div>
-                    <div className="space-y-2 text-gray-900 text-xs">
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>5/15/2025</div>
-                        <div>11:30am</div>
-                        <div>Samantha Greenfield</div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>5/15/2025</div>
-                        <div>11:30am</div>
-                        <div>Samantha Greenfield</div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>5/15/2025</div>
-                        <div>11:30am</div>
-                        <div>Samantha Greenfield</div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>5/15/2025</div>
-                        <div>11:30am</div>
-                        <div>Samantha Greenfield</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Services That Require Action */}
-              <Card className="overflow-hidden border-orange-200">
-                <CardHeader className="bg-orange-50 border-b border-orange-200">
-                  <CardTitle className="text-base text-orange-800">Services That Require Action</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-3">
-                  <p className="text-gray-900 text-sm">
-                    There are <strong>5</strong> past services that require your attention. Please either add case notes or mark them as canceled.
-                  </p>
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <Link href="/student-services/all-services">
-                      <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
-                        Go to services
-                      </Button>
-                    </Link>
-                    <span className="text-gray-500">/</span>
-                    <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
-                      Resolve now
-                    </Button>
-                    <span className="text-gray-500">/</span>
-                    <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
-                      Take a look
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Services Pending Approval */}
-              <Card className="overflow-hidden border-blue-200">
-                <CardHeader className="bg-blue-50 border-b border-blue-200">
-                  <CardTitle className="text-base text-blue-800">Services Pending Approval</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6 space-y-3">
-                  <p className="text-gray-900 text-sm">
-                    There are <strong>45</strong> services pending your approval on the Supervisor log page.
-                  </p>
-                  <Link href="/student-services/supervisor-logs">
-                    <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full">
-                      Go to supervisor logs
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              {/* Caseload */}
-              <Card className="overflow-hidden lg:col-span-2 border-teal-200">
-                <CardHeader className="bg-teal-50 border-b border-teal-200">
-                  <CardTitle className="text-base text-teal-800">Caseload</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-3 gap-6 mb-6">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">15</div>
-                      <div className="text-sm text-gray-600">Total Students</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">5</div>
-                      <div className="text-sm text-gray-600">Seen Last Week</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">4</div>
-                      <div className="text-sm text-gray-600">Scheduled to See This Week</div>
-                    </div>
-                  </div>
-                  <Link href="/caseload">
-                    <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full">
-                      Go to caseload
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          {/* Regular Dashboard Content */}
-          {/* Top Row Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Current Claim Status */}
-            <Card className="overflow-hidden border-teal-200">
-              <CardHeader className="bg-teal-600 text-white">
-                <CardTitle className="text-lg font-semibold">Current Claim Status</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-3 gap-6 mb-6">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-1">1000</div>
-                    <div className="text-sm text-gray-600">Total Claims</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-1">250</div>
-                    <div className="text-sm text-gray-600">Rejected</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-1">250</div>
-                    <div className="text-sm text-gray-600">Awaiting Response</div>
-                  </div>
-                </div>
-                <Link href="/claims">
-                  <Button className="w-full bg-white text-teal-600 border border-teal-600 hover:bg-teal-50">
-                    Go to claims
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Expiring Qualifications */}
-            <Card className="overflow-hidden border-orange-200">
-              <CardHeader className="bg-orange-500 text-white">
-                <CardTitle className="text-lg font-semibold">Expiring Qualifications</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="text-center mb-6">
-                  <p className="text-gray-900 mb-4">There are 5 qualifications expiring in the next month.</p>
-                </div>
-                <Link href="/reports/qualifications">
-                  <Button className="w-full bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">
-                    Go to qualifications report
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Billable Service Window Closing */}
-          <Card className="overflow-hidden border-red-200">
-            <CardHeader className="bg-red-500 text-white">
-              <CardTitle className="text-lg font-semibold">Billable Service Window Closing</CardTitle>
+      {/* Account Type Specific Content */}
+      {accountType === "supervisor" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Today's Schedule */}
+          <Card className="overflow-hidden border-teal-200">
+            <CardHeader className="bg-teal-50 border-b border-teal-200">
+              <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-center mb-6">
-                <p className="text-gray-900 mb-4">
-                  There are 30 services approaching the 180 day mark for billing that have not been submitted.
-                </p>
+            <CardContent className="p-6 space-y-3">
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Samantha Greenfield</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>8:00</span>
+                  <span className="ml-4">1h</span>
+                </div>
               </div>
-              <Link href="/claims">
-                <Button className="w-full bg-white text-red-600 border border-red-600 hover:bg-red-50">
-                  Go to claims
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Nicole Walker</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>9:30</span>
+                  <span className="ml-4">30min</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Zachary Gulgowski</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>10:00</span>
+                  <span className="ml-4">1h</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Leonard Reynolds</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>1:00</span>
+                  <span className="ml-4">1h</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Services Pending Approval */}
+          <Card className="overflow-hidden border-blue-200">
+            <CardHeader className="bg-blue-50 border-b border-blue-200">
+              <CardTitle className="text-base text-blue-800">Services Pending Approval</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <p className="text-gray-900 text-sm">
+                There are <strong>45</strong> services pending your approval on the Supervisor log page.
+              </p>
+              <Link href="/student-services/supervisor-logs">
+                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full">
+                  Go to supervisor logs
                 </Button>
               </Link>
             </CardContent>
           </Card>
+        </div>
+      )}
 
-          {/* Claim Trends Chart */}
-          <Card className="overflow-hidden border-teal-200">
-            <CardHeader className="bg-teal-600 text-white">
-              <CardTitle className="text-lg font-semibold">Claim Trends</CardTitle>
+      {accountType === "administrator" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* System Overview */}
+          <Card className="overflow-hidden border-gray-200">
+            <CardHeader className="bg-gray-50 border-b border-gray-200">
+              <CardTitle className="text-base text-gray-800">System Overview</CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {/* Chart */}
-                <div className="relative">
-                  <div className="flex items-end justify-between h-48 px-4">
-                    {chartData.map((data, index) => {
-                      const total = data.rejected + data.pending + data.paid
-                      const barHeight = (total / maxValue) * chartHeight
-                      const rejectedHeight = (data.rejected / total) * barHeight
-                      const pendingHeight = (data.pending / total) * barHeight
-                      const paidHeight = (data.paid / total) * barHeight
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Total Users</span>
+                <span className="text-lg font-semibold text-gray-900">247</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Active Practitioners</span>
+                <span className="text-lg font-semibold text-green-600">156</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Active Supervisors</span>
+                <span className="text-lg font-semibold text-blue-600">43</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Students</span>
+                <span className="text-lg font-semibold text-purple-600">1,284</span>
+              </div>
+            </CardContent>
+          </Card>
 
-                      return (
-                        <div key={index} className="flex flex-col items-center space-y-2">
-                          <div className="flex flex-col-reverse" style={{ height: `${chartHeight}px` }}>
-                            <div className="bg-red-500 w-8" style={{ height: `${rejectedHeight}px` }} />
-                            <div className="bg-amber-400 w-8" style={{ height: `${pendingHeight}px` }} />
-                            <div className="bg-teal-500 w-8" style={{ height: `${paidHeight}px` }} />
-                          </div>
-                          <div className="text-xs text-gray-600 text-center transform -rotate-45 origin-center">
-                            {data.month}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+          {/* Claims Overview */}
+          <Card className="overflow-hidden border-yellow-200">
+            <CardHeader className="bg-yellow-50 border-b border-yellow-200">
+              <CardTitle className="text-base text-yellow-800">Claims Status</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Pending Claims</span>
+                <Badge className="bg-yellow-100 text-yellow-800">124</Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Ready to Submit</span>
+                <Badge className="bg-blue-100 text-blue-800">67</Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Paid Claims</span>
+                <Badge className="bg-green-100 text-green-800">89</Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Rejected Claims</span>
+                <Badge className="bg-red-100 text-red-800">12</Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-                  {/* Y-axis labels */}
-                  <div className="absolute left-0 top-0 h-48 flex flex-col justify-between text-xs text-gray-600">
-                    <span>100</span>
-                    <span>80</span>
-                    <span>60</span>
-                    <span>40</span>
-                    <span>20</span>
-                    <span>0</span>
-                  </div>
+          {/* Recent Activity */}
+          <Card className="overflow-hidden border-green-200">
+            <CardHeader className="bg-green-50 border-b border-green-200">
+              <CardTitle className="text-base text-green-800">Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <div className="text-sm">
+                <div className="text-gray-900 font-medium">New User Registration</div>
+                <div className="text-gray-600">Sarah Mitchell - Practitioner</div>
+                <div className="text-gray-400 text-xs">2 hours ago</div>
+              </div>
+              <div className="text-sm">
+                <div className="text-gray-900 font-medium">Configuration Update</div>
+                <div className="text-gray-600">Billing codes updated</div>
+                <div className="text-gray-400 text-xs">4 hours ago</div>
+              </div>
+              <div className="text-sm">
+                <div className="text-gray-900 font-medium">Bulk Student Import</div>
+                <div className="text-gray-600">45 new students added</div>
+                <div className="text-gray-400 text-xs">1 day ago</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {accountType === "practitioner" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Today's Schedule */}
+          <Card className="overflow-hidden border-teal-200">
+            <CardHeader className="bg-teal-50 border-b border-teal-200">
+              <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Samantha Greenfield</span>
                 </div>
-
-                {/* Legend */}
-                <div className="flex justify-center space-x-6 pt-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-sm"></div>
-                    <span className="text-sm text-gray-600">Rejected</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-amber-400 rounded-sm"></div>
-                    <span className="text-sm text-gray-600">Pending</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-teal-500 rounded-sm"></div>
-                    <span className="text-sm text-gray-600">Paid</span>
-                  </div>
+                <div className="text-sm text-gray-600">
+                  <span>8:00</span>
+                  <span className="ml-4">1h</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Nicole Walker</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>9:30</span>
+                  <span className="ml-4">30min</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Zachary Gulgowski</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>10:00</span>
+                  <span className="ml-4">1h</span>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </>
+
+          {/* Services That Require Action */}
+          <Card className="overflow-hidden border-orange-200">
+            <CardHeader className="bg-orange-50 border-b border-orange-200">
+              <CardTitle className="text-base text-orange-800">Services That Require Action</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <p className="text-gray-900 text-sm">
+                There are <strong>3</strong> past services that require your attention. Please either add case notes or mark them as canceled.
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <Link href="/student-services/all-services">
+                  <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
+                    Go to services
+                  </Button>
+                </Link>
+                <span className="text-gray-500">/</span>
+                <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
+                  Resolve now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
+
+      {/* Reports Section - Available for all account types */}
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <CardTitle className="text-lg text-gray-800">Quick Reports Access</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {accountType === "administrator" && (
+              <Link href="/reports/user-history">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="w-4 h-4 mr-2" />
+                  User History
+                </Button>
+              </Link>
+            )}
+            <Link href="/reports/qualifications">
+              <Button variant="outline" className="w-full justify-start">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Qualifications
+              </Button>
+            </Link>
+            <Link href="/reports/report-builder">
+              <Button variant="outline" className="w-full justify-start">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Report Builder
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

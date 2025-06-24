@@ -23,7 +23,6 @@ const mockSearchResults = [
 export default function SearchStudentsPage() {
   const [searchTerm, setSearchTerm] = useState("Fruitvale")
   const [searchResults, setSearchResults] = useState(mockSearchResults)
-  const [selectedStudents, setSelectedStudents] = useState<string[]>([])
   const router = useRouter()
 
   const handleSearch = () => {
@@ -33,18 +32,16 @@ export default function SearchStudentsPage() {
   }
 
   const handleSelectStudent = (ssid: string) => {
-    if (selectedStudents.includes(ssid)) {
-      setSelectedStudents(selectedStudents.filter(id => id !== ssid))
-    } else {
-      setSelectedStudents([...selectedStudents, ssid])
+    // Find the selected student
+    const selectedStudent = searchResults.find(student => student.ssid === ssid)
+    if (selectedStudent) {
+      // Navigate to add student page with pre-populated data
+      const studentData = encodeURIComponent(JSON.stringify(selectedStudent))
+      router.push(`/manage-students/add?student=${studentData}`)
     }
   }
 
-  const handleAddSelectedStudents = () => {
-    // TODO: Implement adding selected students to caseload
-    console.log("Adding students:", selectedStudents)
-    router.push("/manage-students")
-  }
+  // Function removed - no longer needed since we handle individual selection
 
   return (
     <div className="p-6">
@@ -77,6 +74,16 @@ export default function SearchStudentsPage() {
             Search
           </Button>
         </div>
+        
+        <div className="flex justify-center">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push("/manage-students/add")}
+            className="border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
+          >
+            Can't find student? Add New Student
+          </Button>
+        </div>
       </div>
 
       {/* Search Results */}
@@ -84,16 +91,6 @@ export default function SearchStudentsPage() {
         <div className="bg-cyan-50 rounded-lg p-6">
           <div className="mb-4">
             <h2 className="text-lg font-semibold mb-2">Search Results</h2>
-            {selectedStudents.length > 0 && (
-              <div className="flex justify-end">
-                <Button 
-                  onClick={handleAddSelectedStudents}
-                  className="bg-cyan-500 hover:bg-cyan-600"
-                >
-                  Add Selected Students ({selectedStudents.length})
-                </Button>
-              </div>
-            )}
           </div>
           
           <Table>
@@ -120,14 +117,11 @@ export default function SearchStudentsPage() {
                   <TableCell>
                     <Button
                       size="sm"
-                      variant={selectedStudents.includes(student.ssid) ? "default" : "outline"}
+                      variant="outline"
                       onClick={() => handleSelectStudent(student.ssid)}
-                      className={selectedStudents.includes(student.ssid) 
-                        ? "bg-cyan-500 hover:bg-cyan-600 text-white" 
-                        : "border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
-                      }
+                      className="border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
                     >
-                      {selectedStudents.includes(student.ssid) ? "Selected" : "Select"}
+                      Select
                     </Button>
                   </TableCell>
                 </TableRow>

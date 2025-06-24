@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 // Mock claims data for different tabs
 const mockClaims = {
@@ -729,6 +730,19 @@ export default function ClaimsPage() {
   const [sortField, setSortField] = useState<string>("")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
+  // Filter states
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [filterState, setFilterState] = useState({
+    statusIndicator: {
+      active: false,
+      inactive: false
+    },
+    mediCalEligible: {
+      yes: false,
+      no: false
+    }
+  })
+
   // In the component, add router
   const router = useRouter()
 
@@ -776,7 +790,35 @@ export default function ClaimsPage() {
     return data
   }
 
+  // Filter handling functions
+  const handleFilterChange = (category: string, option: string, checked: boolean) => {
+    setFilterState(prev => ({
+      ...prev,
+      [category]: {
+        ...prev[category as keyof typeof prev],
+        [option]: checked
+      }
+    }))
+  }
 
+  const applyFilters = () => {
+    setIsFilterOpen(false)
+    // The filtering will be applied through the filteredData computation
+  }
+
+  const clearFilters = () => {
+    setFilterState({
+      statusIndicator: {
+        active: false,
+        inactive: false
+      },
+      mediCalEligible: {
+        yes: false,
+        no: false
+      }
+    })
+    setIsFilterOpen(false)
+  }
 
   // Function to handle sorting
   const handleSort = (field: string) => {
@@ -817,14 +859,32 @@ export default function ClaimsPage() {
   }
 
   const filteredData = sortData(getCurrentData().filter((claim: any) => {
-    if (searchTerm === "") return true
-    
-    // Search across all relevant fields
-    const searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
-    return searchableFields.some(field => {
-      const fieldValue = claim[field]
-      return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    })
+    // Search filter
+    if (searchTerm !== "") {
+      const searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
+      const matchesSearch = searchableFields.some(field => {
+        const fieldValue = claim[field]
+        return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      })
+      if (!matchesSearch) return false
+    }
+
+    // Status Indicator filter
+    const { statusIndicator, mediCalEligible } = filterState
+    if (statusIndicator.active || statusIndicator.inactive) {
+      const isActive = claim.status === "SUBMITTED" || claim.status === "PAID" || claim.status === "APPROVED"
+      if (statusIndicator.active && !isActive) return false
+      if (statusIndicator.inactive && isActive) return false
+    }
+
+    // Medi-cal eligible filter
+    if (mediCalEligible.yes || mediCalEligible.no) {
+      const isMediCalEligible = claim.mediCalEligible === true || claim.mediCalEligible === "Yes"
+      if (mediCalEligible.yes && !isMediCalEligible) return false
+      if (mediCalEligible.no && isMediCalEligible) return false
+    }
+
+    return true
   }))
 
   const handleSelectClaim = (index: number) => {
@@ -1236,10 +1296,90 @@ export default function ClaimsPage() {
               />
             </div>
 
-            <Button variant="outline" className="flex items-center gap-2">
-              <Filter className="w-4 h-4" />
-              Filter
-            </Button>
+            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  Filter
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-4" align="end">
+                <div className="space-y-4">
+                  {/* Status Indicator */}
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Status Indicator</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="status-active"
+                          checked={filterState.statusIndicator.active}
+                          onCheckedChange={(checked) => 
+                            handleFilterChange('statusIndicator', 'active', checked as boolean)
+                          }
+                        />
+                        <label htmlFor="status-active" className="text-sm">Active</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="status-inactive"
+                          checked={filterState.statusIndicator.inactive}
+                          onCheckedChange={(checked) => 
+                            handleFilterChange('statusIndicator', 'inactive', checked as boolean)
+                          }
+                        />
+                        <label htmlFor="status-inactive" className="text-sm">Inactive</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Medi-cal eligible */}
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Medi-cal eligible</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="medical-yes"
+                          checked={filterState.mediCalEligible.yes}
+                          onCheckedChange={(checked) => 
+                            handleFilterChange('mediCalEligible', 'yes', checked as boolean)
+                          }
+                        />
+                        <label htmlFor="medical-yes" className="text-sm">Yes</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="medical-no"
+                          checked={filterState.mediCalEligible.no}
+                          onCheckedChange={(checked) => 
+                            handleFilterChange('mediCalEligible', 'no', checked as boolean)
+                          }
+                        />
+                        <label htmlFor="medical-no" className="text-sm">No</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Filter Actions */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={applyFilters}
+                      className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    >
+                      Apply Filter
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Claims Table */}
