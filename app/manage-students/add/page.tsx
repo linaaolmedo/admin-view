@@ -277,7 +277,7 @@ export default function AddStudentPage() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-2xl font-bold text-[#000000]">Add Student</h1>
+          <h1 className="text-2xl font-bold text-teal-800">Add Student</h1>
         </div>
 
         <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm">
@@ -726,23 +726,17 @@ export default function AddStudentPage() {
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-2xl font-bold text-[#000000]">Add Students</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Add Students</h1>
       </div>
 
       <div className="max-w-4xl mx-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger 
-              value="individual" 
-              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white flex items-center gap-2"
-            >
+          <TabsList className="mb-8">
+            <TabsTrigger value="individual" className="flex items-center gap-2">
               <User className="w-4 h-4" />
               Individual Add
             </TabsTrigger>
-            <TabsTrigger 
-              value="bulk" 
-              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white flex items-center gap-2"
-            >
+            <TabsTrigger value="bulk" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               Bulk Add
             </TabsTrigger>

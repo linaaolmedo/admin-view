@@ -18,10 +18,22 @@ import {
   Settings,
   Clipboard,
   Users2,
-  Briefcase
+  Briefcase,
+  DollarSign,
+  User
 } from "lucide-react"
 
 type AccountType = "administrator" | "practitioner" | "supervisor"
+
+interface QuickAccessCard {
+  title: string
+  description: string
+  icon: any // Using 'any' for Lucide icons since they don't have a specific type
+  href: string
+  color: string
+  iconColor: string
+  headerColor: string
+}
 
 // Mock data for the chart
 const chartData = [
@@ -49,7 +61,6 @@ const sections = [
 export default function DashboardPage() {
   const [accountType, setAccountType] = useState<AccountType | null>(null)
 
-  // Get account type from localStorage on component mount
   useEffect(() => {
     const storedAccountType = localStorage.getItem("accountType") as AccountType
     setAccountType(storedAccountType || "practitioner") // Default to practitioner if not set
@@ -60,127 +71,16 @@ export default function DashboardPage() {
   const chartHeight = 200
 
   // Quick access cards for each account type
-  const getQuickAccessCards = () => {
+  const getQuickAccessCards = (): QuickAccessCard[] => {
     switch (accountType) {
       case "administrator":
-        return [
-          {
-            title: "Claims Management",
-            description: "View, process, and manage all claims",
-            icon: FileText,
-            href: "/claims",
-            color: "bg-blue-50 border-blue-200",
-            iconColor: "text-blue-600",
-            headerColor: "bg-blue-50 text-blue-800"
-          },
-          {
-            title: "User Management",
-            description: "Manage practitioners, supervisors, and administrators",
-            icon: Users2,
-            href: "/manage-users",
-            color: "bg-green-50 border-green-200", 
-            iconColor: "text-green-600",
-            headerColor: "bg-green-50 text-green-800"
-          },
-          {
-            title: "Student Management",
-            description: "Add, search, and manage student records",
-            icon: Clipboard,
-            href: "/manage-students",
-            color: "bg-purple-50 border-purple-200",
-            iconColor: "text-purple-600", 
-            headerColor: "bg-purple-50 text-purple-800"
-          },
-          {
-            title: "System Configuration",
-            description: "Configure billing codes, qualifications, and permissions",
-            icon: Settings,
-            href: "/configurations",
-            color: "bg-orange-50 border-orange-200",
-            iconColor: "text-orange-600",
-            headerColor: "bg-orange-50 text-orange-800"
-          }
-        ]
+        return []
 
       case "supervisor":
-        return [
-          {
-            title: "Service Logs Pending Approval",
-            description: "Review and approve practitioner service logs",
-            icon: CheckCircle2,
-            href: "/student-services/supervisor-logs",
-            color: "bg-blue-50 border-blue-200",
-            iconColor: "text-blue-600",
-            headerColor: "bg-blue-50 text-blue-800"
-          },
-          {
-            title: "Log a Service",
-            description: "Record new service sessions",
-            icon: Calendar,
-            href: "/log-service",
-            color: "bg-teal-50 border-teal-200",
-            iconColor: "text-teal-600",
-            headerColor: "bg-teal-50 text-teal-800"
-          },
-          {
-            title: "Caseload Management",
-            description: "View and manage your assigned caseload",
-            icon: Briefcase,
-            href: "/caseload",
-            color: "bg-green-50 border-green-200",
-            iconColor: "text-green-600",
-            headerColor: "bg-green-50 text-green-800"
-          },
-          {
-            title: "My Calendar",
-            description: "View scheduled appointments and services",
-            icon: Calendar,
-            href: "/student-services/my-calendar",
-            color: "bg-purple-50 border-purple-200",
-            iconColor: "text-purple-600",
-            headerColor: "bg-purple-50 text-purple-800"
-          }
-        ]
+        return []
 
       case "practitioner":
-        return [
-          {
-            title: "Log a Service",
-            description: "Record new service sessions",
-            icon: Calendar,
-            href: "/log-service", 
-            color: "bg-teal-50 border-teal-200",
-            iconColor: "text-teal-600",
-            headerColor: "bg-teal-50 text-teal-800"
-          },
-          {
-            title: "My Calendar",
-            description: "View scheduled appointments and services",
-            icon: Calendar,
-            href: "/student-services/my-calendar",
-            color: "bg-blue-50 border-blue-200",
-            iconColor: "text-blue-600",
-            headerColor: "bg-blue-50 text-blue-800"
-          },
-          {
-            title: "Caseload Management", 
-            description: "View and manage your assigned caseload",
-            icon: Briefcase,
-            href: "/caseload",
-            color: "bg-green-50 border-green-200",
-            iconColor: "text-green-600",
-            headerColor: "bg-green-50 text-green-800"
-          },
-          {
-            title: "All Services",
-            description: "View all your service records and history",
-            icon: Users,
-            href: "/student-services/all-services",
-            color: "bg-purple-50 border-purple-200",
-            iconColor: "text-purple-600",
-            headerColor: "bg-purple-50 text-purple-800"
-          }
-        ]
+        return []
 
       default:
         return []
@@ -198,42 +98,44 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className={accountType === "supervisor" ? "space-y-4" : "space-y-6"}>
       {/* Page Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-teal-800">
             {accountType === "administrator" ? "Administrator Dashboard" : 
              accountType === "supervisor" ? "Supervisor Dashboard" : 
              "Practitioner Dashboard"}
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-slate-600 mt-1">
             Welcome back! Here's an overview of your activities and quick access to key features.
           </p>
         </div>
       </div>
 
       {/* Quick Access Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickAccessCards.map((card, index) => {
-          const IconComponent = card.icon
-          return (
-            <Link key={index} href={card.href}>
-              <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${card.color}`}>
-                <CardHeader className={`${card.headerColor} border-b`}>
-                  <div className="flex items-center space-x-2">
-                    <IconComponent className={`w-5 h-5 ${card.iconColor}`} />
-                    <CardTitle className="text-base">{card.title}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <p className="text-sm text-gray-600">{card.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          )
-        })}
-      </div>
+      {quickAccessCards.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {quickAccessCards.map((card: QuickAccessCard, index: number) => {
+            const IconComponent = card.icon
+            return (
+              <Link key={index} href={card.href}>
+                <Card className={`hover:shadow-lg transition-shadow cursor-pointer h-full ${card.color}`}>
+                  <CardHeader className={`${card.headerColor} border-b`}>
+                    <div className="flex items-center space-x-2">
+                      <IconComponent className={`w-5 h-5 ${card.iconColor}`} />
+                      <CardTitle className="text-base">{card.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <p className="text-sm text-slate-600">{card.description}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
+      )}
 
       {/* Account Type Specific Content */}
       {accountType === "supervisor" && (
@@ -284,21 +186,66 @@ export default function DashboardPage() {
                   <span className="ml-4">1h</span>
                 </div>
               </div>
+              <Link href="/student-services/my-calendar">
+                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  My Calendar
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
           {/* Services Pending Approval */}
-          <Card className="overflow-hidden border-blue-200">
-            <CardHeader className="bg-blue-50 border-b border-blue-200">
-              <CardTitle className="text-base text-blue-800">Services Pending Approval</CardTitle>
+          <Card className="overflow-hidden border-teal-200">
+            <CardHeader className="bg-teal-50 border-b border-teal-200">
+              <CardTitle className="text-base text-teal-800">Services Pending Approval</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-3">
-              <p className="text-gray-900 text-sm">
-                There are <strong>45</strong> services pending your approval on the Supervisor log page.
-              </p>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Johnson, Michael</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>4/20</span>
+                  <span className="ml-4">Speech</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Davis, Sarah</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>4/19</span>
+                  <span className="ml-4">OT</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Wilson, Emma</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>4/18</span>
+                  <span className="ml-4">PT</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Martinez, Carlos</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>4/17</span>
+                  <span className="ml-4">Psych</span>
+                </div>
+              </div>
+
               <Link href="/student-services/supervisor-logs">
-                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full">
-                  Go to supervisor logs
+                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Review & Approve
                 </Button>
               </Link>
             </CardContent>
@@ -307,15 +254,15 @@ export default function DashboardPage() {
       )}
 
       {accountType === "administrator" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {/* System Overview */}
-          <Card className="overflow-hidden border-gray-200">
+          <Card className="overflow-hidden border-gray-200 w-full">
             <CardHeader className="bg-gray-50 border-b border-gray-200">
               <CardTitle className="text-base text-gray-800">System Overview</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-4 md:p-6 space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Total Users</span>
+                <span className="text-sm text-gray-600 truncate">Total Users</span>
                 <span className="text-lg font-semibold text-gray-900">247</span>
               </div>
               <div className="flex justify-between items-center">
@@ -422,6 +369,12 @@ export default function DashboardPage() {
                   <span className="ml-4">1h</span>
                 </div>
               </div>
+              <Link href="/student-services/my-calendar">
+                <Button className="w-full mt-4 bg-white text-teal-600 border border-teal-600 hover:bg-teal-50">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  My Calendar
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -431,55 +384,262 @@ export default function DashboardPage() {
               <CardTitle className="text-base text-orange-800">Services That Require Action</CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-3">
-              <p className="text-gray-900 text-sm">
-                There are <strong>3</strong> past services that require your attention. Please either add case notes or mark them as canceled.
-              </p>
-              <div className="flex flex-wrap gap-2 text-xs">
-                <Link href="/student-services/all-services">
-                  <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
-                    Go to services
-                  </Button>
-                </Link>
-                <span className="text-gray-500">/</span>
-                <Button variant="link" className="text-teal-600 underline p-0 h-auto text-xs hover:text-teal-700">
-                  Resolve now
-                </Button>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Missing Case Notes</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>2 services</span>
+                </div>
               </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Incomplete Services</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>1 service</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Pending Review</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>2 services</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center text-gray-900">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm font-medium">Needs Attention</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span>1 service</span>
+                </div>
+              </div>
+              <Link href="/student-services/all-services">
+                <Button className="w-full mt-4 bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">
+                  <FileText className="w-4 h-4 mr-2" />
+                  All Services
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
       )}
 
-      {/* Reports Section - Available for all account types */}
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
-          <CardTitle className="text-lg text-gray-800">Quick Reports Access</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {accountType === "administrator" && (
-              <Link href="/reports/user-history">
+      {/* Reports Section - Available for administrators and supervisors */}
+      {(accountType === "administrator" || accountType === "supervisor") && (
+        <Card className="overflow-hidden">
+          <CardHeader className="bg-gray-50 border-b border-gray-200">
+            <CardTitle className="text-lg text-gray-800">Quick Reports Access</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {accountType === "administrator" && (
+                <Link href="/reports/user-history">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Users className="w-4 h-4 mr-2" />
+                    User History
+                  </Button>
+                </Link>
+              )}
+              <Link href="/reports/qualifications">
                 <Button variant="outline" className="w-full justify-start">
-                  <Users className="w-4 h-4 mr-2" />
-                  User History
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Qualifications
                 </Button>
               </Link>
-            )}
-            <Link href="/reports/qualifications">
-              <Button variant="outline" className="w-full justify-start">
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Qualifications
-              </Button>
-            </Link>
-            <Link href="/reports/report-builder">
-              <Button variant="outline" className="w-full justify-start">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Report Builder
-              </Button>
-            </Link>
+              <Link href="/reports/report-builder">
+                <Button variant="outline" className="w-full justify-start">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Report Builder
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Supervisor Metrics Section */}
+      {accountType === "supervisor" && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-gray-900">Team Metrics</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Most Active Practitioners */}
+            <Card className="overflow-hidden border-gray-200">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-base text-gray-800">Most Active Practitioners</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/1" className="text-sm text-teal-600 hover:underline">
+                    Sarah Johnson
+                  </Link>
+                  <span className="text-sm font-semibold text-teal-600">24 logins</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/2" className="text-sm text-teal-600 hover:underline">
+                    Michael Davis
+                  </Link>
+                  <span className="text-sm font-semibold text-teal-600">21 logins</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/3" className="text-sm text-teal-600 hover:underline">
+                    Emma Wilson
+                  </Link>
+                  <span className="text-sm font-semibold text-teal-600">18 logins</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/4" className="text-sm text-teal-600 hover:underline">
+                    Carlos Martinez
+                  </Link>
+                  <span className="text-sm font-semibold text-teal-600">16 logins</span>
+                </div>
+                <div className="text-center text-xs text-gray-500 mt-3 pt-2 border-t">
+                  Last 30 days
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Most Appointments */}
+            <Card className="overflow-hidden border-gray-200">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-base text-gray-800">Most Appointments</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/3" className="text-sm text-teal-600 hover:underline">
+                    Emma Wilson
+                  </Link>
+                  <span className="text-sm font-semibold text-blue-600">47 sessions</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/1" className="text-sm text-teal-600 hover:underline">
+                    Sarah Johnson
+                  </Link>
+                  <span className="text-sm font-semibold text-blue-600">42 sessions</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/2" className="text-sm text-teal-600 hover:underline">
+                    Michael Davis
+                  </Link>
+                  <span className="text-sm font-semibold text-blue-600">38 sessions</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/4" className="text-sm text-teal-600 hover:underline">
+                    Carlos Martinez
+                  </Link>
+                  <span className="text-sm font-semibold text-blue-600">35 sessions</span>
+                </div>
+                <div className="text-center text-xs text-gray-500 mt-3 pt-2 border-t">
+                  This month
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Service Completion Rates */}
+            <Card className="overflow-hidden border-gray-200">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-base text-gray-800">Completion Rates</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/1" className="text-sm text-teal-600 hover:underline">
+                    Sarah Johnson
+                  </Link>
+                  <span className="text-sm font-semibold text-green-600">98%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/4" className="text-sm text-teal-600 hover:underline">
+                    Carlos Martinez
+                  </Link>
+                  <span className="text-sm font-semibold text-green-600">96%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/3" className="text-sm text-teal-600 hover:underline">
+                    Emma Wilson
+                  </Link>
+                  <span className="text-sm font-semibold text-green-600">94%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/2" className="text-sm text-teal-600 hover:underline">
+                    Michael Davis
+                  </Link>
+                  <span className="text-sm font-semibold text-yellow-600">87%</span>
+                </div>
+                <div className="text-center text-xs text-gray-500 mt-3 pt-2 border-t">
+                  Service documentation
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Additional Metrics Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Pending Approvals by Practitioner */}
+            <Card className="overflow-hidden border-gray-200">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-base text-gray-800">Pending Approvals by Practitioner</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/2" className="text-sm text-teal-600 hover:underline">
+                    Michael Davis
+                  </Link>
+                  <span className="text-sm font-semibold text-orange-600">12 pending</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/3" className="text-sm text-teal-600 hover:underline">
+                    Emma Wilson
+                  </Link>
+                  <span className="text-sm font-semibold text-orange-600">8 pending</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/4" className="text-sm text-teal-600 hover:underline">
+                    Carlos Martinez
+                  </Link>
+                  <span className="text-sm font-semibold text-orange-600">6 pending</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <Link href="/manage-users/1" className="text-sm text-teal-600 hover:underline">
+                    Sarah Johnson
+                  </Link>
+                  <span className="text-sm font-semibold text-green-600">2 pending</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Team Performance Overview */}
+            <Card className="overflow-hidden border-gray-200">
+              <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-base text-gray-800">Team Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Active Practitioners</span>
+                  <span className="text-lg font-semibold text-gray-900">8</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Total Students</span>
+                  <span className="text-lg font-semibold text-blue-600">156</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Avg. Completion Rate</span>
+                  <span className="text-lg font-semibold text-green-600">94%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Services This Month</span>
+                  <span className="text-lg font-semibold text-purple-600">487</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -89,11 +90,9 @@ export default function CaseloadPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [expandedGroups, setExpandedGroups] = useState<number[]>([1, 2])
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false)
-  const [isAddToCaseloadOpen, setIsAddToCaseloadOpen] = useState(false)
   const [newGroupName, setNewGroupName] = useState("")
   const [groupParticipants, setGroupParticipants] = useState<string[]>([])
   const [availableStudentsForGroup, setAvailableStudentsForGroup] = useState(mockAvailableStudents)
-  const [caseloadStudents, setCaseloadStudents] = useState<string[]>([])
   const [showSuccessNotification, setShowSuccessNotification] = useState(false)
   const [notificationMessage, setNotificationMessage] = useState("")
   const [actualCaseload, setActualCaseload] = useState<typeof mockCaseloadStudents>(mockCaseloadStudents)
@@ -159,7 +158,7 @@ export default function CaseloadPage() {
   }
 
   const handleAddToCaseload = () => {
-    setIsAddToCaseloadOpen(true)
+    router.push("/educlaim-database")
   }
 
   const toggleGroupExpansion = (groupId: number) => {
@@ -178,13 +177,7 @@ export default function CaseloadPage() {
     }
   }
 
-  const handleAddToCaseloadStudent = (ssid: string) => {
-    if (caseloadStudents.includes(ssid)) {
-      setCaseloadStudents(prev => prev.filter(id => id !== ssid))
-    } else {
-      setCaseloadStudents(prev => [...prev, ssid])
-    }
-  }
+
 
   const createGroup = () => {
     if (!newGroupName.trim()) {
@@ -209,23 +202,7 @@ export default function CaseloadPage() {
     setShowSuccessNotification(true)
   }
 
-  const addStudentsToCaseload = () => {
-    if (caseloadStudents.length === 0) {
-      alert("Please select at least one student to add to caseload")
-      return
-    }
 
-    // Add students to caseload (in a real app, this would call an API)
-    console.log("Adding students to caseload:", caseloadStudents)
-    
-    // Reset form
-    setCaseloadStudents([])
-    setIsAddToCaseloadOpen(false)
-    
-    // Show success notification
-    setNotificationMessage(`${caseloadStudents.length} student(s) added to caseload successfully!`)
-    setShowSuccessNotification(true)
-  }
 
   return (
     <div className="p-6">
@@ -247,20 +224,42 @@ export default function CaseloadPage() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Caseload</h1>
+      <h1 className="text-2xl font-bold text-teal-800 mb-6">Caseload</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-between items-center mb-6">
-          <TabsList className="grid grid-cols-2 w-auto">
-            <TabsTrigger value="caseload" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+          <TabsList>
+            <TabsTrigger value="caseload">
               Caseload
             </TabsTrigger>
-            <TabsTrigger value="groups" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
+            <TabsTrigger value="groups">
               Groups
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {/* Search and Filter - only show for caseload tab */}
+            {activeTab === "caseload" && (
+              <>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 w-80"
+                  />
+                </div>
+
+                <Button variant="outline" size="sm">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filter
+                </Button>
+                
+                <div className="w-px h-6 bg-gray-300 mx-2"></div>
+              </>
+            )}
+            
             <Button 
               onClick={handleCreateGroup}
               variant="outline" 
@@ -288,23 +287,6 @@ export default function CaseloadPage() {
         </div>
         
         <TabsContent value="caseload" className="mt-0">
-          {/* Filters and Search */}
-          <div className="flex justify-end items-center gap-4 mb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-80"
-              />
-            </div>
-
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
-          </div>
 
           {/* Students Table */}
           <div className="border rounded-lg">
@@ -338,8 +320,16 @@ export default function CaseloadPage() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{student.ssid}</TableCell>
-                    <TableCell>{student.lastName}</TableCell>
-                    <TableCell>{student.firstName}</TableCell>
+                    <TableCell>
+                      <Link href={`/manage-students/${student.id}`} className="text-teal-600 hover:underline">
+                        {student.lastName}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={`/manage-students/${student.id}`} className="text-teal-600 hover:underline">
+                        {student.firstName}
+                      </Link>
+                    </TableCell>
                     <TableCell>{student.practitioner}</TableCell>
                     <TableCell>{student.district}</TableCell>
                     <TableCell>{student.birthdate}</TableCell>
@@ -398,7 +388,11 @@ export default function CaseloadPage() {
                         {group.students.map((student, index) => (
                           <TableRow key={index}>
                             <TableCell className="font-medium">{student.ssid}</TableCell>
-                            <TableCell>{student.name}</TableCell>
+                            <TableCell>
+                              <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
+                                {student.name}
+                              </Link>
+                            </TableCell>
                             <TableCell>{student.district}</TableCell>
                           </TableRow>
                         ))}
@@ -488,43 +482,7 @@ export default function CaseloadPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Add to Caseload Dialog */}
-      <Dialog open={isAddToCaseloadOpen} onOpenChange={setIsAddToCaseloadOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add Students to Caseload</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Select Students to Add</Label>
-              <div className="mt-2 max-h-60 overflow-y-auto border rounded p-2">
-                {mockAvailableStudents.map((student) => (
-                  <div key={student.ssid} className="flex items-center space-x-2 p-2 hover:bg-gray-50">
-                    <Checkbox
-                      checked={caseloadStudents.includes(student.ssid)}
-                      onCheckedChange={() => handleAddToCaseloadStudent(student.ssid)}
-                    />
-                    <div className="flex-1">
-                      <span className="font-medium">{student.name}</span>
-                      <span className="text-sm text-gray-500 ml-2">SSID: {student.ssid}</span>
-                    </div>
-                    <Badge variant="outline">{student.district}</Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsAddToCaseloadOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={addStudentsToCaseload} className="bg-teal-600 hover:bg-teal-700">
-                Add to Caseload
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div>
   )
 }

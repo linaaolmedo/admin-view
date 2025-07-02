@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -45,6 +46,7 @@ const serviceLocations = [
 
 export default function LogServicePage() {
   const [activeTab, setActiveTab] = useState("student")
+  const router = useRouter()
   const [formData, setFormData] = useState({
     student: "",
     group: "",
@@ -66,28 +68,23 @@ export default function LogServicePage() {
   const handleSave = () => {
     console.log("Saving service log:", formData)
     // In a real app, this would save to the backend
-    alert("Service logged successfully!")
+    // Redirect to all services page
+    router.push("/student-services/all-services")
   }
 
   return (
     <div className="p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Log a Service</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Log a Service</h1>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 w-auto mb-6">
-          <TabsTrigger 
-            value="student" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+        <TabsList className="mb-6">
+          <TabsTrigger value="student">
             Student
           </TabsTrigger>
-          <TabsTrigger 
-            value="group"
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+          <TabsTrigger value="group">
             Group
           </TabsTrigger>
         </TabsList>
@@ -348,7 +345,7 @@ export default function LogServicePage() {
 
         {/* Save Button */}
         <div className="flex justify-center pt-6">
-          <Button onClick={handleSave} className="px-8 py-2 bg-blue-600 hover:bg-blue-700">
+          <Button onClick={handleSave} className="px-8 py-2 bg-teal-600 hover:bg-teal-700">
             Save
           </Button>
         </div>

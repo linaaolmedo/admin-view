@@ -108,15 +108,32 @@ body {
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   html, body {
     @apply bg-background text-foreground;
     margin: 0;
     padding: 0;
     width: 100%;
-    box-sizing: border-box;
+    height: 100%;
+    overflow-x: hidden;
   }
   *, *::before, *::after {
     box-sizing: border-box;
+  }
+  
+  /* Add container max-width constraints */
+  .container-content {
+    @apply max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full;
+  }
+  
+  /* Ensure tables don't overflow */
+  table {
+    @apply w-full table-fixed;
+  }
+  
+  /* Ensure images don't overflow */
+  img {
+    @apply max-w-full h-auto;
   }
 }

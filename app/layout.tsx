@@ -32,11 +32,15 @@ export default function RootLayout({
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#ffffff] w-full">
+    <div className="min-h-screen bg-[#ffffff] overflow-x-hidden">
       <Header />
-      <div className="flex w-full">
+      <div className="flex pt-16">
         <Sidebar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-6 overflow-x-hidden">
+          <div className="container-content">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   )

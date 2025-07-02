@@ -1,6 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft } from "lucide-react"
@@ -146,7 +147,11 @@ export default function ClaimStatusPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">Rendering Provider</label>
-              <p className="text-sm font-semibold text-gray-900">{claimDetails.renderingProvider}</p>
+              <p className="text-sm font-semibold text-gray-900">
+                <Link href={`/manage-users/1`} className="text-teal-600 hover:underline">
+                  {claimDetails.renderingProvider}
+                </Link>
+              </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">Rendering Provider NPI</label>
@@ -206,7 +211,11 @@ export default function ClaimStatusPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">Name</label>
-              <p className="text-sm font-semibold text-gray-900">{claimDetails.studentInfo.name}</p>
+              <p className="text-sm font-semibold text-gray-900">
+                <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
+                  {claimDetails.studentInfo.name}
+                </Link>
+              </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-600">DOB</label>

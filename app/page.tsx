@@ -90,7 +90,7 @@ export default function HomePage() {
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-2xl font-bold text-[#000000]">Cassandra Beck</h1>
+              <h1 className="text-2xl font-bold text-teal-800">Cassandra Beck</h1>
             </div>
             <Button variant="ghost" size="icon">
               <Edit className="w-5 h-5" />

@@ -53,8 +53,6 @@ type AccountType = (typeof accountTypes)[number]
 // Navigation sections
 const navigationSections = [
   { id: "about", label: "About", icon: User },
-  { id: "qualifications", label: "Qualifications & Services", icon: Award },
-  { id: "caseload", label: "Caseload Management", icon: Users },
   { id: "settings", label: "Settings", icon: Settings },
   { id: "activity", label: "Recent Activity", icon: Clock },
 ]
@@ -88,7 +86,7 @@ export default function ProfilePage() {
     
     const element = document.getElementById(sectionId)
     if (element) {
-      const yOffset = -80 // Offset to account for sticky header height
+      const yOffset = -128 // Offset to account for header (64px) + sticky nav (64px)
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
       
       window.scrollTo({
@@ -113,7 +111,7 @@ export default function ProfilePage() {
       },
       { 
         threshold: [0.1, 0.3, 0.5, 0.7],
-        rootMargin: '-80px 0px -50% 0px' // Account for sticky header height
+        rootMargin: '-128px 0px -50% 0px' // Account for header + sticky nav height
       }
     )
 
@@ -247,19 +245,19 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Profile Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-20">
+        <h1 className="text-3xl font-bold text-teal-800">Profile</h1>
       </div>
 
       {/* Horizontal Navigation */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex space-x-8 overflow-x-auto">
+      <div className="border-b border-gray-200 bg-white sticky top-[72px] z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8 overflow-x-auto scrollbar-hide pb-px">
             {navigationSections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => scrollToSection(section.id)}
-                className={`flex items-center gap-2 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`flex-shrink-0 flex items-center gap-2 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
                   activeSection === section.id
                     ? 'text-teal-600 border-b-2 border-teal-600'
                     : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
@@ -277,12 +275,7 @@ export default function ProfilePage() {
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-16">
         
         {/* About Section */}
-        <section id="about" className="mt-0 scroll-mt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">About</h2>
-            <p className="text-gray-600">Your personal information and account details.</p>
-          </div>
-
+        <section id="about" className="scroll-mt-[144px]">
           <Card className="border-teal-200">
             <CardHeader className="bg-teal-50">
               <CardTitle className="text-teal-800">Personal Information</CardTitle>
@@ -313,148 +306,8 @@ export default function ProfilePage() {
           </Card>
         </section>
 
-        {/* Qualifications & Services Section */}
-        <section id="qualifications" className="mt-0 scroll-mt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Qualifications & Services</h2>
-            <p className="text-gray-600">Manage your professional qualifications and service offerings.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-teal-200">
-              <CardHeader className="bg-teal-50">
-                <CardTitle className="text-teal-800">Qualifications</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {mockQualifications.map((qual) => (
-                    <div key={qual.id} className="p-4 border rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{qual.name}</h4>
-                        {getStatusBadge(qual.status)}
-                      </div>
-                      <p className="text-sm text-gray-600">Issued by: {qual.issuer}</p>
-                      <p className="text-sm text-gray-600">Expires: {qual.expiry}</p>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
-                  Add Qualification
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="border-teal-200">
-              <CardHeader className="bg-teal-50">
-                <CardTitle className="text-teal-800">Services Offered</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {mockServices.map((service) => (
-                    <div key={service.id} className="p-4 border rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                        <span className="text-sm font-medium text-teal-600">{service.rate}</span>
-                      </div>
-                      <p className="text-sm text-gray-600">Code: {service.code}</p>
-                    </div>
-                  ))}
-                </div>
-                <Button variant="outline" className="w-full mt-4 border-teal-600 text-teal-600 hover:bg-teal-50">
-                  Add Service
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Caseload Management Section */}
-        <section id="caseload" className="mt-0 scroll-mt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Caseload Management</h2>
-            <p className="text-gray-600">Overview of your current caseload and student management.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Students</p>
-                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.length}</p>
-                  </div>
-                  <Users className="w-8 h-8 text-teal-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-green-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Active Students</p>
-                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "Active").length}</p>
-                  </div>
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-teal-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Scheduled This Week</p>
-                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.nextSession.startsWith(new Date().toISOString().split('T')[0])).length}</p>
-                  </div>
-                  <Calendar className="w-8 h-8 text-teal-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-orange-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Pending Assessments</p>
-                    <p className="text-3xl font-bold text-gray-900">{mockCaseload.filter(s => s.status === "On Hold").length}</p>
-                  </div>
-                  <AlertCircle className="w-8 h-8 text-orange-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="border-teal-200">
-            <CardHeader className="bg-teal-50">
-              <CardTitle className="text-teal-800">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Button className="bg-teal-600 hover:bg-teal-700">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Schedule Service
-                </Button>
-                <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
-                  <Users className="w-4 h-4 mr-2" />
-                  View Caseload
-                </Button>
-                <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-50">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Generate Report
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
         {/* Settings Section */}
-        <section id="settings" className="mt-0 scroll-mt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Settings</h2>
-            <p className="text-gray-600">Manage your account preferences and notifications.</p>
-          </div>
-
+        <section id="settings" className="scroll-mt-[144px]">
           <div className="space-y-6">
             <Card className="border-gray-200">
               <CardHeader>
@@ -501,12 +354,7 @@ export default function ProfilePage() {
         </section>
 
         {/* Recent Activity Section */}
-        <section id="activity" className="mt-0 scroll-mt-20">
-          <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Recent Activity</h2>
-            <p className="text-gray-600">Your recent actions and system updates.</p>
-          </div>
-
+        <section id="activity" className="scroll-mt-[144px]">
           <Card className="border-gray-200">
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>

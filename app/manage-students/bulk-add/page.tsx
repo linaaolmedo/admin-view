@@ -92,7 +92,7 @@ export default function BulkAddStudentsPage() {
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-2xl font-bold text-[#000000]">Bulk Add Students</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Bulk Add Students</h1>
       </div>
 
       <div className="max-w-2xl mx-auto">

@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft, Mail, Phone, MapPin, Calendar, User, Award, Users, FileText, Edit } from "lucide-react"
+import { ArrowLeft, Mail, Phone, MapPin, Calendar, User, Award, Users, FileText, Stethoscope } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-// Mock user data - in a real app, this would come from an API
-const mockUserData = {
+// Mock practitioner data - in a real app, this would come from an API
+const mockPractitionerData = {
   1: {
     id: 1,
     firstName: "Bradley",
@@ -19,72 +18,144 @@ const mockUserData = {
     email: "bradley.brown@example.com",
     phone: "(555) 123-4567",
     npi: "59249790",
-    role: "Practitioner",
+    role: "Speech-Language Pathologist",
     status: "Active",
     address: "123 Main St, Fruitvale, CA 94566",
     hireDate: "2022-03-15",
     department: "Special Education Services",
     supervisor: "Susan Casper",
     licenseNumber: "LIC123456",
+    specialties: ["Speech-Language Pathology", "Applied Behavior Analysis", "Autism Spectrum Disorders"],
     qualifications: [
-      { name: "Speech-Language Pathology", level: "Master's Degree", date: "2020-05-15" },
-      { name: "Applied Behavior Analysis", level: "Certification", date: "2021-02-10" },
-      { name: "Autism Spectrum Disorders", level: "Specialty Certificate", date: "2021-08-22" }
+      { name: "Speech-Language Pathology", level: "Master's Degree", date: "2020-05-15", institution: "California State University" },
+      { name: "Applied Behavior Analysis", level: "Board Certification", date: "2021-02-10", institution: "BACB" },
+      { name: "Autism Spectrum Disorders", level: "Specialty Certificate", date: "2021-08-22", institution: "Autism Training Center" },
+      { name: "Augmentative and Alternative Communication", level: "Advanced Certificate", date: "2022-01-15", institution: "AAC Institute" }
     ],
     services: [
-      { name: "Speech Therapy", code: "92507", billable: true },
-      { name: "Language Assessment", code: "92506", billable: true },
-      { name: "Consultation", code: "99241", billable: false }
+      { name: "Speech Therapy", code: "92507", description: "Individual speech therapy sessions", billable: true, rate: "$85/hour" },
+      { name: "Language Assessment", code: "92506", description: "Comprehensive language evaluation", billable: true, rate: "$120/session" },
+      { name: "AAC Consultation", code: "92508", description: "Augmentative communication device training", billable: true, rate: "$95/hour" },
+      { name: "IEP Consultation", code: "99241", description: "Educational planning consultation", billable: false, rate: "N/A" },
+      { name: "Parent Training", code: "90837", description: "Parent/caregiver training sessions", billable: true, rate: "$75/hour" }
     ],
     caseload: [
-      { studentName: "Sarah Johnson", grade: "3rd", iepDate: "2024-01-15", nextReview: "2024-04-15", status: "Active" },
-      { studentName: "Michael Chen", grade: "5th", iepDate: "2024-02-01", nextReview: "2024-05-01", status: "Active" },
-      { studentName: "Emma Rodriguez", grade: "2nd", iepDate: "2023-12-10", nextReview: "2024-03-10", status: "Review Due" },
-      { studentName: "James Wilson", grade: "4th", iepDate: "2024-01-25", nextReview: "2024-04-25", status: "Active" }
+      { 
+        studentName: "Sarah Johnson", 
+        grade: "3rd", 
+        iepDate: "2024-01-15", 
+        nextReview: "2024-04-15", 
+        status: "Active",
+        primaryGoal: "Improve articulation skills",
+        sessionFrequency: "2x/week, 30min",
+        lastSession: "2024-03-10"
+      },
+      { 
+        studentName: "Michael Chen", 
+        grade: "5th", 
+        iepDate: "2024-02-01", 
+        nextReview: "2024-05-01", 
+        status: "Active",
+        primaryGoal: "Language comprehension",
+        sessionFrequency: "1x/week, 45min",
+        lastSession: "2024-03-08"
+      },
+      { 
+        studentName: "Emma Rodriguez", 
+        grade: "2nd", 
+        iepDate: "2023-12-10", 
+        nextReview: "2024-03-10", 
+        status: "Review Due",
+        primaryGoal: "Social communication",
+        sessionFrequency: "2x/week, 30min",
+        lastSession: "2024-03-05"
+      },
+      { 
+        studentName: "James Wilson", 
+        grade: "4th", 
+        iepDate: "2024-01-25", 
+        nextReview: "2024-04-25", 
+        status: "Active",
+        primaryGoal: "Fluency improvement",
+        sessionFrequency: "1x/week, 30min",
+        lastSession: "2024-03-09"
+      }
+    ]
+  },
+  2: {
+    id: 2,
+    firstName: "Jennifer",
+    lastName: "Martinez",
+    email: "jennifer.martinez@example.com",
+    phone: "(555) 234-5678",
+    npi: "84729105",
+    role: "Occupational Therapist",
+    status: "Active",
+    address: "456 Oak Ave, Martinez, CA 94553",
+    hireDate: "2021-08-20",
+    department: "Therapeutic Services",
+    supervisor: "Michael Thompson",
+    licenseNumber: "LIC234567",
+    specialties: ["Occupational Therapy", "Sensory Integration", "Fine Motor Skills"],
+    qualifications: [
+      { name: "Occupational Therapy", level: "Master's Degree", date: "2019-06-15", institution: "UC San Francisco" },
+      { name: "Sensory Integration", level: "Advanced Certificate", date: "2020-03-10", institution: "SI Network" },
+      { name: "Pediatric OT", level: "Specialty Certification", date: "2020-09-15", institution: "AOTA" }
+    ],
+    services: [
+      { name: "Occupational Therapy", code: "97530", description: "Individual OT sessions", billable: true, rate: "$90/hour" },
+      { name: "Sensory Integration", code: "97533", description: "Sensory processing intervention", billable: true, rate: "$95/hour" },
+      { name: "Equipment Assessment", code: "97542", description: "Adaptive equipment evaluation", billable: true, rate: "$110/session" }
+    ],
+    caseload: [
+      { 
+        studentName: "Alex Thompson", 
+        grade: "1st", 
+        iepDate: "2024-01-10", 
+        nextReview: "2024-04-10", 
+        status: "Active",
+        primaryGoal: "Fine motor development",
+        sessionFrequency: "2x/week, 45min",
+        lastSession: "2024-03-11"
+      },
+      { 
+        studentName: "Maya Patel", 
+        grade: "3rd", 
+        iepDate: "2024-02-05", 
+        nextReview: "2024-05-05", 
+        status: "Active",
+        primaryGoal: "Sensory regulation",
+        sessionFrequency: "1x/week, 30min",
+        lastSession: "2024-03-07"
+      }
     ]
   }
 }
 
-export default function UserProfilePage() {
+export default function PractitionerProfilePage() {
   const router = useRouter()
   const params = useParams()
-  const userId = params.id as string
-  const [user, setUser] = useState<any>(null)
+  const practitionerId = params.id as string
+  const [practitioner, setPractitioner] = useState<any>(null)
   const [activeTab, setActiveTab] = useState("about")
 
   useEffect(() => {
-    // In a real app, you would fetch user data from an API
-    const userData = mockUserData[parseInt(userId) as keyof typeof mockUserData]
-    if (userData) {
-      setUser(userData)
+    // In a real app, you would fetch practitioner data from an API
+    const practitionerData = mockPractitionerData[parseInt(practitionerId) as keyof typeof mockPractitionerData]
+    if (practitionerData) {
+      setPractitioner(practitionerData)
     }
-  }, [userId])
+  }, [practitionerId])
 
   const handleGoBack = () => {
     router.back()
   }
 
-  // Smooth scroll to section with offset
-  const scrollToSection = (sectionId: string) => {
-    setActiveTab(sectionId)
-    
-    const element = document.getElementById(sectionId)
-    if (element) {
-      const yOffset = -128 // Offset to account for header and sticky nav
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
-      
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      })
-    }
-  }
-
-  if (!user) {
+  if (!practitioner) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900">User not found</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Practitioner not found</h2>
           <Button onClick={handleGoBack} variant="outline" className="mt-4">
             Go Back
           </Button>
@@ -119,17 +190,17 @@ export default function UserProfilePage() {
               </Button>
               <div>
                 <h1 className="text-2xl font-bold text-teal-800">
-                  {user.firstName} {user.lastName}
+                  {practitioner.firstName} {practitioner.lastName}
                 </h1>
-                <p className="text-slate-600">{user.role} • NPI: {user.npi}</p>
+                <p className="text-slate-600">{practitioner.role} • NPI: {practitioner.npi}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Badge 
-                variant={user.status === "Active" ? "default" : "secondary"}
-                className={user.status === "Active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
+                variant={practitioner.status === "Active" ? "default" : "secondary"}
+                className={practitioner.status === "Active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
               >
-                {user.status}
+                {practitioner.status}
               </Badge>
             </div>
           </div>
@@ -169,19 +240,19 @@ export default function UserProfilePage() {
                   <CardContent className="space-y-4">
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-gray-400" />
-                      <span>{user.email}</span>
+                      <span>{practitioner.email}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <span>{user.phone}</span>
+                      <span>{practitioner.phone}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-4 h-4 text-gray-400" />
-                      <span>{user.address}</span>
+                      <span>{practitioner.address}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      <span>Hired: {new Date(user.hireDate).toLocaleDateString()}</span>
+                      <span>Hired: {new Date(practitioner.hireDate).toLocaleDateString()}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -197,19 +268,38 @@ export default function UserProfilePage() {
                   <CardContent className="space-y-4">
                     <div>
                       <label className="text-sm font-medium text-gray-600">Department</label>
-                      <p className="text-gray-900">{user.department}</p>
+                      <p className="text-gray-900">{practitioner.department}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">Supervisor</label>
-                      <p className="text-gray-900">{user.supervisor}</p>
+                      <p className="text-gray-900">{practitioner.supervisor}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">License Number</label>
-                      <p className="text-gray-900">{user.licenseNumber}</p>
+                      <p className="text-gray-900">{practitioner.licenseNumber}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-600">NPI Number</label>
-                      <p className="text-gray-900">{user.npi}</p>
+                      <p className="text-gray-900">{practitioner.npi}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Specialties */}
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Stethoscope className="w-5 h-5" />
+                      Areas of Specialty
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {practitioner.specialties.map((specialty: string, index: number) => (
+                        <Badge key={index} variant="outline" className="px-3 py-1">
+                          {specialty}
+                        </Badge>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -222,15 +312,16 @@ export default function UserProfilePage() {
                 {/* Qualifications */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Qualifications</CardTitle>
-                    <CardDescription>Professional certifications and qualifications</CardDescription>
+                    <CardTitle>Qualifications & Certifications</CardTitle>
+                    <CardDescription>Professional certifications and educational background</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {user.qualifications.map((qual: any, index: number) => (
+                      {practitioner.qualifications.map((qual: any, index: number) => (
                         <div key={index} className="border rounded-lg p-4">
                           <h4 className="font-semibold text-gray-900">{qual.name}</h4>
                           <p className="text-sm text-gray-600">{qual.level}</p>
+                          <p className="text-xs text-gray-500 mt-1">{qual.institution}</p>
                           <p className="text-xs text-gray-500">Obtained: {new Date(qual.date).toLocaleDateString()}</p>
                         </div>
                       ))}
@@ -238,17 +329,17 @@ export default function UserProfilePage() {
                   </CardContent>
                 </Card>
 
-                {/* Services */}
+                {/* Authorized Services */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Authorized Services</CardTitle>
-                    <CardDescription>Services this practitioner can provide</CardDescription>
+                    <CardDescription>Services this practitioner is qualified to provide</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {user.services.map((service: any, index: number) => (
+                      {practitioner.services.map((service: any, index: number) => (
                         <div key={index} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start">
+                          <div className="flex justify-between items-start mb-2">
                             <div>
                               <h4 className="font-semibold text-gray-900">{service.name}</h4>
                               <p className="text-sm text-gray-600">Code: {service.code}</p>
@@ -257,6 +348,8 @@ export default function UserProfilePage() {
                               {service.billable ? "Billable" : "Non-billable"}
                             </Badge>
                           </div>
+                          <p className="text-sm text-gray-600 mb-1">{service.description}</p>
+                          <p className="text-xs text-gray-500">Rate: {service.rate}</p>
                         </div>
                       ))}
                     </div>
@@ -269,7 +362,7 @@ export default function UserProfilePage() {
             <TabsContent value="caseload" className="mt-0">
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Caseload</CardTitle>
+                  <CardTitle>Current Caseload ({practitioner.caseload.length} Students)</CardTitle>
                   <CardDescription>Students currently assigned to this practitioner</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -277,23 +370,25 @@ export default function UserProfilePage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-gray-50">
-                          <TableHead className="font-semibold">Student Name</TableHead>
+                          <TableHead className="font-semibold">Student</TableHead>
                           <TableHead className="font-semibold">Grade</TableHead>
-                          <TableHead className="font-semibold">IEP Date</TableHead>
-                          <TableHead className="font-semibold">Next Review</TableHead>
+                          <TableHead className="font-semibold">Primary Goal</TableHead>
+                          <TableHead className="font-semibold">Frequency</TableHead>
+                          <TableHead className="font-semibold">Last Session</TableHead>
+                          <TableHead className="font-semibold">IEP Review</TableHead>
                           <TableHead className="font-semibold">Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {user.caseload.map((student: any, index: number) => (
+                        {practitioner.caseload.map((student: any, index: number) => (
                           <TableRow key={index} className="hover:bg-gray-50">
-                            <TableCell className="font-medium">
-                              <Link href={`/manage-students/${student.studentId || 1}`} className="text-teal-600 hover:underline">
-                                {student.studentName}
-                              </Link>
-                            </TableCell>
+                            <TableCell className="font-medium">{student.studentName}</TableCell>
                             <TableCell>{student.grade}</TableCell>
-                            <TableCell>{new Date(student.iepDate).toLocaleDateString()}</TableCell>
+                            <TableCell className="max-w-48">
+                              <p className="truncate" title={student.primaryGoal}>{student.primaryGoal}</p>
+                            </TableCell>
+                            <TableCell>{student.sessionFrequency}</TableCell>
+                            <TableCell>{new Date(student.lastSession).toLocaleDateString()}</TableCell>
                             <TableCell>{new Date(student.nextReview).toLocaleDateString()}</TableCell>
                             <TableCell>
                               <Badge className={getCaseloadStatusBadge(student.status)}>

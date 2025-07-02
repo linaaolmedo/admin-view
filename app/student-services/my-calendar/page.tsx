@@ -1,9 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Filter, ArrowLeft, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 
 type Appointment = {
   id: number
@@ -325,7 +329,11 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
                             </span>
                           </td>
                           <td className="px-4 py-2 text-sm text-gray-900">{student.ssid}</td>
-                          <td className="px-4 py-2 text-sm text-gray-900">{student.name}</td>
+                          <td className="px-4 py-2 text-sm text-gray-900">
+                            <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
+                              {student.name}
+                            </Link>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -369,43 +377,38 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
 }
 
 export default function MyCalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 3, 22)) // April 2025, 22nd selected
-  const [selectedDate, setSelectedDate] = useState(22)
+  const [month, setMonth] = useState(3) // April
+  const [year, setYear] = useState(2025)
+  const [selectedDate, setSelectedDate] = useState<number | null>(null)
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [hideWeekends, setHideWeekends] = useState(false)
 
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
-
-  const firstDayOfMonth = new Date(year, month, 1)
-  const lastDayOfMonth = new Date(year, month + 1, 0)
-  const daysInMonth = lastDayOfMonth.getDate()
-  const startingDayOfWeek = firstDayOfMonth.getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const startingDayOfWeek = new Date(year, month, 1).getDay()
 
   const prevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1))
+    if (month === 0) {
+      setMonth(11)
+      setYear(year - 1)
+    } else {
+      setMonth(month - 1)
+    }
+    setSelectedDate(null)
   }
 
   const nextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1))
+    if (month === 11) {
+      setMonth(0)
+      setYear(year + 1)
+    } else {
+      setMonth(month + 1)
+    }
+    setSelectedDate(null)
   }
 
   const getAppointmentsForDate = (day: number): Appointment[] => {
-    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    return mockAppointments.filter(apt => apt.date === dateString).map(apt => ({
-      ...apt,
-      // Update color based on actual status
-      color: (() => {
-        const status = getActualAppointmentStatus(apt)
-        switch (status) {
-          case 'complete': return 'bg-green-200 text-green-800'
-          case 'incomplete': return 'bg-yellow-200 text-yellow-800'
-          case 'cancelled': return 'bg-red-200 text-red-800'
-          case 'upcoming': return 'bg-teal-200 text-teal-800'
-          default: return 'bg-gray-200 text-gray-800'
-        }
-      })()
-    }))
+    const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    return mockAppointments.filter(apt => apt.date === date)
   }
 
   const handleAppointmentClick = (appointment: Appointment) => {
@@ -421,29 +424,27 @@ export default function MyCalendarPage() {
       for (let i = 0; i < startingDayOfWeek; i++) {
         const prevMonthDay = new Date(year, month, 0).getDate() - startingDayOfWeek + i + 1
         days.push(
-          <div key={`prev-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+          <div key={`prev-${i}`} className="h-[140px] p-3 text-gray-400 border-r border-b bg-gray-50/50">
             <div className="text-sm">{prevMonthDay}</div>
           </div>
         )
       }
     } else {
-      // For weekdays only, adjust starting position (0=Mon, 1=Tue, etc.)
+      // For weekdays only, adjust starting position
       const adjustedStartingDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1
       const weekdayStartingDay = adjustedStartingDay > 4 ? 0 : adjustedStartingDay
       for (let i = 0; i < weekdayStartingDay; i++) {
         const prevMonthDate = new Date(year, month, 0)
         let prevMonthDay = prevMonthDate.getDate() - weekdayStartingDay + i + 1
         
-        // Find the corresponding weekday in the previous month
         const prevMonthDayOfWeek = new Date(year, month - 1, prevMonthDay).getDay()
         if (prevMonthDayOfWeek === 0 || prevMonthDayOfWeek === 6) {
-          // Skip weekends, adjust to previous weekday
-          if (prevMonthDayOfWeek === 0) prevMonthDay -= 2 // Sunday -> Friday
-          if (prevMonthDayOfWeek === 6) prevMonthDay -= 1 // Saturday -> Friday
+          if (prevMonthDayOfWeek === 0) prevMonthDay -= 2
+          if (prevMonthDayOfWeek === 6) prevMonthDay -= 1
         }
         
         days.push(
-          <div key={`prev-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+          <div key={`prev-${i}`} className="h-[140px] p-3 text-gray-400 border-r border-b bg-gray-50/50">
             <div className="text-sm">{prevMonthDay}</div>
           </div>
         )
@@ -454,7 +455,6 @@ export default function MyCalendarPage() {
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDayOfWeek = new Date(year, month, day).getDay()
       
-      // Skip weekends if hideWeekends is true
       if (hideWeekends && (currentDayOfWeek === 0 || currentDayOfWeek === 6)) {
         continue
       }
@@ -466,28 +466,28 @@ export default function MyCalendarPage() {
       days.push(
         <div 
           key={day} 
-          className={`h-32 p-1 border-r border-b cursor-pointer hover:bg-gray-50 ${
-            isSelected ? 'bg-teal-50' : 'bg-white'
+          className={`h-[140px] p-3 border-r border-b cursor-pointer transition-colors overflow-y-auto ${
+            isSelected ? 'bg-teal-50 hover:bg-teal-100' : 'bg-white hover:bg-gray-50'
           }`}
           onClick={() => setSelectedDate(day)}
         >
-          <div className={`text-sm font-medium mb-1 ${
-            isSelected ? 'text-teal-600' : isToday ? 'font-bold' : 'text-gray-900'
+          <div className={`text-sm font-medium mb-2 sticky top-0 bg-inherit ${
+            isSelected ? 'text-teal-700' : isToday ? 'text-teal-600' : 'text-gray-900'
           }`}>
             {day}
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {appointments.map((apt) => (
               <div
                 key={apt.id}
-                className={`text-xs px-1 py-0.5 rounded text-center truncate cursor-pointer hover:opacity-80 ${apt.color}`}
+                className={`text-xs px-2.5 py-2 rounded-md text-left truncate cursor-pointer transition-opacity hover:opacity-80 ${apt.color}`}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleAppointmentClick(apt)
                 }}
               >
-                <div className="font-medium">{apt.title}</div>
-                <div>{apt.time}</div>
+                <div className="font-medium truncate">{apt.title}</div>
+                <div className="text-[10px] opacity-90">{apt.time}</div>
               </div>
             ))}
           </div>
@@ -495,14 +495,14 @@ export default function MyCalendarPage() {
       )
     }
 
-    // Fill remaining cells if needed (only for standard 7-day view)
+    // Fill remaining cells
     if (!hideWeekends) {
-      const totalCells = Math.ceil((startingDayOfWeek + daysInMonth) / 7) * 7
+      const totalCells = Math.ceil((startingDayOfWeek + daysInMonth) / colsPerWeek) * colsPerWeek
       const remainingCells = totalCells - (startingDayOfWeek + daysInMonth)
       
       for (let i = 1; i <= remainingCells; i++) {
         days.push(
-          <div key={`next-${i}`} className="h-32 p-1 text-gray-400 border-r border-b bg-gray-50">
+          <div key={`next-${i}`} className="h-[140px] p-3 text-gray-400 border-r border-b bg-gray-50/50">
             <div className="text-sm">{i}</div>
           </div>
         )
@@ -514,92 +514,64 @@ export default function MyCalendarPage() {
 
   return (
     <TooltipProvider>
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-gray-900">My Calendar</h1>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-1 h-6 w-6">
-                  <Info className="h-4 w-4 text-gray-500" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="max-w-xs">
-                <div className="space-y-2">
-                  <div className="grid gap-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded bg-yellow-200 border border-yellow-300"></div>
-                      <span className="text-xs">Past appointment - needs notes</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded bg-teal-200 border border-teal-300"></div>
-                      <span className="text-xs">Upcoming appointment</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded bg-green-200 border border-green-300"></div>
-                      <span className="text-xs">Past appointment - completed</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded bg-red-200 border border-red-300"></div>
-                      <span className="text-xs">Past appointment - cancelled</span>
-                    </div>
-                  </div>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
-
-        <div className="space-y-4">
+      <div className="h-[calc(100vh-12rem)] flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Calendar */}
-      <div className="border rounded-lg bg-white">
-        {/* Calendar Header */}
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-4">
-            <CalendarIcon className="h-5 w-5" />
-            <h2 className="text-lg font-semibold">
-              {monthNames[month]} {year}
-            </h2>
-            <div className="flex gap-1">
-              <Button variant="outline" size="sm" onClick={prevMonth}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={nextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+          <div className="flex-1 border rounded-lg bg-white flex flex-col shadow-sm overflow-hidden">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <CalendarIcon className="h-5 w-5 text-gray-500" />
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {monthNames[month]} {year}
+                  </h2>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="icon" onClick={prevMonth}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={nextMonth}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setHideWeekends(!hideWeekends)}
+                  className={hideWeekends ? "bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100" : ""}
+                >
+                  {hideWeekends ? "Show Weekends" : "Hide Weekends"}
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter
+                </Button>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setHideWeekends(!hideWeekends)}
-              className={hideWeekends ? "bg-teal-50 border-teal-300 text-teal-700" : ""}
-            >
-              {hideWeekends ? "Show Weekends" : "Hide Weekends"}
-            </Button>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-          </div>
-        </div>
 
-        {/* Calendar Grid */}
-        <div className={`grid ${hideWeekends ? 'grid-cols-5' : 'grid-cols-7'}`}>
-          {/* Day headers */}
-          {(hideWeekends ? dayNames.slice(1, 6) : dayNames).map((day) => (
-            <div key={day} className="p-3 text-center font-medium text-gray-600 border-b bg-gray-50">
-              {day}
+            {/* Calendar Grid Container */}
+            <div className="flex-1 overflow-auto">
+              <div className="h-full flex flex-col min-h-[800px]">
+                {/* Day headers - Sticky */}
+                <div className={`grid ${hideWeekends ? 'grid-cols-5' : 'grid-cols-7'} sticky top-0 z-10 bg-white`}>
+                  {(hideWeekends ? dayNames.slice(1, 6) : dayNames).map((day) => (
+                    <div key={day} className="py-3 text-center font-medium text-gray-500 border-b bg-gray-50/50 text-sm">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Calendar days - Scrollable */}
+                <div className={`grid ${hideWeekends ? 'grid-cols-5' : 'grid-cols-7'} flex-1`}>
+                  {renderCalendarDays()}
+                </div>
+              </div>
             </div>
-          ))}
-          
-          {/* Calendar days */}
-          {renderCalendarDays()}
-        </div>
-      </div>
+          </div>
 
           {/* Service Log Details Modal */}
           {selectedAppointment && (

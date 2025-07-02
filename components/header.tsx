@@ -71,35 +71,33 @@ export function Header() {
   }
 
   return (
-    <header className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white px-6 py-4 flex items-center justify-between w-full shadow-sm">
+    <header className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white px-6 py-2 flex items-center justify-between w-full shadow-sm fixed top-0 left-0 right-0 z-50">
       <Link href="/dashboard" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
         <Image
           src="/EDUClaim_Horz_White.png"
           alt="EDUclaim - Powered by Kern Integrated Data Systems"
           width={400}
           height={100}
-          className="h-16 w-auto"
+          className="h-12 w-auto"
           priority
         />
       </Link>
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-3 text-white hover:bg-white/20 h-auto py-2 px-3">
-            <div className="flex items-center space-x-2">
+          <Button variant="ghost" className="flex flex-col items-center gap-1 text-white hover:bg-white/20 h-auto py-2 px-3">
+            <div className="flex items-center gap-2">
               {accountType && getAccountTypeIcon(accountType)}
-              <div className="flex flex-col items-start">
-                <span className="text-sm font-medium">{userEmail}</span>
-                {accountType && (
-                  <Badge 
-                    variant="outline" 
-                    className={`text-xs mt-1 ${getAccountTypeBadge(accountType)} bg-white/90 border`}
-                  >
-                    {getAccountTypeLabel(accountType)}
-                  </Badge>
-                )}
-              </div>
+              <span className="text-sm font-medium">{userEmail}</span>
             </div>
+            {accountType && (
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${getAccountTypeBadge(accountType)} bg-white/90 border`}
+              >
+                {getAccountTypeLabel(accountType)}
+              </Badge>
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">

@@ -17,6 +17,7 @@ import {
   Building2,
   Calendar,
   UserCheck,
+  Shield,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -128,7 +129,7 @@ export function Sidebar() {
 
     switch (accountType) {
       case "administrator":
-        return ["claims", "manageUsers", "manageStudents", "reports", "configurations"]
+        return ["adminDashboard", "claims", "manageUsers", "manageStudents", "reports", "configurations"]
       case "supervisor":
         return ["logService", "caseload", "studentServices", "assignedPractitioners", "reports"]
       case "practitioner":
@@ -156,6 +157,33 @@ export function Sidebar() {
       </div>
       
       <nav className={`${isCollapsed ? 'px-2' : 'px-4'} flex-1 space-y-2 overflow-y-auto`}>
+        {/* Team Management - Only for Administrators */}
+        {visibleItems.includes("adminDashboard") && (
+          <div>
+            {isCollapsed ? (
+              <Link
+                href="/administrator"
+                className={`flex items-center justify-center p-3 rounded transition-colors ${
+                  pathname.startsWith("/administrator") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                }`}
+                title="Team Management"
+              >
+                <Shield className="w-5 h-5" />
+              </Link>
+            ) : (
+              <Link
+                href="/administrator"
+                className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+                  pathname.startsWith("/administrator") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                }`}
+              >
+                <Shield className="w-5 h-5" />
+                <span>Team Management</span>
+              </Link>
+            )}
+          </div>
+        )}
+
         {/* Claims Dropdown - Only for Administrators */}
         {visibleItems.includes("claims") && (
           <div>

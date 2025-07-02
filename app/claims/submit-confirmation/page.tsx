@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { ArrowLeft, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -90,7 +91,7 @@ export default function SubmitConfirmationPage() {
         <Button variant="ghost" size="icon" onClick={handleCancel}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <h1 className="text-2xl font-bold text-[#000000]">
+        <h1 className="text-2xl font-bold text-teal-800">
           Are you sure you'd like to submit these claims for billing?
         </h1>
       </div>
@@ -128,10 +129,18 @@ export default function SubmitConfirmationPage() {
                         {claim.serviceDate}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-[#000000]">{claim.claimNumber}</td>
+                    <td className="py-3 px-4 text-[#000000]">
+                      <Link href={`/claims/${claim.claimNumber}`} className="text-teal-600 hover:underline">
+                        {claim.claimNumber}
+                      </Link>
+                    </td>
                     <td className="py-3 px-4 text-[#000000]">{claim.district}</td>
                     <td className="py-3 px-4 text-[#000000]">{claim.ssid}</td>
-                    <td className="py-3 px-4 text-[#000000]">{claim.studentName}</td>
+                    <td className="py-3 px-4 text-[#000000]">
+                      <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
+                        {claim.studentName}
+                      </Link>
+                    </td>
                     <td className="py-3 px-4 text-[#000000] font-medium">{claim.billedAmount}</td>
                     <td className="py-3 px-4">
                       <Button variant="ghost" size="icon">

@@ -232,8 +232,8 @@ export default function QualificationsReportPage() {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-[#000000]">Expiring Qualifications Report</h1>
-            <p className="text-sm text-[#787878] mt-1">Qualifications expiring within 60 days or already expired</p>
+            <h1 className="text-2xl font-bold text-teal-800">Expiring Qualifications Report</h1>
+                          <p className="text-sm text-slate-600 mt-1">Qualifications expiring within 60 days or already expired</p>
           </div>
         </div>
         <Button onClick={exportToCSV} variant="outline" className="flex items-center gap-2">

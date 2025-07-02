@@ -121,7 +121,7 @@ export default function ManageUsersPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Manage Users</h1>
         <Button onClick={handleAddUser} className="bg-teal-600 hover:bg-teal-700">
           <UserPlus className="w-4 h-4 mr-2" />
           Add User
@@ -129,37 +129,25 @@ export default function ManageUsersPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-auto">
-          <TabsTrigger value="all" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            All Users ({getTabCount("all")})
-          </TabsTrigger>
-          <TabsTrigger value="practitioners" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Practitioners ({getTabCount("practitioner")})
-          </TabsTrigger>
-          <TabsTrigger value="supervisors" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Supervisors ({getTabCount("supervisor")})
-          </TabsTrigger>
-          <TabsTrigger value="administrators" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Administrators ({getTabCount("administrator")})
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="mt-6">
-          {/* Filters and Search */}
-          <div className="flex justify-end items-center gap-4 mb-4">
-            {activeTab === "all" && (
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="practitioner">Practitioner</SelectItem>
-                  <SelectItem value="supervisor">Supervisor</SelectItem>
-                  <SelectItem value="administrator">Administrator</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-            
+        {/* Tabs and Controls Row */}
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="all">
+              All Users ({getTabCount("all")})
+            </TabsTrigger>
+            <TabsTrigger value="practitioners">
+              Practitioners ({getTabCount("practitioner")})
+            </TabsTrigger>
+            <TabsTrigger value="supervisors">
+              Supervisors ({getTabCount("supervisor")})
+            </TabsTrigger>
+            <TabsTrigger value="administrators">
+              Administrators ({getTabCount("administrator")})
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Search and Filter Controls */}
+          <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -175,6 +163,9 @@ export default function ManageUsersPage() {
               Filter
             </Button>
           </div>
+        </div>
+        
+        <TabsContent value={activeTab} className="mt-6">
 
           {/* Users Table */}
           <div className="border rounded-lg">

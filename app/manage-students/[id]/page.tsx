@@ -815,103 +815,134 @@ const mockStudentData = {
 }
 
 export default function StudentProfilePage() {
-  const [activeTab, setActiveTab] = useState("demographic")
   const router = useRouter()
   const params = useParams()
+  const [activeTab, setActiveTab] = useState("about")
   const studentId = params.id as string
-  
-  // In a real app, you'd fetch this data based on the ID
   const student = mockStudentData[parseInt(studentId) as keyof typeof mockStudentData]
-  
-  if (!student) {
-    return (
-      <div className="p-6">
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => router.back()}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h1 className="text-2xl font-bold text-[#000000]">Student Not Found</h1>
-        </div>
-      </div>
-    )
-  }
 
   const handleScheduleService = () => {
-    // Navigate to schedule service page with student pre-selected
-    router.push(`/caseload/schedule-service?studentId=${studentId}`)
+    router.push(`/student-services/schedule-service?studentId=${studentId}`)
+  }
+
+  // Smooth scroll to section with offset
+  const scrollToSection = (sectionId: string) => {
+    setActiveTab(sectionId)
+    
+    const element = document.getElementById(sectionId)
+    if (element) {
+      const yOffset = -128 // Offset to account for header and sticky nav
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  if (!student) {
+    return <div>Student not found</div>
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
+    <div className="min-h-screen bg-white">
+      {/* Profile Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => router.back()}
+              className="mr-4"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <h1 className="text-2xl font-bold text-teal-800">Student Profile</h1>
+          </div>
           <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => router.back()}
-            className="mr-4"
+            onClick={handleScheduleService}
+            className="bg-teal-600 hover:bg-teal-700"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <Calendar className="w-4 h-4 mr-2" />
+            Schedule service
           </Button>
-          <h1 className="text-2xl font-bold text-[#000000]">Student Profile</h1>
         </div>
-        <Button 
-          onClick={handleScheduleService}
-          className="bg-teal-600 hover:bg-teal-700"
-        >
-          <Calendar className="w-4 h-4 mr-2" />
-          Schedule service
-        </Button>
       </div>
 
-      <div className="flex items-center mb-6">
-        <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center mr-4">
-          <User className="w-6 h-6 text-white" />
+      {/* Student Info Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center">
+          <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center mr-4">
+            <User className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-teal-800">
+              {student.firstName} {student.lastName}
+            </h2>
+            <p className="text-gray-600">SSID: {student.ssid}</p>
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-[#000000]">
-          {student.firstName} {student.lastName}
-        </h2>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-auto mb-8">
-          <TabsTrigger 
-            value="demographic" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
-            Demographic
-          </TabsTrigger>
-          <TabsTrigger 
-            value="medical" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
-            Medical
-          </TabsTrigger>
-          <TabsTrigger 
-            value="service-log" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
-            Service Log History
-          </TabsTrigger>
-          <TabsTrigger 
-            value="enrollment" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
-            Enrollment History
-          </TabsTrigger>
-        </TabsList>
+      {/* Horizontal Navigation */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8 overflow-x-auto scrollbar-hide pb-px">
+            <button
+              onClick={() => scrollToSection("about")}
+              className={`flex-shrink-0 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === "about"
+                  ? 'text-teal-600 border-b-2 border-teal-600'
+                  : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
+              }`}
+            >
+              About
+            </button>
+            <button
+              onClick={() => scrollToSection("medical")}
+              className={`flex-shrink-0 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === "medical"
+                  ? 'text-teal-600 border-b-2 border-teal-600'
+                  : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
+              }`}
+            >
+              Medical
+            </button>
+            <button
+              onClick={() => scrollToSection("service-log")}
+              className={`flex-shrink-0 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === "service-log"
+                  ? 'text-teal-600 border-b-2 border-teal-600'
+                  : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
+              }`}
+            >
+              Service Log History
+            </button>
+            <button
+              onClick={() => scrollToSection("enrollment")}
+              className={`flex-shrink-0 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                activeTab === "enrollment"
+                  ? 'text-teal-600 border-b-2 border-teal-600'
+                  : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
+              }`}
+            >
+              Enrollment History
+            </button>
+          </div>
+        </div>
+      </div>
 
-        <TabsContent value="demographic" className="space-y-6">
-          <Card className="bg-teal-600 text-white">
-            <CardHeader>
-              <CardTitle className="text-white">Demographic</CardTitle>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* About Section */}
+        <section id="about" className="scroll-mt-32">
+          <Card className="mb-6">
+            <CardHeader className="bg-teal-600 text-white">
+              <CardTitle className="text-white">About</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <div className="text-sm opacity-80">Local ID</div>
@@ -969,58 +1000,15 @@ export default function StudentProfilePage() {
               </div>
             </CardContent>
           </Card>
+        </section>
 
-          <Card className="bg-teal-600 text-white">
-            <CardHeader>
-              <CardTitle className="text-white">Billing</CardTitle>
+        {/* Medical Section */}
+        <section id="medical" className="scroll-mt-32">
+          <Card className="mb-6">
+            <CardHeader className="bg-teal-600 text-white">
+              <CardTitle className="text-white">Medical Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div>
-                  <div className="text-sm opacity-80">Primary</div>
-                  <div className="font-semibold">{student.billing.primary}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Insurance Carrier</div>
-                  <div className="font-semibold">{student.billing.insuranceCarrier}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Group ID</div>
-                  <div className="font-semibold">{student.billing.groupId}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Policy ID</div>
-                  <div className="font-semibold">{student.billing.policyId}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Effective Date</div>
-                  <div className="font-semibold">{student.billing.effectiveDate}</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <div className="text-sm opacity-80">Medicaid Eligible</div>
-                  <div className="font-semibold">{student.billing.medicaidEligible}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Medicaid Benefits ID</div>
-                  <div className="font-semibold">{student.billing.medicaidBenefitsId}</div>
-                </div>
-                <div>
-                  <div className="text-sm opacity-80">Copay ID</div>
-                  <div className="font-semibold">{student.billing.copayId}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="medical" className="space-y-6">
-          <Card className="bg-teal-600 text-white">
-            <CardHeader>
-              <CardTitle className="text-white">Medical</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <div className="text-sm opacity-80">Primary Disability</div>
@@ -1059,14 +1047,15 @@ export default function StudentProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </section>
 
-        <TabsContent value="service-log" className="space-y-6">
-          <Card className="bg-teal-600 text-white">
-            <CardHeader>
+        {/* Service Log Section */}
+        <section id="service-log" className="scroll-mt-32">
+          <Card className="mb-6">
+            <CardHeader className="bg-teal-600 text-white">
               <CardTitle className="text-white">Service Log History</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="bg-white rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
@@ -1095,14 +1084,15 @@ export default function StudentProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </section>
 
-        <TabsContent value="enrollment" className="space-y-6">
-          <Card className="bg-teal-600 text-white">
-            <CardHeader>
+        {/* Enrollment Section */}
+        <section id="enrollment" className="scroll-mt-32">
+          <Card className="mb-6">
+            <CardHeader className="bg-teal-600 text-white">
               <CardTitle className="text-white">Enrollment History</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="bg-white rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
@@ -1129,8 +1119,8 @@ export default function StudentProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </section>
+      </div>
     </div>
   )
 } 

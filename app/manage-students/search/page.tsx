@@ -54,7 +54,7 @@ export default function SearchStudentsPage() {
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-2xl font-bold text-[#000000]">Search for student</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Search for student</h1>
       </div>
 
       {/* Search Form */}

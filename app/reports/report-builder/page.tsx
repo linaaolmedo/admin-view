@@ -116,7 +116,7 @@ export default function ReportBuilderPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-[#000000]">Report Builder</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Report Builder</h1>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={saveReportTemplate} disabled={!reportName || !reportType}>
             <Save className="w-4 h-4 mr-2" />
@@ -130,23 +130,14 @@ export default function ReportBuilderPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 w-auto">
-          <TabsTrigger 
-            value="builder" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+        <TabsList>
+          <TabsTrigger value="builder">
             Report Builder
           </TabsTrigger>
-          <TabsTrigger 
-            value="templates"
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+          <TabsTrigger value="templates">
             Saved Templates
           </TabsTrigger>
-          <TabsTrigger 
-            value="history"
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+          <TabsTrigger value="history">
             Report History
           </TabsTrigger>
         </TabsList>

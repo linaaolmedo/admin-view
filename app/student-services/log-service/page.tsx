@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -46,6 +47,7 @@ const serviceLocations = [
 
 export default function LogServicePage() {
   const [activeTab, setActiveTab] = useState("student")
+  const router = useRouter()
   const [formData, setFormData] = useState({
     student: "",
     group: "",
@@ -67,23 +69,18 @@ export default function LogServicePage() {
   const handleSave = () => {
     console.log("Saving service log:", formData)
     // In a real app, this would save to the backend
-    alert("Service logged successfully!")
+    // Redirect to all services page
+    router.push("/student-services/all-services")
   }
 
   return (
     <div className="max-w-4xl">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 w-auto mb-6">
-          <TabsTrigger 
-            value="student" 
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+        <TabsList className="mb-6">
+          <TabsTrigger value="student">
             Student
           </TabsTrigger>
-          <TabsTrigger 
-            value="group"
-            className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-          >
+          <TabsTrigger value="group">
             Group
           </TabsTrigger>
         </TabsList>

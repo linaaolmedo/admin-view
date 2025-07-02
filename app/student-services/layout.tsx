@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MoreHorizontal } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info, Calendar, List } from "lucide-react"
 
 type AccountType = "administrator" | "practitioner" | "supervisor"
 
@@ -66,47 +67,32 @@ export default function StudentServicesLayout({
   }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Student Services</h1>
-        
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            className="text-teal-600 border-teal-600 hover:bg-teal-50"
-            asChild
-          >
-            <Link href="/student-services/log-service">Log service</Link>
-          </Button>
-          <Button 
-            className="bg-teal-600 hover:bg-teal-700"
-            asChild
-          >
-            <Link href="/student-services/schedule-service">Schedule service</Link>
-          </Button>
-          <Button variant="outline" size="icon">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+    <TooltipProvider>
+    <div className="container-content">
+      <Tabs defaultValue="all-services" className="w-full">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-teal-800">Student Services</h1>
         </div>
-      </div>
 
-      <Tabs value={getActiveTab()} onValueChange={handleTabChange} className="w-full">
-        <TabsList className={`grid w-auto ${navigation.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-          {navigation.map((item) => (
-            <TabsTrigger 
-              key={item.value}
-              value={item.value} 
-              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-            >
-              {item.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="w-full sm:w-auto">
+            {navigation.map((item) => (
+              <TabsTrigger 
+                key={item.value}
+                value={item.value}
+                className="whitespace-nowrap"
+              >
+                {item.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
         
-        <div className="mt-6">
+        <div className="mt-6 overflow-x-hidden">
           {children}
         </div>
       </Tabs>
     </div>
+    </TooltipProvider>
   )
 } 

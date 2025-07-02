@@ -113,7 +113,7 @@ export default function ManageStudentsPage() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Students</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Manage Students</h1>
         <div className="flex gap-3">
           <Button onClick={handleIndividualAdd} variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white">
             Individually Add
@@ -126,21 +126,22 @@ export default function ManageStudentsPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 w-auto">
-          <TabsTrigger value="all" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            All Students ({getTabCount("all")})
-          </TabsTrigger>
-          <TabsTrigger value="active" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Active ({getTabCount("active")})
-          </TabsTrigger>
-          <TabsTrigger value="inactive" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Inactive ({getTabCount("inactive")})
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="mt-6">
-          {/* Filters and Search */}
-          <div className="flex justify-end items-center gap-4 mb-4">
+        {/* Tabs and Controls Row */}
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="all">
+              All Students ({getTabCount("all")})
+            </TabsTrigger>
+            <TabsTrigger value="active">
+              Active ({getTabCount("active")})
+            </TabsTrigger>
+            <TabsTrigger value="inactive">
+              Inactive ({getTabCount("inactive")})
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Search and Filter Controls */}
+          <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -156,6 +157,9 @@ export default function ManageStudentsPage() {
               Filter
             </Button>
           </div>
+        </div>
+        
+        <TabsContent value={activeTab} className="mt-6">
 
           {/* Students Table */}
           <div className="border rounded-lg">

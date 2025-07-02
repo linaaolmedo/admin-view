@@ -48,7 +48,7 @@ export default function ScheduleServicePage() {
       serviceType,
       serviceLocation
     })
-    router.push("/caseload")
+    router.push("/student-services/all-services")
   }
 
   return (
@@ -62,22 +62,16 @@ export default function ScheduleServicePage() {
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-2xl font-bold text-[#000000]">Schedule Services</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Schedule Services</h1>
       </div>
 
       <div className="max-w-6xl mx-auto">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 w-auto mb-8">
-            <TabsTrigger 
-              value="student" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
-            >
+          <TabsList className="mb-8">
+            <TabsTrigger value="student">
               Student
             </TabsTrigger>
-            <TabsTrigger 
-              value="group" 
-              className="data-[state=active]:bg-[#4286f4] data-[state=active]:text-white"
-            >
+            <TabsTrigger value="group">
               Group
             </TabsTrigger>
           </TabsList>

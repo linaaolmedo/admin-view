@@ -55,25 +55,27 @@ export default function ConfigurationsLayout({
   }
 
   return (
-    <div className="p-6">
+    <div className="container-content">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Configurations</h1>
+        <h1 className="text-2xl font-bold text-teal-800">Configurations</h1>
       </div>
 
       <Tabs value={getActiveTab()} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid grid-cols-3 w-auto">
-          {navigation.map((item) => (
-            <TabsTrigger 
-              key={item.value}
-              value={item.value} 
-              className="data-[state=active]:bg-teal-600 data-[state=active]:text-white"
-            >
-              {item.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="w-full sm:w-auto">
+            {navigation.map((item) => (
+              <TabsTrigger 
+                key={item.value}
+                value={item.value}
+                className="whitespace-nowrap"
+              >
+                {item.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
         
-        <div className="mt-6">
+        <div className="mt-6 overflow-x-hidden">
           {children}
         </div>
       </Tabs>

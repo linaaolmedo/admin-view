@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 
 // Mock claims data for different tabs
 const mockClaims = {
@@ -24,7 +25,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -36,7 +36,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -48,7 +47,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -60,7 +58,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -72,7 +69,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -84,7 +80,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -96,7 +91,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -108,7 +102,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -120,7 +113,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -132,7 +124,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -144,7 +135,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -156,7 +146,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
     {
@@ -168,7 +157,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
     },
   ],
@@ -183,7 +171,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -197,7 +184,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -211,7 +197,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -225,7 +210,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -239,7 +223,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -253,7 +236,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -267,7 +249,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -281,7 +262,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -295,7 +275,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -309,7 +288,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -323,7 +301,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -337,7 +314,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -351,7 +327,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "49151059",
       billedAmount: "$120.00",
       paidAmount: "$120.00",
     },
@@ -365,7 +340,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -377,7 +351,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -389,7 +362,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -401,7 +373,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -413,7 +384,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -425,7 +395,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -437,7 +406,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -449,7 +417,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -461,7 +428,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -473,7 +439,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -485,7 +450,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -497,7 +461,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -509,7 +472,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       billedAmount: "$120.00",
       selected: false,
     },
@@ -523,7 +485,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -534,7 +495,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing prescription",
     },
     {
@@ -545,7 +505,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -556,7 +515,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -567,7 +525,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing prescription",
     },
     {
@@ -578,7 +535,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing prescription",
     },
     {
@@ -589,7 +545,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -600,7 +555,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing SSID",
     },
     {
@@ -611,7 +565,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing prescription",
     },
     {
@@ -622,7 +575,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -633,7 +585,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing prescription",
     },
     {
@@ -644,7 +595,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
     {
@@ -655,7 +605,6 @@ const mockClaims = {
       district: "Fruitvale",
       ssid: "43063894",
       studentName: "Greenfield, Samantha",
-      carelonId: "43063894",
       reason: "Missing parental consent",
     },
   ],
@@ -764,15 +713,25 @@ export default function ClaimsPage() {
   }, [searchParams, router])
 
   const getStatusBadge = (status: string) => {
-    const statusStyles = {
-      SUBMITTED: "bg-teal-500 text-white",
-      REJECTED: "bg-orange-500 text-white",
-      PAID: "bg-green-500 text-white",
-      "NEEDS APPROVAL": "bg-yellow-600 text-white",
-      APPROVED: "bg-green-500 text-white",
-      INCOMPLETE: "bg-orange-500 text-white",
+    const statusConfig = {
+      SUBMITTED: { className: "bg-teal-500 text-white", label: "Submitted" },
+      REJECTED: { className: "bg-orange-500 text-white", label: "Rejected" },
+      PAID: { className: "bg-green-500 text-white", label: "Paid" },
+      "NEEDS APPROVAL": { className: "bg-yellow-600 text-white", label: "Needs Approval" },
+      APPROVED: { className: "bg-green-500 text-white", label: "Approved" },
+      INCOMPLETE: { className: "bg-orange-500 text-white", label: "Incomplete" },
     }
-    return statusStyles[status as keyof typeof statusStyles] || "bg-gray-500 text-white"
+
+    const config = statusConfig[status as keyof typeof statusConfig] || { 
+      className: "bg-gray-500 text-white",
+      label: status
+    }
+
+    return (
+      <Badge className={cn("font-medium", config.className)}>
+        {config.label}
+      </Badge>
+    )
   }
 
   const getCurrentData = () => {
@@ -910,297 +869,121 @@ export default function ClaimsPage() {
   }
 
   const renderTableHeaders = () => {
-    switch (activeTab) {
-      case "not-paid":
-        return (
-          <tr className="bg-gray-50">
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("status")}
-            >
-              <div className="flex items-center gap-2">
-                Status
-                {renderSortIcon("status")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("serviceDate")}
-            >
-              <div className="flex items-center gap-2">
-                Service Date
-                {renderSortIcon("serviceDate")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("batchNumber")}
-            >
-              <div className="flex items-center gap-2">
-                Batch #
-                {renderSortIcon("batchNumber")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("claimNumber")}
-            >
-              <div className="flex items-center gap-2">
-                Claim #
-                {renderSortIcon("claimNumber")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("practitioner")}
-            >
-              <div className="flex items-center gap-2">
-                Practitioner
-                {renderSortIcon("practitioner")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("district")}
-            >
-              <div className="flex items-center gap-2">
-                District
-                {renderSortIcon("district")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("ssid")}
-            >
-              <div className="flex items-center gap-2">
-                SSID
-                {renderSortIcon("ssid")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("studentName")}
-            >
-              <div className="flex items-center gap-2">
-                Student Name
-                {renderSortIcon("studentName")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("carelonId")}
-            >
-              <div className="flex items-center gap-2">
-                Carelon ID
-                {renderSortIcon("carelonId")}
-              </div>
-            </th>
-            <th 
-              className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100 transition-colors select-none"
-              onClick={() => handleSort("billedAmount")}
-            >
-              <div className="flex items-center gap-2">
-                Billed Amount
-                {renderSortIcon("billedAmount")}
-              </div>
-            </th>
-          </tr>
-        )
-      case "paid":
-        return (
-          <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Status</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Finalized Date</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Service Date</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Batch #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Claim #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Practitioner</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Student Name</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Carelon ID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Billed Amount</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Paid Amount</th>
-          </tr>
-        )
-      case "ready-to-submit":
-        return (
-          <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">
-              <Checkbox
-                checked={selectedClaims.length === filteredData.length && filteredData.length > 0}
-                onCheckedChange={handleSelectAll}
-              />
-            </th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Status</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Service Date</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Claim #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Practitioner</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Student Name</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Carelon ID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Billed Amount</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]"></th>
-          </tr>
-        )
-      case "incomplete":
-        return (
-          <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Status</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Service Date</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Claim #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Practitioner</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Student Name</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Carelon ID</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Reason</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]"></th>
-          </tr>
-        )
-      case "remittance":
-        return (
-          <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Date Submitted</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Batch #</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Total Claims Submitted</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Claims Paid</th>
-            <th className="text-left py-3 px-4 font-medium text-[#787878]">Denied Claims</th>
-          </tr>
-        )
-      default:
-        return null
-    }
+    const commonHeaders = [
+      { label: "", field: "checkbox", sortable: false },
+      { label: "Status", field: "status", sortable: true },
+      { label: "Service Date", field: "serviceDate", sortable: true },
+      { label: "Batch #", field: "batchNumber", sortable: true },
+      { label: "Claim #", field: "claimNumber", sortable: true },
+      { label: "Practitioner", field: "practitioner", sortable: true },
+      { label: "District", field: "district", sortable: true },
+      { label: "SSID", field: "ssid", sortable: true },
+      { label: "Student Name", field: "studentName", sortable: true },
+      { label: "Billed Amount", field: "billedAmount", sortable: true },
+    ]
+
+    const headers = activeTab === "paid" ? [
+      ...commonHeaders.slice(0, 2),
+      { label: "Finalized Date", field: "finalizedDate", sortable: true },
+      ...commonHeaders.slice(2, -1),
+      { label: "Paid Amount", field: "paidAmount", sortable: true },
+      commonHeaders[commonHeaders.length - 1],
+    ] : commonHeaders
+
+    return (
+      <tr className="bg-gray-50">
+        {headers.map((header) => (
+          <th
+            key={header.field}
+            className={cn(
+              header.field === "checkbox" ? "w-[30px] px-2" : "py-3 px-3 text-left font-semibold text-xs text-gray-600 whitespace-normal break-words min-w-[100px] max-w-[150px]",
+              header.sortable && "cursor-pointer hover:bg-gray-100"
+            )}
+            onClick={() => header.sortable && handleSort(header.field)}
+          >
+            <div className="flex items-center gap-1">
+              {header.label}
+              {header.sortable && renderSortIcon(header.field)}
+            </div>
+          </th>
+        ))}
+      </tr>
+    )
   }
 
   const renderTableRow = (item: any, index: number) => {
-    const isEven = index % 2 === 0
-    const rowClass = isEven ? "bg-white" : "bg-gray-50"
+    const commonCells = [
+      // Checkbox cell
+      <td key="checkbox" className="w-[30px] px-2">
+        <Checkbox
+          checked={selectedClaims.includes(index)}
+          onCheckedChange={() => handleSelectClaim(index)}
+        />
+      </td>,
+      // Status cell
+      <td key="status" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        {getStatusBadge(item.status)}
+      </td>,
+      // Service Date cell
+      <td key="serviceDate" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        {item.serviceDate}
+      </td>,
+      // Batch Number cell
+      <td key="batchNumber" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        <Link href={`/claims/${item.claimNumber}`} className="text-teal-600 hover:underline">
+          {item.batchNumber}
+        </Link>
+      </td>,
+      // Claim Number cell
+      <td key="claimNumber" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        <Link href={`/claims/${item.claimNumber}`} className="text-teal-600 hover:underline">
+          {item.claimNumber}
+        </Link>
+      </td>,
+      // Practitioner cell
+      <td key="practitioner" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        <Link href={`/manage-users/1`} className="text-teal-600 hover:underline">
+          {item.practitioner}
+        </Link>
+      </td>,
+      // District cell
+      <td key="district" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        {item.district}
+      </td>,
+      // SSID cell
+      <td key="ssid" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        {item.ssid}
+      </td>,
+      // Student Name cell
+      <td key="studentName" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
+          {item.studentName}
+        </Link>
+      </td>,
+      // Billed Amount cell
+      <td key="billedAmount" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+        {item.billedAmount}
+      </td>
+    ]
 
-    switch (activeTab) {
-      case "not-paid":
-        return (
-          <tr key={index} className={rowClass}>
-            <td className="py-3 px-4">
-              <Badge className={`${getStatusBadge(item.status)} text-xs font-medium`}>{item.status}</Badge>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.serviceDate}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.batchNumber}</td>
-            <td className="py-3 px-4">
-              <Link 
-                href={`/claims/${item.claimNumber}`}
-                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
-              >
-                {item.claimNumber}
-              </Link>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.practitioner}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.district}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.ssid}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.studentName}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.carelonId}</td>
-            <td className="py-3 px-4 text-[#000000] font-medium">{item.billedAmount}</td>
-          </tr>
-        )
-      case "paid":
-        return (
-          <tr key={index} className={rowClass}>
-            <td className="py-3 px-4">
-              <Badge className={`${getStatusBadge(item.status)} text-xs font-medium`}>{item.status}</Badge>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.finalizedDate}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.serviceDate}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.batchNumber}</td>
-            <td className="py-3 px-4">
-              <Link 
-                href={`/claims/${item.claimNumber}`}
-                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
-              >
-                {item.claimNumber}
-              </Link>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.practitioner}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.district}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.ssid}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.studentName}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.carelonId}</td>
-            <td className="py-3 px-4 text-[#000000] font-medium">{item.billedAmount}</td>
-            <td className="py-3 px-4 text-[#000000] font-medium">{item.paidAmount}</td>
-          </tr>
-        )
-      case "ready-to-submit":
-        return (
-          <tr key={index} className={rowClass}>
-            <td className="py-3 px-4">
-              <Checkbox checked={selectedClaims.includes(index)} onCheckedChange={() => handleSelectClaim(index)} />
-            </td>
-            <td className="py-3 px-4">
-              <Badge className={`${getStatusBadge(item.status)} text-xs font-medium`}>{item.status}</Badge>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.serviceDate}</td>
-            <td className="py-3 px-4">
-              <Link 
-                href={`/claims/${item.claimNumber}`}
-                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
-              >
-                {item.claimNumber}
-              </Link>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.practitioner}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.district}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.ssid}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.studentName}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.carelonId}</td>
-            <td className="py-3 px-4 text-[#000000] font-medium">{item.billedAmount}</td>
-            <td className="py-3 px-4">
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </td>
-          </tr>
-        )
-      case "incomplete":
-        return (
-          <tr key={index} className={rowClass}>
-            <td className="py-3 px-4">
-              <Badge className={`${getStatusBadge(item.status)} text-xs font-medium`}>{item.status}</Badge>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.serviceDate}</td>
-            <td className="py-3 px-4">
-              <Link 
-                href={`/claims/${item.claimNumber}`}
-                className="text-teal-600 hover:text-teal-800 hover:underline font-medium"
-              >
-                {item.claimNumber}
-              </Link>
-            </td>
-            <td className="py-3 px-4 text-[#000000]">{item.practitioner}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.district}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.ssid}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.studentName}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.carelonId}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.reason}</td>
-            <td className="py-3 px-4">
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </td>
-          </tr>
-        )
-      case "remittance":
-        return (
-          <tr key={index} className={rowClass}>
-            <td className="py-3 px-4 text-[#000000]">{item.dateSubmitted}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.batchNumber}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.totalClaimsSubmitted}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.claimsPaid}</td>
-            <td className="py-3 px-4 text-[#000000]">{item.deniedClaims}</td>
-          </tr>
-        )
-      default:
-        return null
+    if (activeTab === "paid") {
+      return (
+        <>
+          {commonCells[0]}{/* Checkbox */}
+          {commonCells[1]}{/* Status */}
+          <td key="finalizedDate" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.finalizedDate}
+          </td>
+          {commonCells.slice(2, -1)}{/* All cells between status and billed amount */}
+          <td key="paidAmount" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.paidAmount}
+          </td>
+          {commonCells[commonCells.length - 1]}{/* Billed amount */}
+        </>
+      )
     }
+
+    return <>{commonCells}</>
   }
 
   // Update the tab click handler
@@ -1244,48 +1027,34 @@ export default function ClaimsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       {/* Page Header */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Claims</h1>
+      <h1 className="text-2xl font-bold text-teal-800 mb-6">Claims</h1>
 
       {successMessage && (
         <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">{successMessage}</div>
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabClick} className="w-full">
-        <TabsList className="grid grid-cols-4 w-auto">
-          <TabsTrigger value="not-paid" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Not Paid ({getTabCount("not-paid")})
-          </TabsTrigger>
-          <TabsTrigger value="paid" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Paid ({getTabCount("paid")})
-          </TabsTrigger>
-          <TabsTrigger value="ready-to-submit" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Ready to Submit ({getTabCount("ready-to-submit")})
-          </TabsTrigger>
-          <TabsTrigger value="incomplete" className="data-[state=active]:bg-teal-600 data-[state=active]:text-white">
-            Incomplete ({getTabCount("incomplete")})
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="mt-6">
-          {/* Action Buttons for Ready to Submit */}
-          {activeTab === "ready-to-submit" && (
-            <div className="flex justify-end gap-2 mb-4">
-              <Button
-                variant="outline"
-                className="text-teal-600 border-teal-600 hover:bg-teal-50"
-                onClick={handleApproveClaims}
-                disabled={selectedClaims.length === 0}
-              >
-                Approve claims
-              </Button>
-              <Button className="bg-teal-600 hover:bg-teal-700 text-white">Submit approved claims for billing</Button>
-            </div>
-          )}
-
+        {/* Tabs and Controls Row */}
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="not-paid">
+              Not Paid ({getTabCount("not-paid")})
+            </TabsTrigger>
+            <TabsTrigger value="paid">
+              Paid ({getTabCount("paid")})
+            </TabsTrigger>
+            <TabsTrigger value="ready-to-submit">
+              Ready to Submit ({getTabCount("ready-to-submit")})
+            </TabsTrigger>
+            <TabsTrigger value="incomplete">
+              Incomplete ({getTabCount("incomplete")})
+            </TabsTrigger>
+          </TabsList>
+          
           {/* Search and Filter Controls */}
-          <div className="flex items-center justify-end gap-4 mb-6">
+          <div className="flex items-center gap-4">
             <div className="relative max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
@@ -1381,14 +1150,41 @@ export default function ClaimsPage() {
               </PopoverContent>
             </Popover>
           </div>
+        </div>
+        
+        <TabsContent value={activeTab} className="mt-6">
+          {/* Action Buttons for Ready to Submit */}
+          {activeTab === "ready-to-submit" && (
+            <div className="flex justify-end gap-2 mb-4">
+              <Button
+                variant="outline"
+                className="text-teal-600 border-teal-600 hover:bg-teal-50"
+                onClick={handleApproveClaims}
+                disabled={selectedClaims.length === 0}
+              >
+                Approve claims
+              </Button>
+              <Button className="bg-teal-600 hover:bg-teal-700 text-white">Submit approved claims for billing</Button>
+            </div>
+          )}
 
           {/* Claims Table */}
-          <div className="bg-white rounded-lg border overflow-hidden">
+          <div className="bg-white rounded-lg border overflow-hidden w-full min-w-full">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>{renderTableHeaders()}</thead>
-                <tbody>{filteredData.map((item, index) => renderTableRow(item, index))}</tbody>
-              </table>
+              <div className="min-w-[1200px]">
+                <table className="w-full">
+                  <thead>
+                    {renderTableHeaders()}
+                  </thead>
+                  <tbody>
+                    {filteredData.map((item, index) => (
+                      <tr key={index}>
+                        {renderTableRow(item, index)}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
