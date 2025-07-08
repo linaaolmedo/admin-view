@@ -78,14 +78,14 @@ export default function SubmitConfirmationPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <p className="text-[#787878]">Loading...</p>
+          <p className="text-gray-500">Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="p-4">
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" onClick={handleCancel}>
@@ -102,46 +102,48 @@ export default function SubmitConfirmationPage() {
           <table className="w-full">
             <thead>
               <tr className="bg-[#e8e9ff] border-b">
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">Service Dates</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">Claim #</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">Student Name</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]">Billed Amount</th>
-                <th className="text-left py-3 px-4 font-medium text-[#787878]"></th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Service Dates</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Claim #</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">District</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">SSID</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Student Name</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600">Billed Amount</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-600"></th>
               </tr>
             </thead>
             <tbody>
               {approvedClaims.map((claim, index) => {
                 const isEven = index % 2 === 0
-                const rowClass = isEven ? "bg-[#f8f9ff]" : "bg-white"
+                const rowClass = isEven ? "bg-blue-50" : "bg-white"
 
                 return (
                   <tr key={index} className={rowClass}>
                     <td className="py-3 px-4">
-                      <Badge className="bg-green-500 text-white text-xs font-medium">APPROVED</Badge>
+                      <Badge className="bg-green-500 text-white text-xs font-medium px-2 py-1 rounded">
+                        APPROVED
+                      </Badge>
                     </td>
-                    <td className="py-3 px-4 text-[#000000]">
-                      <div>
-                        {claim.serviceDate}
+                    <td className="py-3 px-4 text-gray-900">
+                      <div className="text-sm">
+                        02/01/2023
                         <br />
-                        {claim.serviceDate}
+                        02/03/2023
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-[#000000]">
+                    <td className="py-3 px-4 text-gray-900">
                       <Link href={`/claims/${claim.claimNumber}`} className="text-teal-600 hover:underline">
                         {claim.claimNumber}
                       </Link>
                     </td>
-                    <td className="py-3 px-4 text-[#000000]">{claim.district}</td>
-                    <td className="py-3 px-4 text-[#000000]">{claim.ssid}</td>
-                    <td className="py-3 px-4 text-[#000000]">
+                    <td className="py-3 px-4 text-gray-900">{claim.district}</td>
+                    <td className="py-3 px-4 text-gray-900">{claim.ssid}</td>
+                    <td className="py-3 px-4 text-gray-900">
                       <Link href={`/manage-students/1`} className="text-teal-600 hover:underline">
                         {claim.studentName}
                       </Link>
                     </td>
-                    <td className="py-3 px-4 text-[#000000] font-medium">{claim.billedAmount}</td>
+                    <td className="py-3 px-4 text-gray-900 font-medium">{claim.billedAmount}</td>
                     <td className="py-3 px-4">
                       <Button variant="ghost" size="icon">
                         <MoreHorizontal className="w-4 h-4" />
@@ -161,14 +163,14 @@ export default function SubmitConfirmationPage() {
           variant="outline"
           onClick={handleCancel}
           disabled={isSubmitting}
-          className="px-8 py-2 bg-gray-400 text-white border-gray-400 hover:bg-gray-500 hover:border-gray-500"
+          className="px-8 py-2 bg-gray-400 text-white border-gray-400 hover:bg-gray-500 hover:border-gray-500 rounded"
         >
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="px-8 py-2 bg-[#4286f4] hover:bg-[#2f3a83] text-white"
+          className="px-8 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
         >
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>

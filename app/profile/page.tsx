@@ -86,13 +86,35 @@ export default function ProfilePage() {
     
     const element = document.getElementById(sectionId)
     if (element) {
-      const yOffset = -128 // Offset to account for header (64px) + sticky nav (64px)
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      // Calculate the header height (64px for main header + 64px for sticky nav = 128px)
+      const headerHeight = 128
+      const elementTop = element.getBoundingClientRect().top + window.pageYOffset
+      const offsetTop = Math.max(0, elementTop - headerHeight)
       
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      })
+      // Primary method: smooth scroll
+      try {
+        window.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        })
+      } catch (error) {
+        // Fallback method for older browsers
+        window.scrollTo(0, offsetTop)
+      }
+      
+      // Additional fallback: try scrollIntoView if smooth scroll fails
+      setTimeout(() => {
+        const currentPosition = window.pageYOffset
+        const targetPosition = offsetTop
+        const threshold = 50
+        
+        if (Math.abs(currentPosition - targetPosition) > threshold) {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 100)
     }
   }
 
@@ -111,7 +133,7 @@ export default function ProfilePage() {
       },
       { 
         threshold: [0.1, 0.3, 0.5, 0.7],
-        rootMargin: '-128px 0px -50% 0px' // Account for header + sticky nav height
+        rootMargin: '-128px 0px -50% 0px' // Account for header + sticky nav height (128px)
       }
     )
 
@@ -244,13 +266,13 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Profile Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-20">
+      {/* Page Title */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
         <h1 className="text-3xl font-bold text-teal-800">Profile</h1>
       </div>
 
-      {/* Horizontal Navigation */}
-      <div className="border-b border-gray-200 bg-white sticky top-[72px] z-10">
+      {/* Horizontal Navigation - Sticky below main header */}
+      <div className="border-b border-gray-200 bg-white sticky top-16 z-[60] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8 overflow-x-auto scrollbar-hide pb-px">
             {navigationSections.map((section) => (
@@ -275,7 +297,7 @@ export default function ProfilePage() {
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-16">
         
         {/* About Section */}
-        <section id="about" className="scroll-mt-[144px]">
+        <section id="about" className="scroll-mt-[128px]">
           <Card className="border-teal-200">
             <CardHeader className="bg-teal-50">
               <CardTitle className="text-teal-800">Personal Information</CardTitle>
@@ -307,7 +329,7 @@ export default function ProfilePage() {
         </section>
 
         {/* Settings Section */}
-        <section id="settings" className="scroll-mt-[144px]">
+        <section id="settings" className="scroll-mt-[128px]">
           <div className="space-y-6">
             <Card className="border-gray-200">
               <CardHeader>
@@ -337,24 +359,21 @@ export default function ProfilePage() {
                   </div>
                   <Switch id="schedule-reminders" defaultChecked />
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <Button variant="outline">Change Password</Button>
-                <Button variant="outline">Enable Two-Factor Authentication</Button>
-                <Button variant="outline">Download Account Data</Button>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="change-password">Password</Label>
+                    <p className="text-sm text-gray-600">Update your account password</p>
+                  </div>
+                  <Button variant="outline" size="sm">Change Password</Button>
+                </div>
               </CardContent>
             </Card>
           </div>
         </section>
 
         {/* Recent Activity Section */}
-        <section id="activity" className="scroll-mt-[144px]">
+        <section id="activity" className="scroll-mt-[128px]">
           <Card className="border-gray-200">
             <CardHeader>
               <CardTitle>Activity Timeline</CardTitle>

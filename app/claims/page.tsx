@@ -682,13 +682,13 @@ export default function ClaimsPage() {
   // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filterState, setFilterState] = useState({
-    statusIndicator: {
-      active: false,
-      inactive: false
-    },
-    mediCalEligible: {
-      yes: false,
-      no: false
+    status: {
+      SUBMITTED: false,
+      REJECTED: false,
+      PAID: false,
+      "NEEDS APPROVAL": false,
+      APPROVED: false,
+      INCOMPLETE: false
     }
   })
 
@@ -767,13 +767,13 @@ export default function ClaimsPage() {
 
   const clearFilters = () => {
     setFilterState({
-      statusIndicator: {
-        active: false,
-        inactive: false
-      },
-      mediCalEligible: {
-        yes: false,
-        no: false
+      status: {
+        SUBMITTED: false,
+        REJECTED: false,
+        PAID: false,
+        "NEEDS APPROVAL": false,
+        APPROVED: false,
+        INCOMPLETE: false
       }
     })
     setIsFilterOpen(false)
@@ -781,7 +781,7 @@ export default function ClaimsPage() {
 
   // Function to handle sorting
   const handleSort = (field: string) => {
-    if (activeTab !== "not-paid") return // Only sort for not-paid tab
+    if (activeTab !== "not-paid" && activeTab !== "remittance") return // Allow sorting for not-paid and remittance tabs
     
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc")
@@ -793,19 +793,23 @@ export default function ClaimsPage() {
 
   // Function to sort data
   const sortData = (data: any[]) => {
-    if (!sortField || activeTab !== "not-paid") return data
+    if (!sortField || (activeTab !== "not-paid" && activeTab !== "remittance")) return data
     
     return [...data].sort((a, b) => {
       let aValue = a[sortField]
       let bValue = b[sortField]
       
       // Handle different data types
-      if (sortField === "serviceDate") {
+      if (sortField === "serviceDate" || sortField === "dateSubmitted") {
         aValue = new Date(aValue)
         bValue = new Date(bValue)
-      } else if (sortField === "billedAmount") {
+      } else if (sortField === "billedAmount" || sortField === "paidAmount") {
         aValue = parseFloat(aValue.replace(/[$,]/g, ""))
         bValue = parseFloat(bValue.replace(/[$,]/g, ""))
+      } else if (sortField === "totalClaimsSubmitted" || sortField === "claimsPaid" || sortField === "deniedClaims") {
+        // Handle numeric values for remittance data
+        aValue = parseInt(aValue)
+        bValue = parseInt(bValue)
       } else if (typeof aValue === "string") {
         aValue = aValue.toLowerCase()
         bValue = bValue.toLowerCase()
@@ -820,7 +824,13 @@ export default function ClaimsPage() {
   const filteredData = sortData(getCurrentData().filter((claim: any) => {
     // Search filter
     if (searchTerm !== "") {
-      const searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
+      let searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
+      
+      // Add remittance-specific searchable fields
+      if (activeTab === "remittance") {
+        searchableFields = ['dateSubmitted', 'batchNumber', 'totalClaimsSubmitted', 'claimsPaid', 'deniedClaims']
+      }
+      
       const matchesSearch = searchableFields.some(field => {
         const fieldValue = claim[field]
         return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -828,19 +838,13 @@ export default function ClaimsPage() {
       if (!matchesSearch) return false
     }
 
-    // Status Indicator filter
-    const { statusIndicator, mediCalEligible } = filterState
-    if (statusIndicator.active || statusIndicator.inactive) {
-      const isActive = claim.status === "SUBMITTED" || claim.status === "PAID" || claim.status === "APPROVED"
-      if (statusIndicator.active && !isActive) return false
-      if (statusIndicator.inactive && isActive) return false
-    }
-
-    // Medi-cal eligible filter
-    if (mediCalEligible.yes || mediCalEligible.no) {
-      const isMediCalEligible = claim.mediCalEligible === true || claim.mediCalEligible === "Yes"
-      if (mediCalEligible.yes && !isMediCalEligible) return false
-      if (mediCalEligible.no && isMediCalEligible) return false
+    // Status filter
+    const { status } = filterState
+    const hasAnyStatusFilter = Object.values(status).some(Boolean)
+    if (hasAnyStatusFilter) {
+      if (!status[claim.status as keyof typeof status]) {
+        return false
+      }
     }
 
     return true
@@ -860,7 +864,7 @@ export default function ClaimsPage() {
 
   // Function to render sort icon
   const renderSortIcon = (field: string) => {
-    if (activeTab !== "not-paid" || sortField !== field) {
+    if ((activeTab !== "not-paid" && activeTab !== "remittance") || sortField !== field) {
       return <ArrowUpDown className="w-4 h-4 text-gray-400" />
     }
     return sortDirection === "asc" ? 
@@ -869,8 +873,7 @@ export default function ClaimsPage() {
   }
 
   const renderTableHeaders = () => {
-    const commonHeaders = [
-      { label: "", field: "checkbox", sortable: false },
+    const baseHeaders = [
       { label: "Status", field: "status", sortable: true },
       { label: "Service Date", field: "serviceDate", sortable: true },
       { label: "Batch #", field: "batchNumber", sortable: true },
@@ -882,13 +885,37 @@ export default function ClaimsPage() {
       { label: "Billed Amount", field: "billedAmount", sortable: true },
     ]
 
-    const headers = activeTab === "paid" ? [
-      ...commonHeaders.slice(0, 2),
-      { label: "Finalized Date", field: "finalizedDate", sortable: true },
-      ...commonHeaders.slice(2, -1),
-      { label: "Paid Amount", field: "paidAmount", sortable: true },
-      commonHeaders[commonHeaders.length - 1],
-    ] : commonHeaders
+    let headers;
+    if (activeTab === "paid") {
+      headers = [
+        { label: "Status", field: "status", sortable: true },
+        { label: "Finalized Date", field: "finalizedDate", sortable: true },
+        { label: "Service Date", field: "serviceDate", sortable: true },
+        { label: "Batch #", field: "batchNumber", sortable: true },
+        { label: "Claim #", field: "claimNumber", sortable: true },
+        { label: "Practitioner", field: "practitioner", sortable: true },
+        { label: "District", field: "district", sortable: true },
+        { label: "SSID", field: "ssid", sortable: true },
+        { label: "Student Name", field: "studentName", sortable: true },
+        { label: "Paid Amount", field: "paidAmount", sortable: true },
+        { label: "Billed Amount", field: "billedAmount", sortable: true },
+      ]
+    } else if (activeTab === "ready-to-submit") {
+      headers = [
+        { label: "", field: "checkbox", sortable: false },
+        ...baseHeaders,
+      ]
+    } else if (activeTab === "remittance") {
+      headers = [
+        { label: "Date Submitted", field: "dateSubmitted", sortable: true },
+        { label: "Batch #", field: "batchNumber", sortable: true },
+        { label: "Total Claims Submitted", field: "totalClaimsSubmitted", sortable: true },
+        { label: "Claims Paid", field: "claimsPaid", sortable: true },
+        { label: "Denied Claims", field: "deniedClaims", sortable: true },
+      ]
+    } else {
+      headers = baseHeaders
+    }
 
     return (
       <tr className="bg-gray-50">
@@ -902,8 +929,17 @@ export default function ClaimsPage() {
             onClick={() => header.sortable && handleSort(header.field)}
           >
             <div className="flex items-center gap-1">
-              {header.label}
-              {header.sortable && renderSortIcon(header.field)}
+              {header.field === "checkbox" ? (
+                <Checkbox
+                  checked={selectedClaims.length === filteredData.length && filteredData.length > 0}
+                  onCheckedChange={handleSelectAll}
+                />
+              ) : (
+                <>
+                  {header.label}
+                  {header.sortable && renderSortIcon(header.field)}
+                </>
+              )}
             </div>
           </th>
         ))}
@@ -912,14 +948,7 @@ export default function ClaimsPage() {
   }
 
   const renderTableRow = (item: any, index: number) => {
-    const commonCells = [
-      // Checkbox cell
-      <td key="checkbox" className="w-[30px] px-2">
-        <Checkbox
-          checked={selectedClaims.includes(index)}
-          onCheckedChange={() => handleSelectClaim(index)}
-        />
-      </td>,
+    const baseCells = [
       // Status cell
       <td key="status" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
         {getStatusBadge(item.status)}
@@ -969,21 +998,57 @@ export default function ClaimsPage() {
     if (activeTab === "paid") {
       return (
         <>
-          {commonCells[0]}{/* Checkbox */}
-          {commonCells[1]}{/* Status */}
+          {baseCells[0]}{/* Status */}
           <td key="finalizedDate" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
             {item.finalizedDate}
           </td>
-          {commonCells.slice(2, -1)}{/* All cells between status and billed amount */}
+          {baseCells.slice(1, -1)}{/* All cells between status and billed amount */}
           <td key="paidAmount" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
             {item.paidAmount}
           </td>
-          {commonCells[commonCells.length - 1]}{/* Billed amount */}
+          {baseCells[baseCells.length - 1]}{/* Billed amount */}
         </>
       )
     }
 
-    return <>{commonCells}</>
+    if (activeTab === "ready-to-submit") {
+      return (
+        <>
+          {/* Checkbox cell - only for ready-to-submit */}
+          <td key="checkbox" className="w-[30px] px-2">
+            <Checkbox
+              checked={selectedClaims.includes(index)}
+              onCheckedChange={() => handleSelectClaim(index)}
+            />
+          </td>
+          {baseCells}
+        </>
+      )
+    }
+
+    if (activeTab === "remittance") {
+      return (
+        <>
+          <td key="dateSubmitted" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.dateSubmitted}
+          </td>
+          <td key="batchNumber" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.batchNumber}
+          </td>
+          <td key="totalClaimsSubmitted" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.totalClaimsSubmitted}
+          </td>
+          <td key="claimsPaid" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.claimsPaid}
+          </td>
+          <td key="deniedClaims" className="py-2 px-3 text-xs min-w-[100px] max-w-[150px] whitespace-normal break-words">
+            {item.deniedClaims}
+          </td>
+        </>
+      )
+    }
+
+    return <>{baseCells}</>
   }
 
   // Update the tab click handler
@@ -1021,6 +1086,8 @@ export default function ClaimsPage() {
         return mockClaims["ready-to-submit"].length
       case "incomplete":
         return mockClaims.incomplete.length
+      case "remittance":
+        return mockClaims.remittance.length
       default:
         return 0
     }
@@ -1036,7 +1103,7 @@ export default function ClaimsPage() {
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabClick} className="w-full">
-        {/* Tabs and Controls Row */}
+        {/* Tabs Row */}
         <div className="flex justify-between items-center">
           <TabsList>
             <TabsTrigger value="not-paid">
@@ -1051,111 +1118,14 @@ export default function ClaimsPage() {
             <TabsTrigger value="incomplete">
               Incomplete ({getTabCount("incomplete")})
             </TabsTrigger>
+            <TabsTrigger value="remittance">
+              Remittance Overview ({getTabCount("remittance")})
+            </TabsTrigger>
           </TabsList>
           
-          {/* Search and Filter Controls */}
-          <div className="flex items-center gap-4">
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  Filter
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-64 p-4" align="end">
-                <div className="space-y-4">
-                  {/* Status Indicator */}
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Status Indicator</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="status-active"
-                          checked={filterState.statusIndicator.active}
-                          onCheckedChange={(checked) => 
-                            handleFilterChange('statusIndicator', 'active', checked as boolean)
-                          }
-                        />
-                        <label htmlFor="status-active" className="text-sm">Active</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="status-inactive"
-                          checked={filterState.statusIndicator.inactive}
-                          onCheckedChange={(checked) => 
-                            handleFilterChange('statusIndicator', 'inactive', checked as boolean)
-                          }
-                        />
-                        <label htmlFor="status-inactive" className="text-sm">Inactive</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Medi-cal eligible */}
-                  <div>
-                    <h4 className="font-medium text-sm mb-2">Medi-cal eligible</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="medical-yes"
-                          checked={filterState.mediCalEligible.yes}
-                          onCheckedChange={(checked) => 
-                            handleFilterChange('mediCalEligible', 'yes', checked as boolean)
-                          }
-                        />
-                        <label htmlFor="medical-yes" className="text-sm">Yes</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="medical-no"
-                          checked={filterState.mediCalEligible.no}
-                          onCheckedChange={(checked) => 
-                            handleFilterChange('mediCalEligible', 'no', checked as boolean)
-                          }
-                        />
-                        <label htmlFor="medical-no" className="text-sm">No</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Filter Actions */}
-                  <div className="flex gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearFilters}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={applyFilters}
-                      className="flex-1 bg-teal-600 hover:bg-teal-700"
-                    >
-                      Apply Filter
-                    </Button>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-        
-        <TabsContent value={activeTab} className="mt-6">
           {/* Action Buttons for Ready to Submit */}
           {activeTab === "ready-to-submit" && (
-            <div className="flex justify-end gap-2 mb-4">
+            <div className="flex gap-2">
               <Button
                 variant="outline"
                 className="text-teal-600 border-teal-600 hover:bg-teal-50"
@@ -1164,10 +1134,84 @@ export default function ClaimsPage() {
               >
                 Approve claims
               </Button>
-              <Button className="bg-teal-600 hover:bg-teal-700 text-white">Submit approved claims for billing</Button>
+              <Button 
+                className="bg-teal-600 hover:bg-teal-700 text-white"
+                onClick={handleApproveClaims}
+                disabled={selectedClaims.length === 0}
+              >
+                Submit approved claims for billing
+              </Button>
             </div>
           )}
+        </div>
 
+        {/* Search and Filter Controls Row */}
+        <div className="flex justify-end items-center gap-4 mt-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                Filter
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-4" align="end">
+              <div className="space-y-4">
+                {/* Status Filter */}
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Filter by Status</h4>
+                  <div className="space-y-2">
+                    {Object.keys(filterState.status).map((statusKey) => (
+                      <div key={statusKey} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`status-${statusKey}`}
+                          checked={filterState.status[statusKey as keyof typeof filterState.status]}
+                          onCheckedChange={(checked) => 
+                            handleFilterChange('status', statusKey, checked as boolean)
+                          }
+                        />
+                        <label htmlFor={`status-${statusKey}`} className="text-sm">
+                          {statusKey === "NEEDS APPROVAL" ? "Needs Approval" : 
+                           statusKey.charAt(0) + statusKey.slice(1).toLowerCase()}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filter Actions */}
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={applyFilters}
+                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                  >
+                    Apply Filter
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+        
+        <TabsContent value={activeTab} className="mt-6">
           {/* Claims Table */}
           <div className="bg-white rounded-lg border overflow-hidden w-full min-w-full">
             <div className="overflow-x-auto">

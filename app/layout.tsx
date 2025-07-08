@@ -5,6 +5,7 @@ import "./globals.css"
 import { Header } from "@/components/header"
 import { Sidebar } from "@/components/sidebar"
 import { AuthGuard } from "@/components/auth-guard"
+import { DashboardLayoutClient } from "@/components/dashboard-layout-client"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,25 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthGuard>
-          <DashboardLayout>{children}</DashboardLayout>
+          <DashboardLayoutClient>{children}</DashboardLayoutClient>
         </AuthGuard>
       </body>
     </html>
-  )
-}
-
-function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-[#ffffff] overflow-x-hidden">
-      <Header />
-      <div className="flex pt-16">
-        <Sidebar />
-        <main className="flex-1 p-6 overflow-x-hidden">
-          <div className="container-content">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
   )
 }

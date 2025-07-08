@@ -18,21 +18,41 @@ import {
 
 // Mock data for users
 const mockUsers = [
+  // Practitioners
   { id: 1, name: "Bradley Brown", email: "bbrown@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
   { id: 2, name: "Luis Hayes", email: "lhayes@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
   { id: 3, name: "Teri Lakin", email: "tlakin@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  { id: 8, name: "Lisa Anderson", email: "landerson@email.com", role: "Practitioner", permissions: "Standard", status: "Inactive", lastLogin: "4/25/2025" },
+  { id: 10, name: "Maria Rodriguez", email: "mrodriguez@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/2/2025" },
+  { id: 11, name: "James Carter", email: "jcarter@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  { id: 12, name: "Emma Foster", email: "efoster@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "4/30/2025" },
+  { id: 13, name: "Daniel Kim", email: "dkim@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/2/2025" },
+  { id: 14, name: "Ashley Turner", email: "aturner@email.com", role: "Practitioner", permissions: "Standard", status: "Inactive", lastLogin: "4/28/2025" },
+  { id: 15, name: "Kevin Walsh", email: "kwalsh@email.com", role: "Practitioner", permissions: "Standard", status: "Active", lastLogin: "5/1/2025" },
+  
+  // Supervisors
   { id: 4, name: "Sarah Johnson", email: "sjohnson@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "5/1/2025" },
   { id: 5, name: "Michael Davis", email: "mdavis@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "4/30/2025" },
+  { id: 9, name: "David Thompson", email: "dthompson@email.com", role: "Supervisor", permissions: "Advanced", status: "Inactive", lastLogin: "4/20/2025" },
+  { id: 16, name: "Rachel Green", email: "rgreen@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "5/2/2025" },
+  { id: 17, name: "Christopher Lee", email: "clee@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "5/1/2025" },
+  { id: 18, name: "Amanda Clark", email: "aclark@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "4/29/2025" },
+  { id: 19, name: "Ryan Cooper", email: "rcooper@email.com", role: "Supervisor", permissions: "Advanced", status: "Active", lastLogin: "5/2/2025" },
+  { id: 20, name: "Michelle Parker", email: "mparker@email.com", role: "Supervisor", permissions: "Advanced", status: "Inactive", lastLogin: "4/26/2025" },
+  
+  // Administrators
   { id: 6, name: "Jennifer Wilson", email: "jwilson@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "5/1/2025" },
   { id: 7, name: "Robert Martinez", email: "rmartinez@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "4/29/2025" },
-  { id: 8, name: "Lisa Anderson", email: "landerson@email.com", role: "Practitioner", permissions: "Standard", status: "Inactive", lastLogin: "4/25/2025" },
-  { id: 9, name: "David Thompson", email: "dthompson@email.com", role: "Supervisor", permissions: "Advanced", status: "Inactive", lastLogin: "4/20/2025" },
+  { id: 21, name: "Patricia Moore", email: "pmoore@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "5/2/2025" },
+  { id: 22, name: "Steven Adams", email: "sadams@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "5/1/2025" },
+  { id: 23, name: "Laura Bennett", email: "lbennett@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "4/30/2025" },
+  { id: 24, name: "Mark Phillips", email: "mphillips@email.com", role: "Administrator", permissions: "Full", status: "Inactive", lastLogin: "4/27/2025" },
+  { id: 25, name: "Nicole Evans", email: "nevans@email.com", role: "Administrator", permissions: "Full", status: "Active", lastLogin: "5/2/2025" },
 ]
 
 export default function ManageUsersPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedRole, setSelectedRole] = useState("practitioner")
   const [sortBy, setSortBy] = useState("name")
   const [sortOrder, setSortOrder] = useState("asc")
   const router = useRouter()
@@ -43,11 +63,18 @@ export default function ManageUsersPage() {
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.role.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesRole = user.role.toLowerCase() === selectedRole.toLowerCase()
+    let matchesTab = false
+    if (activeTab === "all") {
+      matchesTab = true
+    } else if (activeTab === "practitioners") {
+      matchesTab = user.role.toLowerCase() === "practitioner"
+    } else if (activeTab === "supervisors") {
+      matchesTab = user.role.toLowerCase() === "supervisor"
+    } else if (activeTab === "administrators") {
+      matchesTab = user.role.toLowerCase() === "administrator"
+    }
 
-    const matchesTab = activeTab === "all" || user.role.toLowerCase() === activeTab.toLowerCase()
-
-    return matchesSearch && matchesRole && matchesTab
+    return matchesSearch && matchesTab
   }).sort((a, b) => {
     const aValue = a[sortBy as keyof typeof a]
     const bValue = b[sortBy as keyof typeof b]
@@ -120,16 +147,12 @@ export default function ManageUsersPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-teal-800">Manage Users</h1>
-        <Button onClick={handleAddUser} className="bg-teal-600 hover:bg-teal-700">
-          <UserPlus className="w-4 h-4 mr-2" />
-          Add User
-        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {/* Tabs and Controls Row */}
+        {/* Tabs Row */}
         <div className="flex justify-between items-center">
           <TabsList>
             <TabsTrigger value="all">
@@ -146,23 +169,28 @@ export default function ManageUsersPage() {
             </TabsTrigger>
           </TabsList>
           
-          {/* Search and Filter Controls */}
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-80"
-              />
-            </div>
+          <Button onClick={handleAddUser} size="sm" className="bg-teal-600 hover:bg-teal-700">
+            <UserPlus className="w-4 h-4 mr-2" />
+            Add User
+          </Button>
+        </div>
 
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
+        {/* Search and Filter Controls Row */}
+        <div className="flex justify-end items-center gap-4 mt-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
+
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            Filter
+          </Button>
         </div>
         
         <TabsContent value={activeTab} className="mt-6">
@@ -190,7 +218,7 @@ export default function ManageUsersPage() {
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold">Role</TableHead>
+                  {activeTab === "all" && <TableHead className="font-semibold">Role</TableHead>}
                   <TableHead className="font-semibold">Permissions</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
                   <TableHead className="font-semibold">Last Login</TableHead>
@@ -209,7 +237,7 @@ export default function ManageUsersPage() {
                       </button>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.role}</TableCell>
+                    {activeTab === "all" && <TableCell>{user.role}</TableCell>}
                     <TableCell>{getPermissionsBadge(user.permissions)}</TableCell>
                     <TableCell>{getStatusBadge(user.status)}</TableCell>
                     <TableCell>{user.lastLogin}</TableCell>

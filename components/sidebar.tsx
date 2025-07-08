@@ -17,7 +17,6 @@ import {
   Building2,
   Calendar,
   UserCheck,
-  Shield,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -41,9 +40,9 @@ const manageStudentsSubItems = [
 ]
 
 const manageOrganizationsSubItems = [
-  { href: "/manage-organizations/all", label: "All Organizations" },
-  { href: "/manage-organizations/add", label: "Add Organization" },
-  { href: "/manage-organizations/settings", label: "Organization Settings" },
+  { href: "/manage-organizations/payer-type-info", label: "Payer Type Info" },
+  { href: "/manage-organizations/billing-codes", label: "Billing Codes" },
+  { href: "/manage-organizations/qualifications", label: "Qualifications" },
 ]
 
 const caseloadSubItems = [
@@ -81,6 +80,12 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  // Initialize collapsed state from localStorage
+  useEffect(() => {
+    const collapsed = localStorage.getItem("sidebarCollapsed") === "true"
+    setIsCollapsed(collapsed)
+  }, [])
   const [accountType, setAccountType] = useState<AccountType | null>(null)
   
   // State for dropdown menus
@@ -129,7 +134,7 @@ export function Sidebar() {
 
     switch (accountType) {
       case "administrator":
-        return ["adminDashboard", "claims", "manageUsers", "manageStudents", "reports", "configurations"]
+        return ["claims", "manageUsers", "manageStudents", "reports", "configurations", "manageOrganizations"]
       case "supervisor":
         return ["logService", "caseload", "studentServices", "assignedPractitioners", "reports"]
       case "practitioner":
@@ -143,13 +148,24 @@ export function Sidebar() {
   const studentServicesSubItems = getStudentServicesSubItems()
 
   return (
-    <aside className={`${isCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-cyan-500 to-teal-600 text-white min-h-screen flex flex-col transition-all duration-300 shadow-lg`}>
+    <aside className={`fixed left-0 top-0 ${isCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-cyan-500 to-teal-600 text-white h-screen flex flex-col transition-all duration-300 shadow-lg z-40`}>
+      {/* Header spacer */}
+      <div className="h-16"></div>
+      
       {/* Toggle Button */}
       <div className="flex justify-end p-2">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={() => {
+            const newCollapsed = !isCollapsed
+            setIsCollapsed(newCollapsed)
+            localStorage.setItem("sidebarCollapsed", newCollapsed.toString())
+            // Emit custom event to notify layout
+            window.dispatchEvent(new CustomEvent("sidebarToggle", { 
+              detail: { collapsed: newCollapsed } 
+            }))
+          }}
           className="text-white hover:bg-white/20 hover:text-white p-1"
         >
           <PanelLeft className="w-4 h-4" />
@@ -157,33 +173,6 @@ export function Sidebar() {
       </div>
       
       <nav className={`${isCollapsed ? 'px-2' : 'px-4'} flex-1 space-y-2 overflow-y-auto`}>
-        {/* Team Management - Only for Administrators */}
-        {visibleItems.includes("adminDashboard") && (
-          <div>
-            {isCollapsed ? (
-              <Link
-                href="/administrator"
-                className={`flex items-center justify-center p-3 rounded transition-colors ${
-                  pathname.startsWith("/administrator") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                }`}
-                title="Team Management"
-              >
-                <Shield className="w-5 h-5" />
-              </Link>
-            ) : (
-              <Link
-                href="/administrator"
-                className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                  pathname.startsWith("/administrator") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                }`}
-              >
-                <Shield className="w-5 h-5" />
-                <span>Team Management</span>
-              </Link>
-            )}
-          </div>
-        )}
-
         {/* Claims Dropdown - Only for Administrators */}
         {visibleItems.includes("claims") && (
           <div>
@@ -602,6 +591,64 @@ export function Sidebar() {
                 {isConfigurationsOpen && (
                   <div className="ml-8 mt-2 space-y-1">
                     {configurationsSubItems.map((item) => {
+                      const isActive = pathname === item.href
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`block px-3 py-2 rounded text-sm transition-colors ${
+                            isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Manage Organizations Dropdown - Only for Administrators */}
+        {visibleItems.includes("manageOrganizations") && (
+          <div>
+            {isCollapsed ? (
+              <Link
+                href="/manage-organizations"
+                className={`flex items-center justify-center p-3 rounded transition-colors ${
+                  pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                }`}
+                title="Manage Organizations"
+              >
+                <Building2 className="w-5 h-5" />
+              </Link>
+            ) : (
+              <>
+                <div className="flex items-center gap-1">
+                  <Link
+                    href="/manage-organizations"
+                    className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
+                      pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <Building2 className="w-5 h-5" />
+                    <span>Manage Organizations</span>
+                  </Link>
+                  <button
+                    onClick={() => setIsManageOrganizationsOpen(!isManageOrganizationsOpen)}
+                    className={`px-2 py-2 rounded transition-colors ${
+                      pathname.startsWith("/manage-organizations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {isManageOrganizationsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {isManageOrganizationsOpen && (
+                  <div className="ml-8 mt-2 space-y-1">
+                    {manageOrganizationsSubItems.map((item) => {
                       const isActive = pathname === item.href
                       return (
                         <Link

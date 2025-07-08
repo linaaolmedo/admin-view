@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { AdminDashboardTabs } from "@/components/dashboard/AdminDashboardTabs"
 import { 
   BarChart3, 
   Users, 
@@ -254,81 +255,7 @@ export default function DashboardPage() {
       )}
 
       {accountType === "administrator" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* System Overview */}
-          <Card className="overflow-hidden border-gray-200 w-full">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
-              <CardTitle className="text-base text-gray-800">System Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 md:p-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 truncate">Total Users</span>
-                <span className="text-lg font-semibold text-gray-900">247</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Active Practitioners</span>
-                <span className="text-lg font-semibold text-green-600">156</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Active Supervisors</span>
-                <span className="text-lg font-semibold text-blue-600">43</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Students</span>
-                <span className="text-lg font-semibold text-purple-600">1,284</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Claims Overview */}
-          <Card className="overflow-hidden border-yellow-200">
-            <CardHeader className="bg-yellow-50 border-b border-yellow-200">
-              <CardTitle className="text-base text-yellow-800">Claims Status</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Pending Claims</span>
-                <Badge className="bg-yellow-100 text-yellow-800">124</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Ready to Submit</span>
-                <Badge className="bg-blue-100 text-blue-800">67</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Paid Claims</span>
-                <Badge className="bg-green-100 text-green-800">89</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Rejected Claims</span>
-                <Badge className="bg-red-100 text-red-800">12</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card className="overflow-hidden border-green-200">
-            <CardHeader className="bg-green-50 border-b border-green-200">
-              <CardTitle className="text-base text-green-800">Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3">
-              <div className="text-sm">
-                <div className="text-gray-900 font-medium">New User Registration</div>
-                <div className="text-gray-600">Sarah Mitchell - Practitioner</div>
-                <div className="text-gray-400 text-xs">2 hours ago</div>
-              </div>
-              <div className="text-sm">
-                <div className="text-gray-900 font-medium">Configuration Update</div>
-                <div className="text-gray-600">Billing codes updated</div>
-                <div className="text-gray-400 text-xs">4 hours ago</div>
-              </div>
-              <div className="text-sm">
-                <div className="text-gray-900 font-medium">Bulk Student Import</div>
-                <div className="text-gray-600">45 new students added</div>
-                <div className="text-gray-400 text-xs">1 day ago</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <AdminDashboardTabs />
       )}
 
       {accountType === "practitioner" && (
@@ -431,22 +358,20 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Reports Section - Available for administrators and supervisors */}
-      {(accountType === "administrator" || accountType === "supervisor") && (
+      {/* Reports Section - Available for administrators only */}
+      {accountType === "administrator" && (
         <Card className="overflow-hidden">
           <CardHeader className="bg-gray-50 border-b border-gray-200">
             <CardTitle className="text-lg text-gray-800">Quick Reports Access</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {accountType === "administrator" && (
-                <Link href="/reports/user-history">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Users className="w-4 h-4 mr-2" />
-                    User History
-                  </Button>
-                </Link>
-              )}
+              <Link href="/reports/user-history">
+                <Button variant="outline" className="w-full justify-start">
+                  <Users className="w-4 h-4 mr-2" />
+                  User History
+                </Button>
+              </Link>
               <Link href="/reports/qualifications">
                 <Button variant="outline" className="w-full justify-start">
                   <CheckCircle2 className="w-4 h-4 mr-2" />
