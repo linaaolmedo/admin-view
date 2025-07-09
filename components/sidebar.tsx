@@ -63,9 +63,8 @@ const supervisorOnlySubItems = [
 ]
 
 const reportsSubItems = [
-  { href: "/reports/report-builder", label: "Report builder" },
-  { href: "/reports/user-history", label: "User history" },
-  { href: "/reports/qualifications", label: "Qualifications" }
+  { href: "/reports", label: "Canned reports" },
+  { href: "/reports/report-builder", label: "Report builder" }
 ]
 
 const configurationsSubItems = [

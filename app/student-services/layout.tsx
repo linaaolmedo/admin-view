@@ -68,31 +68,14 @@ export default function StudentServicesLayout({
 
   return (
     <TooltipProvider>
-    <div className="container-content">
-      <Tabs defaultValue="all-services" className="w-full">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-teal-800">Student Services</h1>
-        </div>
-
-        <div className="overflow-x-auto">
-          <TabsList className="w-full sm:w-auto">
-            {navigation.map((item) => (
-              <TabsTrigger 
-                key={item.value}
-                value={item.value}
-                className="whitespace-nowrap"
-              >
-                {item.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
-        
-        <div className="mt-6 overflow-x-hidden">
-          {children}
-        </div>
-      </Tabs>
-    </div>
+      <div className="container-content">
+        {/* Hidden tabs for navigation functionality but remove visible title and tabs */}
+        <Tabs value={getActiveTab()} onValueChange={handleTabChange} className="w-full">
+          <div className="mt-6 overflow-x-hidden">
+            {children}
+          </div>
+        </Tabs>
+      </div>
     </TooltipProvider>
   )
 } 

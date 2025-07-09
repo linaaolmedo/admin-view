@@ -71,7 +71,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "UPCOMING":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-teal-100 text-teal-800 border-teal-200"
       case "INCOMPLETE":
         return "bg-orange-100 text-orange-800 border-orange-200"
       case "CANCELLED":
@@ -107,6 +107,18 @@ export default function ServiceDetailsPage() {
     router.push(`/student-services/modify-appointment/${serviceId}`)
   }
 
+  const handleMarkAsCancelled = () => {
+    // In a real app, this would update the service status in the backend
+    console.log(`Marking service ${serviceId} as cancelled`)
+    // TODO: Implement API call to update service status
+    // For now, we'll show a confirmation and redirect
+    if (confirm("Are you sure you want to mark this appointment as cancelled?")) {
+      alert("Service marked as cancelled")
+      // Optionally redirect back to all services
+      router.push("/student-services/all-services")
+    }
+  }
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -117,22 +129,31 @@ export default function ServiceDetailsPage() {
           </Button>
           <h1 className="text-2xl font-bold text-teal-800">Service Log Details</h1>
         </div>
-        <Button 
-          variant="outline" 
-          className="text-blue-600 border-blue-600 hover:bg-blue-50"
-          onClick={handleModifyAppointment}
-        >
-          Modify appointment
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="text-teal-600 border-teal-600 hover:bg-teal-50"
+            onClick={handleModifyAppointment}
+          >
+            Modify appointment
+          </Button>
+          <Button 
+            variant="outline" 
+            className="text-red-600 border-red-600 hover:bg-red-50"
+            onClick={handleMarkAsCancelled}
+          >
+            Mark as cancelled
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-6">
         {/* Service Information */}
         <div className="bg-white rounded-lg border">
-          <div className="bg-blue-500 text-white px-6 py-3 rounded-t-lg">
+          <div className="bg-teal-600 text-white px-6 py-3 rounded-t-lg">
             <h2 className="text-lg font-medium">Service Information</h2>
           </div>
-          <div className="p-6 bg-blue-50">
+          <div className="p-6 bg-teal-50">
             {/* First Row */}
             <div className="grid grid-cols-5 gap-6 mb-6">
               <div>
@@ -193,10 +214,10 @@ export default function ServiceDetailsPage() {
 
         {/* Student Information */}
         <div className="bg-white rounded-lg border">
-          <div className="bg-blue-500 text-white px-6 py-3 rounded-t-lg">
+          <div className="bg-teal-600 text-white px-6 py-3 rounded-t-lg">
             <h2 className="text-lg font-medium">Student Information</h2>
           </div>
-          <div className="p-6 bg-blue-50">
+          <div className="p-6 bg-teal-50">
             <div className="grid grid-cols-5 gap-6">
               <div>
                 <label className="text-sm font-medium text-gray-700">SSID</label>
@@ -224,10 +245,10 @@ export default function ServiceDetailsPage() {
 
         {/* Past Service History */}
         <div className="bg-white rounded-lg border">
-          <div className="bg-blue-500 text-white px-6 py-3 rounded-t-lg">
+          <div className="bg-teal-600 text-white px-6 py-3 rounded-t-lg">
             <h2 className="text-lg font-medium">Past Service History</h2>
           </div>
-          <div className="bg-blue-50">
+          <div className="bg-teal-50">
             <div className="p-6">
               <div className="bg-white rounded border">
                 <div className="grid grid-cols-2 gap-4 p-4 border-b bg-gray-50 font-medium text-sm">

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { MoreHorizontal, Search, Filter, ArrowUpDown, Plus, Upload } from "lucide-react"
+import { MoreHorizontal, Search, Filter, ArrowUpDown, Plus, Upload, FileText, CheckCircle, XCircle, Clock } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +31,15 @@ const mockStudents = [
   { id: 11, lastName: "Deckow", firstName: "Jody", ssid: "01258369", localId: "21537095", district: "Fruitvale", school: "Fruitvale", birthdate: "10/25/1999", contactNumber: "860-952-4302", status: "Inactive", modifiedDate: "5/1/2025" },
   { id: 12, lastName: "Koelpin", firstName: "Jason", ssid: "74640060", localId: "41676362", district: "Fruitvale", school: "Fruitvale", birthdate: "10/25/1999", contactNumber: "765-944-7904", status: "Inactive", modifiedDate: "5/1/2025" },
   { id: 13, lastName: "Marks", firstName: "Douglas", ssid: "26102631", localId: "29758053", district: "Fruitvale", school: "Fruitvale", birthdate: "10/25/1999", contactNumber: "936-551-5653", status: "Inactive", modifiedDate: "5/1/2025" },
+]
+
+// Mock data for upload history
+const mockUploadHistory = [
+  { id: 1, fileName: "students_batch_1.xlsx", uploadDate: "5/1/2025 10:30 AM", uploadedBy: "John Admin", recordsProcessed: 45, recordsSuccessful: 43, recordsFailed: 2, status: "Completed" },
+  { id: 2, fileName: "fruitvale_students_may.csv", uploadDate: "4/28/2025 2:15 PM", uploadedBy: "Jane Smith", recordsProcessed: 78, recordsSuccessful: 78, recordsFailed: 0, status: "Completed" },
+  { id: 3, fileName: "student_data_update.xlsx", uploadDate: "4/25/2025 9:45 AM", uploadedBy: "Mike Johnson", recordsProcessed: 23, recordsSuccessful: 20, recordsFailed: 3, status: "Completed" },
+  { id: 4, fileName: "new_enrollments.csv", uploadDate: "4/24/2025 11:20 AM", uploadedBy: "Sarah Wilson", recordsProcessed: 12, recordsSuccessful: 0, recordsFailed: 12, status: "Failed" },
+  { id: 5, fileName: "student_import_april.xlsx", uploadDate: "4/20/2025 3:00 PM", uploadedBy: "John Admin", recordsProcessed: 156, recordsSuccessful: 156, recordsFailed: 0, status: "Completed" },
 ]
 
 export default function ManageStudentsPage() {
@@ -75,6 +84,35 @@ export default function ManageStudentsPage() {
     )
   }
 
+  const getUploadStatusBadge = (status: string) => {
+    const statusConfig = {
+      "Completed": { 
+        variant: "default" as const, 
+        className: "bg-green-100 text-green-800 hover:bg-green-200",
+        icon: <CheckCircle className="w-3 h-3 mr-1" />
+      },
+      "Failed": { 
+        variant: "destructive" as const, 
+        className: "bg-red-100 text-red-800 hover:bg-red-200",
+        icon: <XCircle className="w-3 h-3 mr-1" />
+      },
+      "Processing": { 
+        variant: "secondary" as const, 
+        className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
+        icon: <Clock className="w-3 h-3 mr-1" />
+      }
+    }
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.Processing
+    
+    return (
+      <Badge variant={config.variant} className={config.className}>
+        {config.icon}
+        {status}
+      </Badge>
+    )
+  }
+
   const handleIndividualAdd = () => {
     router.push("/manage-students/search")
   }
@@ -107,6 +145,7 @@ export default function ManageStudentsPage() {
 
   const getTabCount = (status: string) => {
     if (status === "all") return mockStudents.length
+    if (status === "upload-history") return mockUploadHistory.length
     return mockStudents.filter(student => student.status.toLowerCase() === status.toLowerCase()).length
   }
 
@@ -138,6 +177,9 @@ export default function ManageStudentsPage() {
             <TabsTrigger value="inactive">
               Inactive ({getTabCount("inactive")})
             </TabsTrigger>
+            <TabsTrigger value="upload-history">
+              Upload History ({getTabCount("upload-history")})
+            </TabsTrigger>
           </TabsList>
           
           {/* Search and Filter Controls */}
@@ -159,9 +201,8 @@ export default function ManageStudentsPage() {
           </div>
         </div>
         
-        <TabsContent value={activeTab} className="mt-6">
-
-          {/* Students Table */}
+        {/* Students Table Content */}
+        <TabsContent value="all" className="mt-6">
           <div className="border rounded-lg">
             <Table>
               <TableHeader>
@@ -251,6 +292,254 @@ export default function ManageStudentsPage() {
           {filteredStudents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500">No students found matching your criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="active" className="mt-6">
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("lastName")}
+                  >
+                    <div className="flex items-center">
+                      Last Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    <div className="flex items-center">
+                      First Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold">SSID</TableHead>
+                  <TableHead className="font-semibold">Local ID</TableHead>
+                  <TableHead className="font-semibold">District</TableHead>
+                  <TableHead className="font-semibold">School</TableHead>
+                  <TableHead className="font-semibold">Birthdate</TableHead>
+                  <TableHead className="font-semibold">Contact Number</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudents.map((student) => (
+                  <TableRow key={student.id} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.lastName}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.firstName}
+                      </button>
+                    </TableCell>
+                    <TableCell>{student.ssid}</TableCell>
+                    <TableCell>{student.localId}</TableCell>
+                    <TableCell>{student.district}</TableCell>
+                    <TableCell>{student.school}</TableCell>
+                    <TableCell>{student.birthdate}</TableCell>
+                    <TableCell>{student.contactNumber}</TableCell>
+                    <TableCell>{getStatusBadge(student.status)}</TableCell>
+                    <TableCell>{student.modifiedDate}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleStudentAction("view", student.id)}>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("deactivate", student.id)}>
+                            {student.status === "Active" ? "Deactivate" : "Activate"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {filteredStudents.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No students found matching your criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="inactive" className="mt-6">
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("lastName")}
+                  >
+                    <div className="flex items-center">
+                      Last Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    <div className="flex items-center">
+                      First Name
+                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                    </div>
+                  </TableHead>
+                  <TableHead className="font-semibold">SSID</TableHead>
+                  <TableHead className="font-semibold">Local ID</TableHead>
+                  <TableHead className="font-semibold">District</TableHead>
+                  <TableHead className="font-semibold">School</TableHead>
+                  <TableHead className="font-semibold">Birthdate</TableHead>
+                  <TableHead className="font-semibold">Contact Number</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudents.map((student) => (
+                  <TableRow key={student.id} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.lastName}
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <button 
+                        onClick={() => handleStudentClick(student.id)}
+                        className="text-teal-600 hover:text-teal-700 hover:underline cursor-pointer"
+                      >
+                        {student.firstName}
+                      </button>
+                    </TableCell>
+                    <TableCell>{student.ssid}</TableCell>
+                    <TableCell>{student.localId}</TableCell>
+                    <TableCell>{student.district}</TableCell>
+                    <TableCell>{student.school}</TableCell>
+                    <TableCell>{student.birthdate}</TableCell>
+                    <TableCell>{student.contactNumber}</TableCell>
+                    <TableCell>{getStatusBadge(student.status)}</TableCell>
+                    <TableCell>{student.modifiedDate}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleStudentAction("view", student.id)}>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("edit", student.id)}>
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleStudentAction("deactivate", student.id)}>
+                            {student.status === "Active" ? "Deactivate" : "Activate"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {filteredStudents.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No students found matching your criteria.</p>
+            </div>
+          )}
+        </TabsContent>
+
+        {/* Upload History Tab Content */}
+        <TabsContent value="upload-history" className="mt-6">
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-semibold">File Name</TableHead>
+                  <TableHead className="font-semibold">Date</TableHead>
+                  <TableHead className="font-semibold">User</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockUploadHistory.map((upload) => (
+                  <TableRow key={upload.id} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center">
+                        <FileText className="w-4 h-4 mr-2 text-gray-500" />
+                        {upload.fileName}
+                      </div>
+                    </TableCell>
+                    <TableCell>{upload.uploadDate}</TableCell>
+                    <TableCell>{upload.uploadedBy}</TableCell>
+                    <TableCell>{getUploadStatusBadge(upload.status)}</TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            Download Report
+                          </DropdownMenuItem>
+                          {upload.recordsFailed > 0 && (
+                            <DropdownMenuItem>
+                              View Errors
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {mockUploadHistory.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No upload history found.</p>
             </div>
           )}
         </TabsContent>
