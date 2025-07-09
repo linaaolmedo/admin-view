@@ -4,22 +4,26 @@ import { useRouter, usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { User, LogOut, Shield, Users } from "lucide-react"
+import { User, LogOut, Shield, Users, ChevronDown, Building } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 
 type AccountType = "administrator" | "practitioner" | "supervisor"
+type OrganizationType = "fee-schedule" | "lea-bop"
 
 export function Header() {
   const router = useRouter()
   const pathname = usePathname()
   const [accountType, setAccountType] = useState<AccountType | null>(null)
+  const [selectedOrganization, setSelectedOrganization] = useState<OrganizationType>("fee-schedule")
 
-  // Get account type from localStorage on component mount
+  // Get account type and organization from localStorage on component mount
   useEffect(() => {
     const storedAccountType = localStorage.getItem("accountType") as AccountType
+    const storedOrganization = localStorage.getItem("selectedOrganization") as OrganizationType
     setAccountType(storedAccountType || "practitioner")
+    setSelectedOrganization(storedOrganization || "fee-schedule")
   }, [])
 
   // Don't show header on login page
@@ -31,7 +35,15 @@ export function Header() {
     localStorage.removeItem("isAuthenticated")
     localStorage.removeItem("userEmail")
     localStorage.removeItem("accountType")
+    localStorage.removeItem("selectedOrganization")
     router.push("/login")
+  }
+
+  const handleOrganizationChange = (organization: OrganizationType) => {
+    setSelectedOrganization(organization)
+    localStorage.setItem("selectedOrganization", organization)
+    // Trigger a page refresh to update organization-specific data
+    window.location.reload()
   }
 
   const userEmail =
@@ -70,6 +82,17 @@ export function Header() {
     }
   }
 
+  const getOrganizationLabel = (organization: OrganizationType) => {
+    switch (organization) {
+      case "fee-schedule":
+        return "Fee Schedule"
+      case "lea-bop":
+        return "LEA-BOP"
+      default:
+        return "Fee Schedule"
+    }
+  }
+
   return (
     <header className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white px-6 py-2 flex items-center justify-between w-full shadow-sm fixed top-0 left-0 right-0 z-50">
       <Link href="/dashboard" className="flex items-center hover:opacity-90 transition-opacity cursor-pointer">
@@ -83,36 +106,66 @@ export function Header() {
         />
       </Link>
       
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex flex-col items-center gap-1 text-white hover:bg-white/20 h-auto py-2 px-3">
-            <div className="flex items-center gap-2">
-              {accountType && getAccountTypeIcon(accountType)}
-              <span className="text-sm font-medium">{userEmail}</span>
-            </div>
-            {accountType && (
-              <Badge 
-                variant="outline" 
-                className={`text-xs ${getAccountTypeBadge(accountType)} bg-white/90 border`}
-              >
-                {getAccountTypeLabel(accountType)}
-              </Badge>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem asChild>
-            <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
-              <User className="w-4 h-4" />
-              Profile
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
-            <LogOut className="w-4 h-4" />
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex items-center gap-4">
+        {/* Organization Selector */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex items-center gap-2 text-white hover:bg-white/20 h-auto py-2 px-3">
+              <Building className="w-4 h-4" />
+              <span className="text-sm font-medium">{getOrganizationLabel(selectedOrganization)}</span>
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem 
+              onClick={() => handleOrganizationChange("fee-schedule")}
+              className={selectedOrganization === "fee-schedule" ? "bg-gray-100" : ""}
+            >
+              <Building className="w-4 h-4 mr-2" />
+              Fee Schedule
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => handleOrganizationChange("lea-bop")}
+              className={selectedOrganization === "lea-bop" ? "bg-gray-100" : ""}
+            >
+              <Building className="w-4 h-4 mr-2" />
+              LEA-BOP
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* User Profile */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 text-white hover:bg-white/20 h-auto py-2 px-3">
+              <div className="flex items-center gap-2">
+                {accountType && getAccountTypeIcon(accountType)}
+                <span className="text-sm font-medium">{userEmail}</span>
+              </div>
+              {accountType && (
+                <Badge 
+                  variant="outline" 
+                  className={`text-xs ${getAccountTypeBadge(accountType)} bg-white/90 border`}
+                >
+                  {getAccountTypeLabel(accountType)}
+                </Badge>
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem asChild>
+              <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
+                <User className="w-4 h-4" />
+                Profile
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-red-600">
+              <LogOut className="w-4 h-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   )
 }

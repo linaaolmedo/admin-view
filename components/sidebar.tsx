@@ -10,7 +10,6 @@ import {
   Clipboard,
   Briefcase,
   Download,
-  Settings,
   ChevronUp,
   ChevronDown,
   PanelLeft,
@@ -39,10 +38,15 @@ const manageStudentsSubItems = [
   { href: "/manage-students/add", label: "Add" },
 ]
 
-const manageOrganizationsSubItems = [
+const getManageOrganizationsSubItems = (selectedOrganization: string) => [
   { href: "/manage-organizations/payer-type-info", label: "Payer Type Info" },
-  { href: "/manage-organizations/billing-codes", label: "Billing Codes" },
   { href: "/manage-organizations/qualifications", label: "Qualifications" },
+  { href: "/manage-organizations/billing-codes", label: "Billing Codes" },
+  { href: "/manage-organizations/permission-types", label: "Permission Types" },
+  { 
+    href: selectedOrganization === "fee-schedule" ? "/manage-organizations/carelon" : "/manage-organizations/medi-cal", 
+    label: selectedOrganization === "fee-schedule" ? "Carelon" : "Medi-Cal"
+  },
 ]
 
 const caseloadSubItems = [
@@ -67,11 +71,7 @@ const reportsSubItems = [
   { href: "/reports/report-builder", label: "Report builder" }
 ]
 
-const configurationsSubItems = [
-  { href: "/configurations/qualifications", label: "Qualifications" },
-  { href: "/configurations/billing-codes", label: "Billing codes" },
-  { href: "/configurations/permission-types", label: "Permission types" },
-]
+
 
 type AccountType = "administrator" | "practitioner" | "supervisor"
 
@@ -79,6 +79,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [selectedOrganization, setSelectedOrganization] = useState("fee-schedule")
 
   // Initialize collapsed state from localStorage
   useEffect(() => {
@@ -86,6 +87,12 @@ export function Sidebar() {
     setIsCollapsed(collapsed)
   }, [])
   const [accountType, setAccountType] = useState<AccountType | null>(null)
+
+  // Get selected organization from localStorage
+  useEffect(() => {
+    const storedOrganization = localStorage.getItem("selectedOrganization") || "fee-schedule"
+    setSelectedOrganization(storedOrganization)
+  }, [])
   
   // State for dropdown menus
   const [isClaimsOpen, setIsClaimsOpen] = useState(pathname.startsWith("/claims"))
@@ -95,7 +102,6 @@ export function Sidebar() {
   const [isCaseloadOpen, setIsCaseloadOpen] = useState(pathname.startsWith("/caseload"))
   const [isStudentServicesOpen, setIsStudentServicesOpen] = useState(pathname.startsWith("/student-services"))
   const [isReportsOpen, setIsReportsOpen] = useState(pathname.startsWith("/reports"))
-  const [isConfigurationsOpen, setIsConfigurationsOpen] = useState(pathname.startsWith("/configurations"))
 
   // Get account type from localStorage on component mount
   useEffect(() => {
@@ -133,7 +139,7 @@ export function Sidebar() {
 
     switch (accountType) {
       case "administrator":
-        return ["claims", "manageUsers", "manageStudents", "reports", "configurations", "manageOrganizations"]
+        return ["claims", "manageUsers", "manageStudents", "reports", "manageOrganizations"]
       case "supervisor":
         return ["logService", "caseload", "studentServices", "assignedPractitioners", "reports"]
       case "practitioner":
@@ -145,6 +151,7 @@ export function Sidebar() {
 
   const visibleItems = getVisibleNavItems()
   const studentServicesSubItems = getStudentServicesSubItems()
+  const manageOrganizationsSubItems = getManageOrganizationsSubItems(selectedOrganization)
 
   return (
     <aside className={`fixed left-0 top-0 ${isCollapsed ? 'w-16' : 'w-64'} bg-gradient-to-b from-cyan-500 to-teal-600 text-white h-screen flex flex-col transition-all duration-300 shadow-lg z-40`}>
@@ -552,63 +559,7 @@ export function Sidebar() {
           </div>
         )}
 
-        {/* Configurations Dropdown - Only for Administrators */}
-        {visibleItems.includes("configurations") && (
-          <div>
-            {isCollapsed ? (
-              <Link
-                href="/configurations"
-                className={`flex items-center justify-center p-3 rounded transition-colors ${
-                  pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                }`}
-                title="Configurations"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
-            ) : (
-              <>
-                <div className="flex items-center gap-1">
-                  <Link
-                    href="/configurations"
-                    className={`flex-1 flex items-center gap-3 px-3 py-2 rounded transition-colors ${
-                      pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    <Settings className="w-5 h-5" />
-                    <span>Configurations</span>
-                  </Link>
-                  <button
-                    onClick={() => setIsConfigurationsOpen(!isConfigurationsOpen)}
-                    className={`px-2 py-2 rounded transition-colors ${
-                      pathname.startsWith("/configurations") ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {isConfigurationsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </button>
-                </div>
 
-                {isConfigurationsOpen && (
-                  <div className="ml-8 mt-2 space-y-1">
-                    {configurationsSubItems.map((item) => {
-                      const isActive = pathname === item.href
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={`block px-3 py-2 rounded text-sm transition-colors ${
-                            isActive ? "bg-white/20 text-white" : "text-white hover:bg-white/10"
-                          }`}
-                        >
-                          {item.label}
-                        </Link>
-                      )
-                    })}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
 
         {/* Manage Organizations Dropdown - Only for Administrators */}
         {visibleItems.includes("manageOrganizations") && (

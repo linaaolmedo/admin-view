@@ -3,12 +3,12 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-export default function PayerTypeInfoPage() {
+export default function PermissionTypesPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect to main manage organizations page with payer-type-info tab
-    router.replace("/manage-organizations?tab=payer-type-info")
+    // Redirect to main manage organizations page with permission-types tab
+    router.replace("/manage-organizations?tab=permission-types")
   }, [router])
 
   return (

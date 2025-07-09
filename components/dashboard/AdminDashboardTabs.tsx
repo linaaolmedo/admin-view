@@ -6,14 +6,12 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TimeRangeSelector } from "./TimeRangeSelector"
 import { ClaimsProcessingPerformanceChart } from "./ClaimsProcessingPerformanceChart"
-import { ClaimsVolumeTrendsChart } from "./ClaimsVolumeTrendsChart"
-import { FinancialImpactChart } from "./FinancialImpactChart"
 import { ClaimsAgingChart } from "./ClaimsAgingChart"
+import { FinancialImpactChart } from "./FinancialImpactChart"
 import { 
   generateClaimsProcessingData,
-  generateClaimsVolumeData,
-  generateFinancialImpactData,
-  generateClaimsAgingData
+  generateClaimsAgingData,
+  generateFinancialImpactData
 } from "@/lib/data/mock-claims-data"
 import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react"
 
@@ -23,9 +21,8 @@ export function AdminDashboardTabs() {
 
   // Generate mock data
   const claimsProcessingData = generateClaimsProcessingData()
-  const claimsVolumeData = generateClaimsVolumeData()
-  const financialImpactData = generateFinancialImpactData()
   const claimsAgingData = generateClaimsAgingData()
+  const financialImpactData = generateFinancialImpactData()
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -355,26 +352,20 @@ export function AdminDashboardTabs() {
           </div>
 
           {/* Claims Processing Performance */}
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="w-full flex">
                 <ClaimsProcessingPerformanceChart data={claimsProcessingData} timeRange={timeRange} />
               </div>
               
               <div className="w-full flex">
-                <ClaimsVolumeTrendsChart data={claimsVolumeData} timeRange={timeRange} />
+                <ClaimsAgingChart data={claimsAgingData} />
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-8">
               <div className="w-full flex">
                 <FinancialImpactChart data={financialImpactData} timeRange={timeRange} />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-6">
-              <div className="w-full flex">
-                <ClaimsAgingChart data={claimsAgingData} />
               </div>
             </div>
           </div>

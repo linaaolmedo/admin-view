@@ -3,12 +3,12 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-export default function PayerTypeInfoPage() {
+export default function CarelonPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect to main manage organizations page with payer-type-info tab
-    router.replace("/manage-organizations?tab=payer-type-info")
+    // Redirect to main manage organizations page with carelon tab
+    router.replace("/manage-organizations?tab=carelon")
   }, [router])
 
   return (
