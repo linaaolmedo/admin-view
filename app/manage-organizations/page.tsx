@@ -210,7 +210,8 @@ const feeScheduleBillingCodes = [
     description: "Individual - Health behavior intervention",
     unit: "15 minutes",
     rate: "$20.11",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 2,
@@ -219,7 +220,8 @@ const feeScheduleBillingCodes = [
     description: "Group - Health behavior intervention",
     unit: "15 minutes",
     rate: "$8.04",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 3,
@@ -228,7 +230,8 @@ const feeScheduleBillingCodes = [
     description: "Individual - Education and training for patient self-management",
     unit: "30 minutes",
     rate: "$26.66",
-    eligiblePractitioners: "CHW"
+    eligiblePractitioners: "CHW",
+    status: "Active"
   },
   {
     id: 4,
@@ -237,7 +240,8 @@ const feeScheduleBillingCodes = [
     description: "2-4 patients - Education and training for patient self-management",
     unit: "30 minutes",
     rate: "$12.66",
-    eligiblePractitioners: "CHW"
+    eligiblePractitioners: "CHW",
+    status: "Active"
   },
   {
     id: 5,
@@ -246,7 +250,8 @@ const feeScheduleBillingCodes = [
     description: "5-8 patients - Education and training for patient self-management",
     unit: "30 minutes",
     rate: "$9.46",
-    eligiblePractitioners: "CHW"
+    eligiblePractitioners: "CHW",
+    status: "Archived"
   },
   {
     id: 6,
@@ -255,7 +260,8 @@ const feeScheduleBillingCodes = [
     description: "Individual - Skills Training and Development",
     unit: "15 minutes",
     rate: "$20.11",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 7,
@@ -264,7 +270,8 @@ const feeScheduleBillingCodes = [
     description: "Screening for Annual Alcohol Misuse",
     unit: "15 minutes",
     rate: "$17.14",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 8,
@@ -273,7 +280,8 @@ const feeScheduleBillingCodes = [
     description: "Screening for ACES/Trauma (High Risk)",
     unit: "30 minutes",
     rate: "$29.00",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 9,
@@ -282,7 +290,8 @@ const feeScheduleBillingCodes = [
     description: "Screening for ACES/Trauma (Low Risk)",
     unit: "30 minutes",
     rate: "$29.00",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 10,
@@ -291,7 +300,8 @@ const feeScheduleBillingCodes = [
     description: "Screening for depression (positive)",
     unit: "30 minutes",
     rate: "$37.25",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 11,
@@ -300,7 +310,8 @@ const feeScheduleBillingCodes = [
     description: "Screening for depression (negative)",
     unit: "30 minutes",
     rate: "$17.14",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 12,
@@ -309,7 +320,8 @@ const feeScheduleBillingCodes = [
     description: "Alcohol and/or substance abuse structured screening, and brief intervention (SBI) services",
     unit: "15-30 minutes",
     rate: "$31.24",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Archived"
   },
   {
     id: 13,
@@ -318,7 +330,8 @@ const feeScheduleBillingCodes = [
     description: "Alcohol and/or substance abuse structured screening, and brief intervention (SBI) services",
     unit: "30 or more minutes",
     rate: "$59.61",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 14,
@@ -327,7 +340,8 @@ const feeScheduleBillingCodes = [
     description: "Psychosocial Status Assessment",
     unit: "30 minutes",
     rate: "$85.40",
-    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH"
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW, PSYCH",
+    status: "Active"
   },
   {
     id: 15,
@@ -336,7 +350,8 @@ const feeScheduleBillingCodes = [
     description: "Psychological Testing and Evaluation",
     unit: "initial 60 minutes",
     rate: "$107.69",
-    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist"
+    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist",
+    status: "Active"
   },
   {
     id: 16,
@@ -345,7 +360,8 @@ const feeScheduleBillingCodes = [
     description: "Neuropsychological Testing and Evaluation",
     unit: "initial 60 minutes",
     rate: "$116.97",
-    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist"
+    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist",
+    status: "Archived"
   },
   {
     id: 17,
@@ -354,7 +370,8 @@ const feeScheduleBillingCodes = [
     description: "Psychological or neuropsychological testing and evaluation",
     unit: "initial 60 minutes",
     rate: "$41.90",
-    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist"
+    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS School Psychologist",
+    status: "Active"
   }
 ]
 
@@ -366,7 +383,8 @@ const leaBopBillingCodes = [
     description: "Adaptive behavior treatment with protocol modification",
     unit: "15 minutes",
     rate: "$28.50",
-    eligiblePractitioners: "BCBA, BCaBA"
+    eligiblePractitioners: "BCBA, BCaBA",
+    status: "Active"
   },
   {
     id: 2,
@@ -375,7 +393,8 @@ const leaBopBillingCodes = [
     description: "Family adaptive behavior treatment guidance",
     unit: "15 minutes",
     rate: "$32.75",
-    eligiblePractitioners: "BCBA, BCaBA"
+    eligiblePractitioners: "BCBA, BCaBA",
+    status: "Active"
   },
   {
     id: 3,
@@ -384,7 +403,8 @@ const leaBopBillingCodes = [
     description: "Speech/hearing therapy",
     unit: "15 minutes",
     rate: "$45.80",
-    eligiblePractitioners: "SLP, SLPA"
+    eligiblePractitioners: "SLP, SLPA",
+    status: "Active"
   },
   {
     id: 4,
@@ -393,7 +413,8 @@ const leaBopBillingCodes = [
     description: "Therapeutic activities, direct (one-on-one) patient contact",
     unit: "15 minutes",
     rate: "$42.15",
-    eligiblePractitioners: "OT, COTA, PT, PTA"
+    eligiblePractitioners: "OT, COTA, PT, PTA",
+    status: "Active"
   },
   {
     id: 5,
@@ -402,7 +423,8 @@ const leaBopBillingCodes = [
     description: "Therapeutic procedure, 1 or more areas",
     unit: "15 minutes",
     rate: "$38.90",
-    eligiblePractitioners: "PT, PTA"
+    eligiblePractitioners: "PT, PTA",
+    status: "Archived"
   },
   {
     id: 6,
@@ -411,7 +433,8 @@ const leaBopBillingCodes = [
     description: "Neuromuscular reeducation",
     unit: "15 minutes",
     rate: "$41.25",
-    eligiblePractitioners: "PT, PTA"
+    eligiblePractitioners: "PT, PTA",
+    status: "Active"
   },
   {
     id: 7,
@@ -420,7 +443,8 @@ const leaBopBillingCodes = [
     description: "Self-care/home management training",
     unit: "15 minutes",
     rate: "$44.60",
-    eligiblePractitioners: "OT, COTA"
+    eligiblePractitioners: "OT, COTA",
+    status: "Active"
   },
   {
     id: 8,
@@ -429,7 +453,8 @@ const leaBopBillingCodes = [
     description: "Neurobehavioral status exam",
     unit: "30 minutes",
     rate: "$89.75",
-    eligiblePractitioners: "PSYCH"
+    eligiblePractitioners: "PSYCH",
+    status: "Active"
   },
   {
     id: 9,
@@ -438,7 +463,8 @@ const leaBopBillingCodes = [
     description: "Psychological testing evaluation services",
     unit: "60 minutes",
     rate: "$115.80",
-    eligiblePractitioners: "PSYCH"
+    eligiblePractitioners: "PSYCH",
+    status: "Active"
   },
   {
     id: 10,
@@ -447,7 +473,8 @@ const leaBopBillingCodes = [
     description: "Evaluation of speech fluency",
     unit: "30 minutes",
     rate: "$52.35",
-    eligiblePractitioners: "SLP"
+    eligiblePractitioners: "SLP",
+    status: "Active"
   },
   {
     id: 11,
@@ -456,7 +483,8 @@ const leaBopBillingCodes = [
     description: "Evaluation of speech sound production",
     unit: "30 minutes",
     rate: "$48.90",
-    eligiblePractitioners: "SLP"
+    eligiblePractitioners: "SLP",
+    status: "Archived"
   },
   {
     id: 12,
@@ -465,7 +493,8 @@ const leaBopBillingCodes = [
     description: "Occupational therapy evaluation, low complexity",
     unit: "30 minutes",
     rate: "$67.45",
-    eligiblePractitioners: "OT"
+    eligiblePractitioners: "OT",
+    status: "Active"
   },
   {
     id: 13,
@@ -474,7 +503,8 @@ const leaBopBillingCodes = [
     description: "Occupational therapy evaluation, moderate complexity",
     unit: "45 minutes",
     rate: "$89.20",
-    eligiblePractitioners: "OT"
+    eligiblePractitioners: "OT",
+    status: "Active"
   },
   {
     id: 14,
@@ -483,7 +513,8 @@ const leaBopBillingCodes = [
     description: "Occupational therapy evaluation, high complexity",
     unit: "60 minutes",
     rate: "$115.75",
-    eligiblePractitioners: "OT"
+    eligiblePractitioners: "OT",
+    status: "Active"
   },
   {
     id: 15,
@@ -492,7 +523,111 @@ const leaBopBillingCodes = [
     description: "Physical therapy evaluation, low complexity",
     unit: "30 minutes",
     rate: "$63.85",
-    eligiblePractitioners: "PT"
+    eligiblePractitioners: "PT",
+    status: "Active"
+  }
+]
+
+// Mock data for service types (organization-specific)
+const feeScheduleServiceTypes = [
+  {
+    id: 1,
+    code: "MHS-01",
+    type: "Mental Health",
+    description: "Individual Mental Health Services",
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW",
+    status: "Active"
+  },
+  {
+    id: 2,
+    code: "MHS-02",
+    type: "Mental Health",
+    description: "Group Mental Health Services",
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS, AMFT, ASW",
+    status: "Active"
+  },
+  {
+    id: 3,
+    code: "BHS-01",
+    type: "Behavioral Health",
+    description: "Behavioral Health Intervention Services",
+    eligiblePractitioners: "CHW, LCSW, LMFT, LPSS",
+    status: "Active"
+  },
+  {
+    id: 4,
+    code: "AS-01",
+    type: "Assessment",
+    description: "Comprehensive Assessment Services",
+    eligiblePractitioners: "MD, NP, PA, PSYCH, PSY ASSOC, PPS",
+    status: "Active"
+  },
+  {
+    id: 5,
+    code: "CS-01",
+    type: "Crisis",
+    description: "Crisis Intervention Services",
+    eligiblePractitioners: "MD, PA, NP, RN, PSYCH, LCSW, LMFT, LPSS",
+    status: "Active"
+  },
+  {
+    id: 6,
+    code: "PS-01",
+    type: "Prevention",
+    description: "Prevention and Early Intervention Services",
+    eligiblePractitioners: "CHW, LCSW, LMFT, LPSS, AMFT, ASW",
+    status: "Archived"
+  }
+]
+
+const leaBopServiceTypes = [
+  {
+    id: 1,
+    code: "ABA-01",
+    type: "ABA",
+    description: "Applied Behavior Analysis Services",
+    eligiblePractitioners: "BCBA, BCaBA",
+    status: "Active"
+  },
+  {
+    id: 2,
+    code: "ST-01",
+    type: "Speech Therapy",
+    description: "Speech and Language Therapy Services",
+    eligiblePractitioners: "SLP, SLPA",
+    status: "Active"
+  },
+  {
+    id: 3,
+    code: "OT-01",
+    type: "Occupational Therapy",
+    description: "Occupational Therapy Services",
+    eligiblePractitioners: "OT, COTA",
+    status: "Active"
+  },
+  {
+    id: 4,
+    code: "PT-01",
+    type: "Physical Therapy",
+    description: "Physical Therapy Services",
+    eligiblePractitioners: "PT, PTA",
+    status: "Active"
+  },
+  {
+    id: 5,
+    code: "APE-01",
+    type: "Adapted PE",
+    description: "Adapted Physical Education Services",
+    eligiblePractitioners: "APE",
+    status: "Active"
+  },
+  {
+    id: 6,
+    code: "PSYC-01",
+    type: "Psychology",
+    description: "Educational Psychology Services",
+    eligiblePractitioners: "PSYCH",
+    status: "Active"
   }
 ]
 
@@ -888,6 +1023,12 @@ export default function ManageOrganizationsPage() {
               Permission Types
             </TabsTrigger>
             <TabsTrigger 
+              value="service-types"
+              className="data-[state=active]:text-teal-600 data-[state=active]:border-b-2 data-[state=active]:border-teal-600 data-[state=active]:bg-transparent rounded-none border-b-2 border-transparent py-3 px-4"
+            >
+              Service Types
+            </TabsTrigger>
+            <TabsTrigger 
               value={selectedOrganization === "fee-schedule" ? "carelon" : "medi-cal"}
               className="data-[state=active]:text-teal-600 data-[state=active]:border-b-2 data-[state=active]:border-teal-600 data-[state=active]:bg-transparent rounded-none border-b-2 border-transparent py-3 px-4"
             >
@@ -904,8 +1045,14 @@ export default function ManageOrganizationsPage() {
           ) : activeTab === "medi-cal" ? (
             renderPayerTypeInfo()
           ) : activeTab === "billing-codes" ? (
-            <div className="bg-white rounded-lg border">
-              <Table>
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                  Add Billing Code
+                </Button>
+              </div>
+              <div className="bg-white rounded-lg border">
+                <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
                     <TableHead className="font-semibold text-gray-900">Code</TableHead>
@@ -914,6 +1061,7 @@ export default function ManageOrganizationsPage() {
                     <TableHead className="font-semibold text-gray-900">Unit</TableHead>
                     <TableHead className="font-semibold text-gray-900">Rate</TableHead>
                     <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -931,6 +1079,11 @@ export default function ManageOrganizationsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <Badge variant="secondary" className={getStatusBadge(item.status)}>
+                          {item.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm">
@@ -941,7 +1094,56 @@ export default function ManageOrganizationsPage() {
                             <DropdownMenuItem>Edit</DropdownMenuItem>
                             <DropdownMenuItem>View Details</DropdownMenuItem>
                             <DropdownMenuItem className="text-red-600">
-                              Archive
+                              {item.status === "Active" ? "Archive" : "Activate"}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              </div>
+            </div>
+          ) : activeTab === "service-types" ? (
+            <div className="bg-white rounded-lg border">
+                <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-gray-900">Code</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Type</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Description</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
+                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(selectedOrganization === "fee-schedule" ? feeScheduleServiceTypes : leaBopServiceTypes).map((item) => (
+                    <TableRow key={item.id} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">{item.code}</TableCell>
+                      <TableCell className="font-medium">{item.type}</TableCell>
+                      <TableCell className="max-w-md">{item.description}</TableCell>
+                      <TableCell className="max-w-xs">
+                        <div className="text-sm text-gray-600 line-clamp-2">
+                          {item.eligiblePractitioners}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className={getStatusBadge(item.status)}>
+                          {item.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4 text-gray-400" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem className="text-teal-600">
+                              {item.status === "Active" ? "Deactivate" : "Activate"}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -952,8 +1154,16 @@ export default function ManageOrganizationsPage() {
               </Table>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border">
-              <Table>
+            <div className="space-y-4">
+              {activeTab === "qualifications" && (
+                <div className="flex justify-end">
+                  <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                    Add Qualification
+                  </Button>
+                </div>
+              )}
+              <div className="bg-white rounded-lg border">
+                <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
                     <TableHead className="font-semibold text-gray-900">Type</TableHead>
@@ -966,7 +1176,9 @@ export default function ManageOrganizationsPage() {
                 <TableBody>
                   {(activeTab === "qualifications" 
                     ? (selectedOrganization === "fee-schedule" ? feeScheduleQualifications : leaBopQualifications)
-                    : permissionTypesData
+                    : activeTab === "permission-types" 
+                    ? permissionTypesData
+                    : []
                   ).map((item) => (
                     <TableRow key={item.id} className="hover:bg-gray-50">
                       <TableCell className="font-medium">{item.type}</TableCell>
@@ -997,6 +1209,7 @@ export default function ManageOrganizationsPage() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </div>
           )}
         </TabsContent>
