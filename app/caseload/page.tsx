@@ -33,6 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for caseload students
 const mockCaseloadStudents = [
@@ -115,6 +116,12 @@ export default function CaseloadPage() {
 
     return matchesSearch
   })
+
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    filteredStudents,
+    "lastName",
+    "asc"
+  )
 
   const dismissNotification = () => {
     setShowSuccessNotification(false)
@@ -299,19 +306,107 @@ export default function CaseloadPage() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead className="font-semibold">SSID</TableHead>
-                  <TableHead className="font-semibold">Last Name</TableHead>
-                  <TableHead className="font-semibold">First Name</TableHead>
-                  <TableHead className="font-semibold">Practitioner</TableHead>
-                  <TableHead className="font-semibold">District</TableHead>
-                  <TableHead className="font-semibold">Birthdate</TableHead>
-                  <TableHead className="font-semibold">Gender</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("ssid")}
+                  >
+                    <div className="flex items-center gap-1">
+                      SSID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("ssid")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("lastName")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Last Name
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("lastName")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("firstName")}
+                  >
+                    <div className="flex items-center gap-1">
+                      First Name
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("firstName")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("practitioner")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Practitioner
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("practitioner")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("district")}
+                  >
+                    <div className="flex items-center gap-1">
+                      District
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("district")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("birthdate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Birthdate
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("birthdate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("gender")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Gender
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("gender")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.map((student) => (
+                {sortedData.map((student) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell>
                       <Checkbox

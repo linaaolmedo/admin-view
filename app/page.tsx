@@ -15,9 +15,24 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { redirect } from "next/navigation"
+import { useTableSorting } from "@/hooks/use-table-sorting"
+
+// Mock data for the homepage table
+const mockCaseloadData = [
+  { id: 1, ssid: "96759512", name: "Philip Shields", dob: "10/18/1998", district: "Fruitvale", dateOfLastService: "3/12/2025" },
+  { id: 2, ssid: "98587232", name: "Georgia Fritsch", dob: "10/25/1999", district: "Fruitvale", dateOfLastService: "3/09/2025" },
+  { id: 3, ssid: "76253606", name: "Marshall Weber", dob: "2/20/1999", district: "Di Giorgio", dateOfLastService: "3/03/2025" },
+  { id: 4, ssid: "54102726", name: "Jodi Welch", dob: "3/17/1998", district: "Di Giorgio", dateOfLastService: "4/2/2025" },
+]
 
 export default function HomePage() {
   redirect("/dashboard")
+  
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    mockCaseloadData,
+    "dateOfLastService",
+    "desc"
+  )
 
   return (
     <div className="min-h-screen bg-[#ffffff]">
@@ -219,42 +234,78 @@ export default function HomePage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 px-4 font-medium text-[#787878]">SSID</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#787878]">Name</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#787878]">DOB</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#787878]">District</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#787878]">Date of Last Service</th>
+                      <th 
+                        className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100"
+                        {...getSortableHeaderProps("ssid")}
+                      >
+                        <div className="flex items-center gap-1">
+                          SSID
+                          {(() => {
+                            const { icon: Icon, className } = getSortIcon("ssid")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
+                      <th 
+                        className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100"
+                        {...getSortableHeaderProps("name")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Name
+                          {(() => {
+                            const { icon: Icon, className } = getSortIcon("name")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
+                      <th 
+                        className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100"
+                        {...getSortableHeaderProps("dob")}
+                      >
+                        <div className="flex items-center gap-1">
+                          DOB
+                          {(() => {
+                            const { icon: Icon, className } = getSortIcon("dob")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
+                      <th 
+                        className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100"
+                        {...getSortableHeaderProps("district")}
+                      >
+                        <div className="flex items-center gap-1">
+                          District
+                          {(() => {
+                            const { icon: Icon, className } = getSortIcon("district")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
+                      <th 
+                        className="text-left py-3 px-4 font-medium text-[#787878] cursor-pointer hover:bg-gray-100"
+                        {...getSortableHeaderProps("dateOfLastService")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Date of Last Service
+                          {(() => {
+                            const { icon: Icon, className } = getSortIcon("dateOfLastService")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-[#000000]">96759512</td>
-                      <td className="py-3 px-4 text-[#000000]">Philip Shields</td>
-                      <td className="py-3 px-4 text-[#000000]">10/18/1998</td>
-                      <td className="py-3 px-4 text-[#000000]">Fruitvale</td>
-                      <td className="py-3 px-4 text-[#000000]">3/12/2025</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-[#000000]">98587232</td>
-                      <td className="py-3 px-4 text-[#000000]">Georgia Fritsch</td>
-                      <td className="py-3 px-4 text-[#000000]">10/25/1999</td>
-                      <td className="py-3 px-4 text-[#000000]">Fruitvale</td>
-                      <td className="py-3 px-4 text-[#000000]">3/09/2025</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-3 px-4 text-[#000000]">76253606</td>
-                      <td className="py-3 px-4 text-[#000000]">Marshall Weber</td>
-                      <td className="py-3 px-4 text-[#000000]">2/20/1999</td>
-                      <td className="py-3 px-4 text-[#000000]">Di Giorgio</td>
-                      <td className="py-3 px-4 text-[#000000]">3/03/2025</td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4 text-[#000000]">54102726</td>
-                      <td className="py-3 px-4 text-[#000000]">Jodi Welch</td>
-                      <td className="py-3 px-4 text-[#000000]">3/17/1998</td>
-                      <td className="py-3 px-4 text-[#000000]">Di Giorgio</td>
-                      <td className="py-3 px-4 text-[#000000]">4/2/2025</td>
-                    </tr>
+                    {sortedData.map((item, index) => (
+                      <tr key={item.id} className={index < sortedData.length - 1 ? "border-b" : ""}>
+                        <td className="py-3 px-4 text-[#000000]">{item.ssid}</td>
+                        <td className="py-3 px-4 text-[#000000]">{item.name}</td>
+                        <td className="py-3 px-4 text-[#000000]">{item.dob}</td>
+                        <td className="py-3 px-4 text-[#000000]">{item.district}</td>
+                        <td className="py-3 px-4 text-[#000000]">{item.dateOfLastService}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

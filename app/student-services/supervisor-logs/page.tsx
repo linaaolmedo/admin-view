@@ -22,6 +22,7 @@ import {
   User,
   FileText
 } from "lucide-react"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for practitioners and their students
 const mockPractitionerData = [
@@ -167,6 +168,27 @@ export default function SupervisorLogsPage() {
     return matchesSearch
   })
 
+  // Flatten the data for sorting by practitioner-student pairs
+  const practitionerStudentPairs = filteredPractitioners.flatMap(practitioner => 
+    practitioner.students.map(student => ({
+      ...student,
+      practitionerName: practitioner.name,
+      practitionerId: practitioner.id
+    }))
+  )
+  
+  const { sortedData: sortedPractitionerStudents, getSortIcon: getPractitionerSortIcon, getSortableHeaderProps: getPractitionerSortableHeaderProps } = useTableSorting(
+    practitionerStudentPairs,
+    "practitionerName",
+    "asc"
+  )
+  
+  const { sortedData: sortedSupervisionLogs, getSortIcon: getLogsSortIcon, getSortableHeaderProps: getLogsSortableHeaderProps } = useTableSorting(
+    mockSupervisionLogs,
+    "serviceDate",
+    "desc"
+  )
+
   const handlePractitionerClick = (practitioner: any, student: any) => {
     setSelectedPractitioner(practitioner)
     setSelectedStudent(student)
@@ -256,16 +278,82 @@ export default function SupervisorLogsPage() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>Service Date</TableHead>
-                  <TableHead>Service Type</TableHead>
-                  <TableHead>Start Time</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Comments</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("serviceDate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Service Date
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("serviceDate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("serviceType")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Service Type
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("serviceType")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("startTime")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Start Time
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("startTime")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("duration")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Duration
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("duration")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("comments")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Comments
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("comments")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-blue-100"
+                    {...getLogsSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getLogsSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockSupervisionLogs.map((log) => (
+                {sortedSupervisionLogs.map((log) => (
                   <TableRow key={log.id} className={selectedLogs.includes(log.id) ? "bg-blue-50" : ""}>
                     <TableCell>
                       <Checkbox
@@ -398,55 +486,101 @@ export default function SupervisorLogsPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-blue-50">
-                <TableHead>Practitioner</TableHead>
-                <TableHead>Student</TableHead>
-                <TableHead>SSID</TableHead>
-                <TableHead>DOB</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-blue-100"
+                  {...getPractitionerSortableHeaderProps("practitionerName")}
+                >
+                  <div className="flex items-center gap-1">
+                    Practitioner
+                    {(() => {
+                      const { icon: Icon, className } = getPractitionerSortIcon("practitionerName")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-blue-100"
+                  {...getPractitionerSortableHeaderProps("name")}
+                >
+                  <div className="flex items-center gap-1">
+                    Student
+                    {(() => {
+                      const { icon: Icon, className } = getPractitionerSortIcon("name")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-blue-100"
+                  {...getPractitionerSortableHeaderProps("ssid")}
+                >
+                  <div className="flex items-center gap-1">
+                    SSID
+                    {(() => {
+                      const { icon: Icon, className } = getPractitionerSortIcon("ssid")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-blue-100"
+                  {...getPractitionerSortableHeaderProps("dob")}
+                >
+                  <div className="flex items-center gap-1">
+                    DOB
+                    {(() => {
+                      const { icon: Icon, className } = getPractitionerSortIcon("dob")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
+                </TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPractitioners.map((practitioner) => (
-                practitioner.students.map((student, index) => (
-                  <TableRow 
-                    key={`${practitioner.id}-${student.id}`}
-                    className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => handlePractitionerClick(practitioner, student)}
-                  >
-                    <TableCell className="font-medium">
-                      <Link 
-                        href={`/student-services/supervisor-logs?practitioner=${practitioner.id}&student=${student.id}`}
-                        className="text-teal-600 hover:underline"
-                      >
-                        {practitioner.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link 
-                        href={`/manage-students/${student.id}`}
-                        className="text-teal-600 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {student.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{student.ssid}</TableCell>
-                    <TableCell>{student.dob}</TableCell>
+              {sortedPractitionerStudents.map((studentData) => (
+                <TableRow 
+                  key={`${studentData.practitionerId}-${studentData.id}`}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => {
+                    const practitioner = { id: studentData.practitionerId, name: studentData.practitionerName }
+                    const student = { id: studentData.id, name: studentData.name }
+                    handlePractitionerClick(practitioner, student)
+                  }}
+                >
+                  <TableCell className="font-medium">
+                    <Link 
+                      href={`/student-services/supervisor-logs?practitioner=${studentData.practitionerId}&student=${studentData.id}`}
+                      className="text-teal-600 hover:underline"
+                    >
+                      {studentData.practitionerName}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link 
+                      href={`/manage-students/${studentData.id}`}
+                      className="text-teal-600 hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {studentData.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{studentData.ssid}</TableCell>
+                  <TableCell>{studentData.dob}</TableCell>
                     <TableCell>
                       <Button 
                         variant="ghost" 
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation()
-                          console.log("More options for", practitioner.name, student.name)
+                          console.log("More options for", studentData.practitionerName, studentData.name)
                         }}
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              ))}
+                ))}
             </TableBody>
           </Table>
         </CardContent>

@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for students
 const mockStudents = [
@@ -45,8 +46,6 @@ const mockUploadHistory = [
 export default function ManageStudentsPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("lastName")
-  const [sortOrder, setSortOrder] = useState("asc")
   const router = useRouter()
 
   const filteredStudents = mockStudents.filter((student) => {
@@ -62,16 +61,13 @@ export default function ManageStudentsPage() {
     const matchesTab = activeTab === "all" || student.status.toLowerCase() === activeTab.toLowerCase()
 
     return matchesSearch && matchesTab
-  }).sort((a, b) => {
-    const aValue = a[sortBy as keyof typeof a]
-    const bValue = b[sortBy as keyof typeof b]
-    
-    if (sortOrder === "asc") {
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
-    } else {
-      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
-    }
   })
+
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    filteredStudents,
+    "lastName",
+    "asc"
+  )
 
   const getStatusBadge = (status: string) => {
     return (
@@ -134,14 +130,7 @@ export default function ManageStudentsPage() {
     router.push(`/manage-students/${studentId}`)
   }
 
-  const handleSort = (column: string) => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-    } else {
-      setSortBy(column)
-      setSortOrder("asc")
-    }
-  }
+  // handleSort is now handled by the useTableSorting hook
 
   const getTabCount = (status: string) => {
     if (status === "all") return mockStudents.length
@@ -209,30 +198,124 @@ export default function ManageStudentsPage() {
                 <TableRow className="bg-gray-50">
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("lastName")}
+                    {...getSortableHeaderProps("lastName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       Last Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("lastName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("firstName")}
+                    {...getSortableHeaderProps("firstName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       First Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("firstName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold">SSID</TableHead>
-                  <TableHead className="font-semibold">Local ID</TableHead>
-                  <TableHead className="font-semibold">District</TableHead>
-                  <TableHead className="font-semibold">School</TableHead>
-                  <TableHead className="font-semibold">Birthdate</TableHead>
-                  <TableHead className="font-semibold">Contact Number</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("ssid")}
+                  >
+                    <div className="flex items-center gap-1">
+                      SSID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("ssid")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("localId")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Local ID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("localId")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("district")}
+                  >
+                    <div className="flex items-center gap-1">
+                      District
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("district")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("school")}
+                  >
+                    <div className="flex items-center gap-1">
+                      School
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("school")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("birthdate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Birthdate
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("birthdate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("contactNumber")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Contact Number
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("contactNumber")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("modifiedDate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Modified Date
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("modifiedDate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -303,35 +386,129 @@ export default function ManageStudentsPage() {
                 <TableRow className="bg-gray-50">
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("lastName")}
+                    {...getSortableHeaderProps("lastName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       Last Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("lastName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("firstName")}
+                    {...getSortableHeaderProps("firstName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       First Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("firstName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold">SSID</TableHead>
-                  <TableHead className="font-semibold">Local ID</TableHead>
-                  <TableHead className="font-semibold">District</TableHead>
-                  <TableHead className="font-semibold">School</TableHead>
-                  <TableHead className="font-semibold">Birthdate</TableHead>
-                  <TableHead className="font-semibold">Contact Number</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("ssid")}
+                  >
+                    <div className="flex items-center gap-1">
+                      SSID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("ssid")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("localId")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Local ID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("localId")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("district")}
+                  >
+                    <div className="flex items-center gap-1">
+                      District
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("district")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("school")}
+                  >
+                    <div className="flex items-center gap-1">
+                      School
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("school")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("birthdate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Birthdate
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("birthdate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("contactNumber")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Contact Number
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("contactNumber")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("modifiedDate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Modified Date
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("modifiedDate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.map((student) => (
+                {sortedData.filter((student: any) => student.status === "Active").map((student: any) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">
                       <button 
@@ -397,35 +574,129 @@ export default function ManageStudentsPage() {
                 <TableRow className="bg-gray-50">
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("lastName")}
+                    {...getSortableHeaderProps("lastName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       Last Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("lastName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("firstName")}
+                    {...getSortableHeaderProps("firstName")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       First Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("firstName")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
-                  <TableHead className="font-semibold">SSID</TableHead>
-                  <TableHead className="font-semibold">Local ID</TableHead>
-                  <TableHead className="font-semibold">District</TableHead>
-                  <TableHead className="font-semibold">School</TableHead>
-                  <TableHead className="font-semibold">Birthdate</TableHead>
-                  <TableHead className="font-semibold">Contact Number</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold">Modified Date</TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("ssid")}
+                  >
+                    <div className="flex items-center gap-1">
+                      SSID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("ssid")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("localId")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Local ID
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("localId")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("district")}
+                  >
+                    <div className="flex items-center gap-1">
+                      District
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("district")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("school")}
+                  >
+                    <div className="flex items-center gap-1">
+                      School
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("school")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("birthdate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Birthdate
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("birthdate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("contactNumber")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Contact Number
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("contactNumber")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("modifiedDate")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Modified Date
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("modifiedDate")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredStudents.map((student) => (
+                {sortedData.filter((student: any) => student.status === "Inactive").map((student: any) => (
                   <TableRow key={student.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">
                       <button 

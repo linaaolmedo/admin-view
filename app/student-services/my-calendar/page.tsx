@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 type Appointment = {
   id: number
@@ -177,6 +178,20 @@ const getActualAppointmentStatus = (appointment: Appointment): 'incomplete' | 'c
 function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment; onClose: () => void }) {
   const [notes, setNotes] = useState(appointment.caseNotes || '')
 
+  // Sorting for students table
+  const { sortedData: sortedStudents, getSortIcon: getStudentsSortIcon, getSortableHeaderProps: getStudentsSortableHeaderProps } = useTableSorting(
+    appointment.students || [],
+    "name",
+    "asc"
+  )
+  
+  // Sorting for past services table
+  const { sortedData: sortedPastServices, getSortIcon: getPastServicesSortIcon, getSortableHeaderProps: getPastServicesSortableHeaderProps } = useTableSorting(
+    appointment.pastServices || [],
+    "date",
+    "desc"
+  )
+
   const getStatusDisplay = (status: string) => {
     const statusConfig = {
       incomplete: { label: 'INCOMPLETE', className: 'bg-yellow-100 text-yellow-800 border border-yellow-300' },
@@ -315,13 +330,46 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Service Log Status</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">SSID</th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Student Name</th>
+                        <th 
+                          className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                          {...getStudentsSortableHeaderProps("status")}
+                        >
+                          <div className="flex items-center gap-1">
+                            Service Log Status
+                            {(() => {
+                              const { icon: Icon, className } = getStudentsSortIcon("status")
+                              return <Icon className={className} />
+                            })()}
+                          </div>
+                        </th>
+                        <th 
+                          className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                          {...getStudentsSortableHeaderProps("ssid")}
+                        >
+                          <div className="flex items-center gap-1">
+                            SSID
+                            {(() => {
+                              const { icon: Icon, className } = getStudentsSortIcon("ssid")
+                              return <Icon className={className} />
+                            })()}
+                          </div>
+                        </th>
+                        <th 
+                          className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                          {...getStudentsSortableHeaderProps("name")}
+                        >
+                          <div className="flex items-center gap-1">
+                            Student Name
+                            {(() => {
+                              const { icon: Icon, className } = getStudentsSortIcon("name")
+                              return <Icon className={className} />
+                            })()}
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {appointment.students.map((student, index) => (
+                      {sortedStudents.map((student, index) => (
                         <tr key={index} className="bg-white">
                           <td className="px-4 py-2">
                             <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
@@ -354,12 +402,34 @@ function ServiceLogDetails({ appointment, onClose }: { appointment: Appointment;
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Date</th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Service Type</th>
+                      <th 
+                        className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                        {...getPastServicesSortableHeaderProps("date")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Date
+                          {(() => {
+                            const { icon: Icon, className } = getPastServicesSortIcon("date")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
+                      <th 
+                        className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                        {...getPastServicesSortableHeaderProps("serviceType")}
+                      >
+                        <div className="flex items-center gap-1">
+                          Service Type
+                          {(() => {
+                            const { icon: Icon, className } = getPastServicesSortIcon("serviceType")
+                            return <Icon className={className} />
+                          })()}
+                        </div>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {appointment.pastServices.map((service, index) => (
+                    {sortedPastServices.map((service, index) => (
                       <tr key={index} className="bg-white">
                         <td className="px-4 py-2 text-sm text-gray-900">{service.date}</td>
                         <td className="px-4 py-2 text-sm text-gray-900">{service.serviceType}</td>

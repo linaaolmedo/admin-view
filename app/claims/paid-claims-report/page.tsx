@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock paid claims data
 const paidClaimsData = [
@@ -167,6 +168,12 @@ const paidClaimsData = [
 
 export default function PaidClaimsReportPage() {
   const router = useRouter()
+  
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    paidClaimsData,
+    "finalizedDate",
+    "desc"
+  )
 
   const handleExport = () => {
     console.log("Exporting paid claims data...")
@@ -202,34 +209,106 @@ export default function PaidClaimsReportPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("status")}
+                >
+                  <div className="flex items-center gap-1">
+                    Status
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("status")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Finalized Date
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("finalizedDate")}
+                >
+                  <div className="flex items-center gap-1">
+                    Finalized Date
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("finalizedDate")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service Date
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("serviceDate")}
+                >
+                  <div className="flex items-center gap-1">
+                    Service Date
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("serviceDate")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Batch #
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("batchNumber")}
+                >
+                  <div className="flex items-center gap-1">
+                    Batch #
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("batchNumber")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Claim #
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("claimNumber")}
+                >
+                  <div className="flex items-center gap-1">
+                    Claim #
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("claimNumber")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Practitioner
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("practitioner")}
+                >
+                  <div className="flex items-center gap-1">
+                    Practitioner
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("practitioner")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  District
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("district")}
+                >
+                  <div className="flex items-center gap-1">
+                    District
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("district")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  SSID
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("ssid")}
+                >
+                  <div className="flex items-center gap-1">
+                    SSID
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("ssid")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {paidClaimsData.map((claim, index) => (
+              {sortedData.map((claim, index) => (
                 <tr key={claim.claimNumber} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                   <td className="px-6 py-4 text-sm">
                     <Badge className="bg-green-500 text-white px-3 py-1 rounded-full">

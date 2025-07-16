@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Search, ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data - in a real app, this would come from an API
 const mockServices = [
@@ -182,9 +183,7 @@ export default function AllServicesPage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
 
-  const [orderBy, setOrderBy] = useState("status")
-
-  const filteredAndSortedServices = useMemo(() => {
+  const filteredServices = useMemo(() => {
     let filtered = mockServices
 
     // Filter based on search across all fields
@@ -196,38 +195,14 @@ export default function AllServicesPage() {
       })
     }
 
-    // Sort based on orderBy
-    filtered.sort((a, b) => {
-      const aValue = a[orderBy as keyof typeof a]
-      const bValue = b[orderBy as keyof typeof b]
-
-      if (orderBy === "serviceDate") {
-        // Sort by most recent first (reverse chronological)
-        return new Date(bValue as string).getTime() - new Date(aValue as string).getTime()
-      }
-
-      if (orderBy === "status") {
-        // Sort by status priority: INCOMPLETE -> UPCOMING -> COMPLETED -> CANCELLED
-        const statusPriority = {
-          "INCOMPLETE": 1,
-          "UPCOMING": 2,
-          "COMPLETED": 3,
-          "CANCELLED": 4
-        }
-        const aPriority = statusPriority[aValue as keyof typeof statusPriority] || 999
-        const bPriority = statusPriority[bValue as keyof typeof statusPriority] || 999
-        return aPriority - bPriority
-      }
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return aValue.localeCompare(bValue)
-      }
-
-      return 0
-    })
-
     return filtered
-  }, [searchTerm, orderBy])
+  }, [searchTerm])
+
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    filteredServices,
+    "status",
+    "asc"
+  )
 
   const handleRowClick = (serviceId: number) => {
     router.push(`/student-services/service-details/${serviceId}`)
@@ -242,22 +217,7 @@ export default function AllServicesPage() {
 
       {/* Search and Controls */}
       <div className="flex items-center justify-end gap-4 mb-6">
-        {/* Sort By */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Sort by:</span>
-          <Select value={orderBy} onValueChange={setOrderBy}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {orderOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Sort controls now handled by table column headers */}
 
         {/* Search Bar */}
         <div className="relative max-w-md">
@@ -280,25 +240,102 @@ export default function AllServicesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Student</TableHead>
-              <TableHead>Service Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Service</TableHead>
-              <TableHead>Service Type</TableHead>
-              <TableHead>Service Delivery</TableHead>
-              <TableHead>Completed Date</TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("studentName")}
+              >
+                <div className="flex items-center gap-1">
+                  Student
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("studentName")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("serviceDate")}
+              >
+                <div className="flex items-center gap-1">
+                  Service Date
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("serviceDate")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("status")}
+              >
+                <div className="flex items-center gap-1">
+                  Status
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("status")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("service")}
+              >
+                <div className="flex items-center gap-1">
+                  Service
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("service")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("serviceType")}
+              >
+                <div className="flex items-center gap-1">
+                  Service Type
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("serviceType")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("serviceDelivery")}
+              >
+                <div className="flex items-center gap-1">
+                  Service Delivery
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("serviceDelivery")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("completedDate")}
+              >
+                <div className="flex items-center gap-1">
+                  Completed Date
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("completedDate")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAndSortedServices.length === 0 ? (
+            {sortedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   No services found
                 </TableCell>
               </TableRow>
             ) : (
-              filteredAndSortedServices.map((service) => (
+              sortedData.map((service) => (
                 <TableRow 
                   key={service.id} 
                   className="cursor-pointer hover:bg-gray-50"
@@ -351,7 +388,7 @@ export default function AllServicesPage() {
       {/* Results Summary */}
       <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
         <span>
-          Showing {filteredAndSortedServices.length} of {mockServices.length} services
+          Showing {sortedData.length} of {mockServices.length} services
         </span>
       </div>
     </div>

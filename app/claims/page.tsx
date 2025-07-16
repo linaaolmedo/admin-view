@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock claims data for different tabs
 const mockClaims = {
@@ -676,8 +677,6 @@ export default function ClaimsPage() {
 
   const [selectedClaims, setSelectedClaims] = useState<number[]>([])
   const [successMessage, setSuccessMessage] = useState("")
-  const [sortField, setSortField] = useState<string>("")
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -779,49 +778,17 @@ export default function ClaimsPage() {
     setIsFilterOpen(false)
   }
 
-  // Function to handle sorting
-  const handleSort = (field: string) => {
-    if (activeTab !== "not-paid" && activeTab !== "remittance") return // Allow sorting for not-paid and remittance tabs
-    
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
-  }
+  // Get current data based on active tab
+  const currentData = getCurrentData()
+  
+  // Use table sorting hook
+  const { sortedData: allSortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    currentData as any[],
+    "",
+    "asc"
+  )
 
-  // Function to sort data
-  const sortData = (data: any[]) => {
-    if (!sortField || (activeTab !== "not-paid" && activeTab !== "remittance")) return data
-    
-    return [...data].sort((a, b) => {
-      let aValue = a[sortField]
-      let bValue = b[sortField]
-      
-      // Handle different data types
-      if (sortField === "serviceDate" || sortField === "dateSubmitted") {
-        aValue = new Date(aValue)
-        bValue = new Date(bValue)
-      } else if (sortField === "billedAmount" || sortField === "paidAmount") {
-        aValue = parseFloat(aValue.replace(/[$,]/g, ""))
-        bValue = parseFloat(bValue.replace(/[$,]/g, ""))
-      } else if (sortField === "totalClaimsSubmitted" || sortField === "claimsPaid" || sortField === "deniedClaims") {
-        // Handle numeric values for remittance data
-        aValue = parseInt(aValue)
-        bValue = parseInt(bValue)
-      } else if (typeof aValue === "string") {
-        aValue = aValue.toLowerCase()
-        bValue = bValue.toLowerCase()
-      }
-      
-      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
-      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
-      return 0
-    })
-  }
-
-  const filteredData = sortData(getCurrentData().filter((claim: any) => {
+  const filteredData = allSortedData.filter((claim: any) => {
     // Search filter
     if (searchTerm !== "") {
       let searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
@@ -862,14 +829,13 @@ export default function ClaimsPage() {
     }
   }
 
-  // Function to render sort icon
+  // Function to render sort icon using the hook
   const renderSortIcon = (field: string) => {
-    if ((activeTab !== "not-paid" && activeTab !== "remittance") || sortField !== field) {
+    if (activeTab !== "not-paid" && activeTab !== "remittance") {
       return <ArrowUpDown className="w-4 h-4 text-gray-400" />
     }
-    return sortDirection === "asc" ? 
-      <ChevronUp className="w-4 h-4 text-teal-600" /> : 
-      <ChevronDown className="w-4 h-4 text-teal-600" />
+    const { icon: Icon, className } = getSortIcon(field)
+    return <Icon className={className} />
   }
 
   const renderTableHeaders = () => {
@@ -926,7 +892,7 @@ export default function ClaimsPage() {
               header.field === "checkbox" ? "w-[30px] px-2" : "py-3 px-3 text-left font-semibold text-xs text-gray-600 whitespace-normal break-words min-w-[100px] max-w-[150px]",
               header.sortable && "cursor-pointer hover:bg-gray-100"
             )}
-            onClick={() => header.sortable && handleSort(header.field)}
+            {...(header.sortable && (activeTab === "not-paid" || activeTab === "remittance") ? getSortableHeaderProps(header.field) : {})}
           >
             <div className="flex items-center gap-1">
               {header.field === "checkbox" ? (

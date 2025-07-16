@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Search, Filter, Download, Calendar, AlertTriangle } from "lucide-react"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for qualifications report
 const mockQualificationsData = [
@@ -123,7 +124,7 @@ export default function QualificationsReportPage() {
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts")
   const [selectedType, setSelectedType] = useState("All Types")
   const router = useRouter()
-
+  
   // Filter to only show qualifications that are expiring soon (within 60 days) or already expired
   const expiringQualifications = mockQualificationsData.filter((item) => {
     return item.daysToExpiration <= 60 // Show qualifications expiring within 60 days or already expired
@@ -142,6 +143,12 @@ export default function QualificationsReportPage() {
 
     return matchesSearch && matchesDistrict && matchesType
   })
+
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    filteredData,
+    "daysToExpiration",
+    "asc"
+  )
 
   const getStatusBadge = (status: string, daysToExpiration: number) => {
     if (status === "Expired" || daysToExpiration < 0) {
@@ -332,21 +339,118 @@ export default function QualificationsReportPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
-              <TableHead className="font-semibold">Practitioner</TableHead>
-              <TableHead className="font-semibold">Email</TableHead>
-              <TableHead className="font-semibold">NPI</TableHead>
-              <TableHead className="font-semibold">State</TableHead>
-              <TableHead className="font-semibold">Qualification Type</TableHead>
-              <TableHead className="font-semibold">Code</TableHead>
-              <TableHead className="font-semibold">Expiration Date</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold">District</TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("practitioner")}
+              >
+                <div className="flex items-center gap-1">
+                  Practitioner
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("practitioner")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("email")}
+              >
+                <div className="flex items-center gap-1">
+                  Email
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("email")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("npi")}
+              >
+                <div className="flex items-center gap-1">
+                  NPI
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("npi")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("state")}
+              >
+                <div className="flex items-center gap-1">
+                  State
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("state")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("qualificationType")}
+              >
+                <div className="flex items-center gap-1">
+                  Qualification Type
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("qualificationType")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("qualificationCode")}
+              >
+                <div className="flex items-center gap-1">
+                  Code
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("qualificationCode")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("expirationDate")}
+              >
+                <div className="flex items-center gap-1">
+                  Expiration Date
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("expirationDate")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("status")}
+              >
+                <div className="flex items-center gap-1">
+                  Status
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("status")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="font-semibold cursor-pointer hover:bg-gray-100"
+                {...getSortableHeaderProps("district")}
+              >
+                <div className="flex items-center gap-1">
+                  District
+                  {(() => {
+                    const { icon: Icon, className } = getSortIcon("district")
+                    return <Icon className={className} />
+                  })()}
+                </div>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredData
-              .sort((a, b) => a.daysToExpiration - b.daysToExpiration) // Sort by most urgent first
-              .map((item) => (
+            {sortedData.map((item) => (
               <TableRow key={item.id} className="hover:bg-gray-50">
                 <TableCell className="font-medium">{item.practitioner}</TableCell>
                 <TableCell className="text-sm text-gray-600">{item.email}</TableCell>

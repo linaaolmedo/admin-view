@@ -149,7 +149,7 @@ export default function AdminPractitionerProfilePage() {
   }, [practitionerId])
 
   const handleGoBack = () => {
-    router.push("/administrator?tab=practitioners")
+    router.push("/manage-users?tab=practitioners")
   }
 
   // Smooth scroll to section with offset
@@ -174,7 +174,7 @@ export default function AdminPractitionerProfilePage() {
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900">Practitioner not found</h2>
           <Button onClick={handleGoBack} variant="outline" className="mt-4">
-            Back to Team Management
+            Back to Manage Users
           </Button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -18,6 +18,8 @@ import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react"
 export function AdminDashboardTabs() {
   const [timeRange, setTimeRange] = useState("1y")
   const [activeSection, setActiveSection] = useState("overview")
+  const [isSticky, setIsSticky] = useState(false)
+  const tabsRef = useRef<HTMLDivElement>(null)
 
   // Generate mock data
   const claimsProcessingData = generateClaimsProcessingData()
@@ -42,22 +44,12 @@ export function AdminDashboardTabs() {
       
       // Then adjust for the sticky header after a short delay
       setTimeout(() => {
-        const stickyHeader = document.querySelector('.sticky') as HTMLElement
-        const headerHeight = 80 // Main app header
-        const stickyHeaderHeight = stickyHeader ? stickyHeader.offsetHeight : 80
-        const totalOffset = headerHeight + stickyHeaderHeight + 20 // Extra padding
+        const headerHeight = 80 // Blue banner height + sticky tabs position
+        const stickyTabsHeight = isSticky ? 60 : 0 // Account for sticky tabs height if they're active
+        const totalOffset = headerHeight + stickyTabsHeight + 20 // Extra padding
         
         const currentScroll = window.pageYOffset
         const adjustedScroll = currentScroll - totalOffset
-        
-        // Debug logging
-        console.log('Scroll adjustment:', {
-          sectionId,
-          currentScroll,
-          totalOffset,
-          adjustedScroll,
-          stickyHeaderHeight
-        })
         
         window.scrollTo({
           top: Math.max(0, adjustedScroll),
@@ -83,29 +75,47 @@ export function AdminDashboardTabs() {
     setTimeout(() => {
       // Scroll to the appropriate section
       if (tabValue === "overview") {
-        scrollToSection("system-overview-cards")
+        scrollToSection("overview")
       } else if (tabValue === "analytics") {
-        scrollToSection("claims-analytics-overview")
+        scrollToSection("analytics")
       }
     }, 100)
   }
 
-  // Handle scroll detection to update active section
+  // Handle scroll detection to update active section and sticky state
   useEffect(() => {
     const handleScroll = () => {
-      const overviewElement = document.getElementById('system-overview-cards')
-      const analyticsElement = document.getElementById('claims-analytics-overview')
+      const overviewElement = document.getElementById('overview')
+      const analyticsElement = document.getElementById('analytics')
+      
+      // Calculate when tabs should become sticky
+      if (tabsRef.current) {
+        const tabsRect = tabsRef.current.getBoundingClientRect()
+        const scrollY = window.scrollY
+        const shouldBeSticky = scrollY > 100 // More reliable detection
+        
+        // Debug logging
+        console.log('Sticky detection:', {
+          scrollY,
+          tabsTop: tabsRect.top,
+          shouldBeSticky,
+          currentIsSticky: isSticky
+        })
+        
+        setIsSticky(shouldBeSticky)
+      }
       
       if (overviewElement && analyticsElement) {
-        const stickyHeader = document.querySelector('.sticky') as HTMLElement
-        const stickyHeaderHeight = stickyHeader ? stickyHeader.offsetHeight + 80 : 160
+        const headerHeight = 80 // Blue banner height + sticky position
+        const stickyTabsHeight = isSticky ? 60 : 0
+        const totalOffset = headerHeight + stickyTabsHeight
         
-        const scrollPosition = window.scrollY + stickyHeaderHeight
+        const scrollPosition = window.scrollY + totalOffset
         const overviewTop = overviewElement.offsetTop
         const analyticsTop = analyticsElement.offsetTop
         
         // Determine which section is currently in view
-        if (scrollPosition >= analyticsTop - 50) {
+        if (scrollPosition >= analyticsTop - 100) {
           setActiveSection('analytics')
         } else {
           setActiveSection('overview')
@@ -129,19 +139,26 @@ export function AdminDashboardTabs() {
       window.removeEventListener('scroll', debouncedHandleScroll)
       clearTimeout(timeoutId)
     }
-  }, [])
+  }, [isSticky])
 
   return (
-    <div className="w-full relative">
-      {/* Navigation Header - Sticky position for natural scrolling behavior */}
-      <div className="sticky top-20 z-[200] bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-lg mb-6">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="w-full">
+      {/* Navigation Header - Dynamic sticky behavior */}
+      <div 
+        ref={tabsRef}
+        className={`border-b mb-6 py-4 transition-all duration-300 ${
+          isSticky 
+            ? 'fixed top-20 left-0 right-0 z-[999] bg-white border-teal-200 shadow-lg' 
+            : 'relative bg-white border-gray-200 shadow-sm'
+        }`}
+      >
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <Tabs value={activeSection} onValueChange={handleTabClick} className="w-auto">
-              <TabsList className="grid w-full min-w-[300px] max-w-[400px] grid-cols-2 bg-gray-100">
+              <TabsList className="bg-gray-50 border border-gray-200 rounded-lg p-1">
                 <TabsTrigger 
                   value="overview" 
-                  className="flex items-center justify-center gap-2 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-teal-600 data-[state=active]:shadow-sm"
+                  className="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-md"
                   onClick={() => handleTabClick("overview")}
                 >
                   <BarChart3 className="w-4 h-4" />
@@ -149,7 +166,7 @@ export function AdminDashboardTabs() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="analytics" 
-                  className="flex items-center justify-center gap-2 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-teal-600 data-[state=active]:shadow-sm"
+                  className="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-md"
                   onClick={() => handleTabClick("analytics")}
                 >
                   <TrendingUp className="w-4 h-4" />
@@ -164,7 +181,10 @@ export function AdminDashboardTabs() {
         </div>
       </div>
 
-      {/* Main Content - Remove excessive padding */}
+      {/* Spacer div when tabs are sticky to prevent content jump */}
+      {isSticky && <div className="h-16 mb-6" />}
+
+      {/* Main Content */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Overview Section */}
         <section id="overview" className="scroll-mt-32 space-y-6 mb-16">

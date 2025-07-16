@@ -189,7 +189,7 @@ export default function AdminSupervisorProfilePage() {
   }, [supervisorId])
 
   const handleGoBack = () => {
-    router.push("/administrator?tab=supervisors")
+    router.push("/manage-users?tab=supervisors")
   }
 
   // Smooth scroll to section with offset
@@ -214,7 +214,7 @@ export default function AdminSupervisorProfilePage() {
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900">Supervisor not found</h2>
           <Button onClick={handleGoBack} variant="outline" className="mt-4">
-            Back to Team Management
+            Back to Manage Users
           </Button>
         </div>
       </div>

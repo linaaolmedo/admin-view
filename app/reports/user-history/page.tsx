@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for user history
 const mockUserHistory = [
@@ -94,6 +95,12 @@ const mockUserHistory = [
 
 export default function UserHistoryPage() {
   const router = useRouter()
+  
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    mockUserHistory,
+    "eventTime",
+    "desc"
+  )
 
   const handleExport = () => {
     console.log("Exporting user history data...")
@@ -129,22 +136,58 @@ export default function UserHistoryPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("user")}
+                >
+                  <div className="flex items-center gap-1">
+                    User
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("user")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User Type
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("userType")}
+                >
+                  <div className="flex items-center gap-1">
+                    User Type
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("userType")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Event Time
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("eventTime")}
+                >
+                  <div className="flex items-center gap-1">
+                    Event Time
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("eventTime")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Event Description
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  {...getSortableHeaderProps("eventDescription")}
+                >
+                  <div className="flex items-center gap-1">
+                    Event Description
+                    {(() => {
+                      const { icon: Icon, className } = getSortIcon("eventDescription")
+                      return <Icon className={className} />
+                    })()}
+                  </div>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mockUserHistory.map((item, index) => (
+              {sortedData.map((item, index) => (
                 <tr key={item.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {item.user}

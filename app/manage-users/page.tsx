@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useTableSorting } from "@/hooks/use-table-sorting"
 
 // Mock data for users
 const mockUsers = [
@@ -53,8 +54,6 @@ const mockUsers = [
 export default function ManageUsersPage() {
   const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("name")
-  const [sortOrder, setSortOrder] = useState("asc")
   const router = useRouter()
 
   const filteredUsers = mockUsers.filter((user) => {
@@ -75,16 +74,13 @@ export default function ManageUsersPage() {
     }
 
     return matchesSearch && matchesTab
-  }).sort((a, b) => {
-    const aValue = a[sortBy as keyof typeof a]
-    const bValue = b[sortBy as keyof typeof b]
-    
-    if (sortOrder === "asc") {
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
-    } else {
-      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
-    }
   })
+
+  const { sortedData, getSortIcon, getSortableHeaderProps } = useTableSorting(
+    filteredUsers,
+    "name",
+    "asc"
+  )
 
   const getStatusBadge = (status: string) => {
     return (
@@ -131,14 +127,7 @@ export default function ManageUsersPage() {
     router.push(`/manage-users/${userId}`)
   }
 
-  const handleSort = (column: string) => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-    } else {
-      setSortBy(column)
-      setSortOrder("asc")
-    }
-  }
+  // handleSort is now handled by the useTableSorting hook
 
   const getTabCount = (role: string) => {
     if (role === "all") return mockUsers.length
@@ -202,31 +191,83 @@ export default function ManageUsersPage() {
                 <TableRow className="bg-gray-50">
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("name")}
+                    {...getSortableHeaderProps("name")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       Name
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("name")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
                   <TableHead 
                     className="font-semibold cursor-pointer hover:bg-gray-100"
-                    onClick={() => handleSort("email")}
+                    {...getSortableHeaderProps("email")}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       Email
-                      <ArrowUpDown className="w-4 h-4 ml-1" />
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("email")
+                        return <Icon className={className} />
+                      })()}
                     </div>
                   </TableHead>
-                  {activeTab === "all" && <TableHead className="font-semibold">Role</TableHead>}
-                  <TableHead className="font-semibold">Permissions</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold">Last Login</TableHead>
+                  {activeTab === "all" && (
+                    <TableHead 
+                      className="font-semibold cursor-pointer hover:bg-gray-100"
+                      {...getSortableHeaderProps("role")}
+                    >
+                      <div className="flex items-center gap-1">
+                        Role
+                        {(() => {
+                          const { icon: Icon, className } = getSortIcon("role")
+                          return <Icon className={className} />
+                        })()}
+                      </div>
+                    </TableHead>
+                  )}
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("permissions")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Permissions
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("permissions")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("status")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Status
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("status")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="font-semibold cursor-pointer hover:bg-gray-100"
+                    {...getSortableHeaderProps("lastLogin")}
+                  >
+                    <div className="flex items-center gap-1">
+                      Last Login
+                      {(() => {
+                        const { icon: Icon, className } = getSortIcon("lastLogin")
+                        return <Icon className={className} />
+                      })()}
+                    </div>
+                  </TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user) => (
+                {sortedData.map((user) => (
                   <TableRow key={user.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">
                       <button 

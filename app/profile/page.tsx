@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { useRouter } from "next/navigation"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
+import ProfileTabs from "@/components/ProfileTabs"
 
 // Mock user history data
 const mockUserHistory = [
@@ -50,13 +51,6 @@ const mockCaseload = [
 const accountTypes = ["practitioner", "admin", "supervisor"] as const
 type AccountType = (typeof accountTypes)[number]
 
-// Navigation sections
-const navigationSections = [
-  { id: "about", label: "About", icon: User },
-  { id: "settings", label: "Settings", icon: Settings },
-  { id: "activity", label: "Recent Activity", icon: Clock },
-]
-
 export default function ProfilePage() {
   const router = useRouter()
   const [userEmail, setUserEmail] = useState("")
@@ -79,70 +73,25 @@ export default function ProfilePage() {
     setAccountType(randomType)
   }, [])
 
-  // Smooth scroll to section with offset
-  const scrollToSection = (sectionId: string) => {
-    // Immediately set active section for instant visual feedback
-    setActiveSection(sectionId)
-    
-    const element = document.getElementById(sectionId)
-    if (element) {
-      // Calculate the header height (64px for main header + 64px for sticky nav = 128px)
-      const headerHeight = 128
-      const elementTop = element.getBoundingClientRect().top + window.pageYOffset
-      const offsetTop = Math.max(0, elementTop - headerHeight)
-      
-      // Primary method: smooth scroll
-      try {
-        window.scrollTo({
-          top: offsetTop,
-          behavior: 'smooth'
-        })
-      } catch (error) {
-        // Fallback method for older browsers
-        window.scrollTo(0, offsetTop)
-      }
-      
-      // Additional fallback: try scrollIntoView if smooth scroll fails
-      setTimeout(() => {
-        const currentPosition = window.pageYOffset
-        const targetPosition = offsetTop
-        const threshold = 50
-        
-        if (Math.abs(currentPosition - targetPosition) > threshold) {
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
-        }
-      }, 100)
-    }
-  }
-
-  // Handle intersection observer to update active section
+  // Handle initial hash navigation
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Find the section that is most visible
-        const visibleEntries = entries.filter(entry => entry.isIntersecting)
-        
-        if (visibleEntries.length > 0) {
-          // Sort by intersection ratio to get the most visible section
-          const mostVisible = visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-          setActiveSection(mostVisible.target.id)
-        }
-      },
-      { 
-        threshold: [0.1, 0.3, 0.5, 0.7],
-        rootMargin: '-128px 0px -50% 0px' // Account for header + sticky nav height (128px)
+    const hash = window.location.hash.slice(1)
+    if (hash && ['about', 'settings', 'activity'].includes(hash)) {
+      setActiveSection(hash)
+    }
+  }, [])
+
+  // Handle browser back/forward navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1)
+      if (hash && ['about', 'settings', 'activity'].includes(hash)) {
+        setActiveSection(hash)
       }
-    )
+    }
 
-    navigationSections.forEach((section) => {
-      const element = document.getElementById(section.id)
-      if (element) observer.observe(element)
-    })
-
-    return () => observer.disconnect()
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
   const handlePasswordReset = async (e: React.FormEvent) => {
@@ -257,7 +206,7 @@ export default function ProfilePage() {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'service': return <Calendar className="w-4 h-4 text-teal-600" />
-              case 'claim': return <FileText className="w-4 h-4 text-teal-600" />
+      case 'claim': return <FileText className="w-4 h-4 text-teal-600" />
       case 'assessment': return <CheckCircle className="w-4 h-4 text-green-600" />
       case 'qualification': return <Award className="w-4 h-4 text-purple-600" />
       default: return <Clock className="w-4 h-4 text-gray-600" />
@@ -265,145 +214,144 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Page Title */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <>
+      {/* Page Title - Static */}
+      <div className="bg-white border-b border-gray-100 px-6 py-4">
         <h1 className="text-3xl font-bold text-teal-800">Profile</h1>
       </div>
-
-      {/* Horizontal Navigation - Sticky below main header */}
-      <div className="border-b border-gray-200 bg-white sticky top-16 z-[60] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8 overflow-x-auto scrollbar-hide pb-px">
-            {navigationSections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => scrollToSection(section.id)}
-                className={`flex-shrink-0 flex items-center gap-2 px-2 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
-                  activeSection === section.id
-                    ? 'text-teal-600 border-b-2 border-teal-600'
-                    : 'text-gray-600 hover:text-gray-900 border-b-2 border-transparent'
-                }`}
-              >
-                <section.icon className="w-4 h-4" />
-                {section.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      
+      {/* Navigation Tabs - Sticky positioned at 64px offset */}
+      <ProfileTabs 
+        activeSection={activeSection} 
+        onSectionChange={setActiveSection}
+      />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-16">
-        
-        {/* About Section */}
-        <section id="about" className="scroll-mt-[128px]">
-          <Card className="border-teal-200">
-            <CardHeader className="bg-teal-50">
-              <CardTitle className="text-teal-800">Personal Information</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" defaultValue="Bradley" disabled className="bg-gray-50" />
-                </div>
-                <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" defaultValue="Brown" disabled className="bg-gray-50" />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue="bbrown@email.com" disabled className="bg-gray-50" />
-                </div>
-                <div>
-                  <Label htmlFor="accountType">Account Type</Label>
-                  <Input id="accountType" defaultValue="Practitioner" disabled className="bg-gray-50" />
-                </div>
-              </div>
-              <div className="text-sm text-gray-500 italic">
-                Personal information is managed by your administrator and cannot be changed here.
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Settings Section */}
-        <section id="settings" className="scroll-mt-[128px]">
-          <div className="space-y-6">
-            <Card className="border-gray-200">
-              <CardHeader>
-                <CardTitle>Notification Preferences</CardTitle>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="space-y-12">
+          
+          {/* About Section */}
+          <section id="about" className="scroll-mt-32" role="tabpanel" aria-labelledby="about-tab">
+            <Card className="border-teal-200 shadow-sm">
+              <CardHeader className="bg-teal-50">
+                <CardTitle className="text-teal-800 flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Personal Information
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email-notifications">Email Notifications</Label>
+                    <Label htmlFor="firstName" className="text-gray-700">First Name</Label>
+                    <Input id="firstName" defaultValue="Bradley" disabled className="bg-gray-50 border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName" className="text-gray-700">Last Name</Label>
+                    <Input id="lastName" defaultValue="Brown" disabled className="bg-gray-50 border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-gray-700">Email</Label>
+                    <Input id="email" type="email" defaultValue="bbrown@email.com" disabled className="bg-gray-50 border-gray-200" />
+                  </div>
+                  <div>
+                    <Label htmlFor="accountType" className="text-gray-700">Account Type</Label>
+                    <Input id="accountType" defaultValue="Practitioner" disabled className="bg-gray-50 border-gray-200" />
+                  </div>
+                </div>
+                <div className="text-sm text-gray-500 italic bg-blue-50 p-3 rounded-md border border-blue-200">
+                  <AlertCircle className="w-4 h-4 inline mr-2" />
+                  Personal information is managed by your administrator and cannot be changed here.
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Settings Section */}
+          <section id="settings" className="scroll-mt-32" role="tabpanel" aria-labelledby="settings-tab">
+            <Card className="border-gray-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-gray-800 flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  Notification Preferences
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center justify-between py-3">
+                  <div>
+                    <Label htmlFor="email-notifications" className="text-gray-700">Email Notifications</Label>
                     <p className="text-sm text-gray-600">Receive email updates about your account</p>
                   </div>
                   <Switch id="email-notifications" defaultChecked />
                 </div>
                 <Separator />
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between py-3">
                   <div>
-                    <Label htmlFor="claim-alerts">Claim Status Alerts</Label>
+                    <Label htmlFor="claim-alerts" className="text-gray-700">Claim Status Alerts</Label>
                     <p className="text-sm text-gray-600">Get notified when claim status changes</p>
                   </div>
                   <Switch id="claim-alerts" defaultChecked />
                 </div>
                 <Separator />
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between py-3">
                   <div>
-                    <Label htmlFor="schedule-reminders">Schedule Reminders</Label>
+                    <Label htmlFor="schedule-reminders" className="text-gray-700">Schedule Reminders</Label>
                     <p className="text-sm text-gray-600">Receive reminders about upcoming appointments</p>
                   </div>
                   <Switch id="schedule-reminders" defaultChecked />
                 </div>
                 <Separator />
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between py-3">
                   <div>
-                    <Label htmlFor="change-password">Password</Label>
+                    <Label htmlFor="change-password" className="text-gray-700">Password</Label>
                     <p className="text-sm text-gray-600">Update your account password</p>
                   </div>
-                  <Button variant="outline" size="sm">Change Password</Button>
+                  <Button variant="outline" size="sm" className="hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300">
+                    <Key className="w-4 h-4 mr-2" />
+                    Change Password
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </section>
+          </section>
 
-        {/* Recent Activity Section */}
-        <section id="activity" className="scroll-mt-[128px]">
-          <Card className="border-gray-200">
-            <CardHeader>
-              <CardTitle>Activity Timeline</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {mockUserHistory.map((entry, index) => (
-                  <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg">
-                    <div className="flex-shrink-0 mt-1">
-                      {getActivityIcon(entry.action.toLowerCase())}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">{entry.action}</p>
-                      <div className="flex items-center mt-1 space-x-2">
-                        <Clock className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">{entry.time}</span>
+          {/* Recent Activity Section */}
+          <section id="activity" className="scroll-mt-32" role="tabpanel" aria-labelledby="activity-tab">
+            <Card className="border-gray-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-gray-800 flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  {mockUserHistory.map((entry, index) => (
+                    <div key={index} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                      <div className="flex-shrink-0 mt-1">
+                        {getActivityIcon(entry.action.toLowerCase())}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{entry.action}</p>
+                        <div className="flex items-center mt-1 space-x-2">
+                          <Clock className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs text-gray-500">{entry.date} at {entry.time}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              <Button variant="outline" className="w-full mt-4">
-                View All Activity
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
+                  ))}
+                </div>
+                <Button variant="outline" className="w-full mt-6 hover:bg-teal-50 hover:text-teal-600 hover:border-teal-300">
+                  View All Activity
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
 
+        </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 

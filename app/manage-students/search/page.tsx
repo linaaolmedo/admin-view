@@ -21,14 +21,38 @@ const mockSearchResults = [
 ]
 
 export default function SearchStudentsPage() {
-  const [searchTerm, setSearchTerm] = useState("Fruitvale")
-  const [searchResults, setSearchResults] = useState(mockSearchResults)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [searchResults, setSearchResults] = useState<any[]>([])
   const router = useRouter()
 
+  // Filter results based on search term
+  const getFilteredResults = (term: string) => {
+    if (!term.trim()) {
+      return []
+    }
+    
+    return mockSearchResults.filter(student => 
+      student.name.toLowerCase().includes(term.toLowerCase()) ||
+      student.ssid.includes(term) ||
+      student.localId.includes(term) ||
+      student.district.toLowerCase().includes(term.toLowerCase()) ||
+      student.school.toLowerCase().includes(term.toLowerCase())
+    )
+  }
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchTerm = e.target.value
+    setSearchTerm(newSearchTerm)
+    
+    // Update results in real-time as user types
+    const filteredResults = getFilteredResults(newSearchTerm)
+    setSearchResults(filteredResults)
+  }
+
   const handleSearch = () => {
-    // In a real app, this would make an API call
-    // For now, we'll just show the mock results
-    setSearchResults(mockSearchResults)
+    // This function now just triggers the same filtering logic
+    const filteredResults = getFilteredResults(searchTerm)
+    setSearchResults(filteredResults)
   }
 
   const handleSelectStudent = (ssid: string) => {
@@ -64,13 +88,13 @@ export default function SearchStudentsPage() {
             <Input
               placeholder="Search students by name, SSID, local ID, district, or school..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchInputChange}
               className="pr-12"
             />
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
           
-          <Button onClick={handleSearch} className="bg-cyan-500 hover:bg-cyan-600">
+          <Button onClick={handleSearch} className="bg-teal-600 hover:bg-teal-700">
             Search
           </Button>
         </div>
@@ -79,7 +103,7 @@ export default function SearchStudentsPage() {
           <Button 
             variant="outline" 
             onClick={() => router.push("/manage-students/add")}
-            className="border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
+            className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white"
           >
             Can't find student? Add New Student
           </Button>
@@ -87,47 +111,56 @@ export default function SearchStudentsPage() {
       </div>
 
       {/* Search Results */}
-      {searchResults.length > 0 && (
-        <div className="bg-cyan-50 rounded-lg p-6">
+      {searchTerm.trim() && (
+        <div className="bg-teal-50 rounded-lg p-6">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2">Search Results</h2>
+            <h2 className="text-lg font-semibold mb-2">
+              Search Results {searchResults.length > 0 ? `(${searchResults.length} found)` : '(No results found)'}
+            </h2>
           </div>
           
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-cyan-100">
-                <TableHead className="font-semibold">SSID</TableHead>
-                <TableHead className="font-semibold">Local ID</TableHead>
-                <TableHead className="font-semibold">Name</TableHead>
-                <TableHead className="font-semibold">District</TableHead>
-                <TableHead className="font-semibold">School</TableHead>
-                <TableHead className="font-semibold">DOB</TableHead>
-                <TableHead className="w-20"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {searchResults.map((student, index) => (
-                <TableRow key={index} className="hover:bg-cyan-100">
-                  <TableCell className="font-medium">{student.ssid}</TableCell>
-                  <TableCell>{student.localId}</TableCell>
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.district}</TableCell>
-                  <TableCell>{student.school}</TableCell>
-                  <TableCell>{student.dob}</TableCell>
-                  <TableCell>
-                    <Button
+          {searchResults.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-teal-100">
+                  <TableHead className="font-semibold">SSID</TableHead>
+                  <TableHead className="font-semibold">Local ID</TableHead>
+                  <TableHead className="font-semibold">Name</TableHead>
+                  <TableHead className="font-semibold">District</TableHead>
+                  <TableHead className="font-semibold">School</TableHead>
+                  <TableHead className="font-semibold">DOB</TableHead>
+                  <TableHead className="w-20"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {searchResults.map((student, index) => (
+                  <TableRow key={index} className="hover:bg-teal-100">
+                    <TableCell className="font-medium">{student.ssid}</TableCell>
+                    <TableCell>{student.localId}</TableCell>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.district}</TableCell>
+                    <TableCell>{student.school}</TableCell>
+                    <TableCell>{student.dob}</TableCell>
+                    <TableCell>
+                                          <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleSelectStudent(student.ssid)}
-                      className="border-cyan-500 text-cyan-600 hover:bg-cyan-500 hover:text-white"
+                      className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white"
                     >
                       Select
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-600">No students found matching your search criteria.</p>
+              <p className="text-sm text-gray-500 mt-2">Try searching with different keywords or check your spelling.</p>
+            </div>
+          )}
         </div>
       )}
     </div>

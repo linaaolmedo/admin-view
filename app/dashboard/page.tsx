@@ -140,117 +140,225 @@ export default function DashboardPage() {
 
       {/* Account Type Specific Content */}
       {accountType === "supervisor" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Today's Schedule */}
-          <Card className="overflow-hidden border-teal-200">
-            <CardHeader className="bg-teal-50 border-b border-teal-200">
-              <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3">
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Samantha Greenfield</span>
+        <div className="space-y-6">
+          {/* First Row: Today's Schedule and Assigned Practitioners */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Today's Schedule */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Samantha Greenfield</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>8:00</span>
+                    <span className="ml-4">1h</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>8:00</span>
-                  <span className="ml-4">1h</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Nicole Walker</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>9:30</span>
+                    <span className="ml-4">30min</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Nicole Walker</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Zachary Gulgowski</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>10:00</span>
+                    <span className="ml-4">1h</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>9:30</span>
-                  <span className="ml-4">30min</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Leonard Reynolds</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>1:00</span>
+                    <span className="ml-4">1h</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Zachary Gulgowski</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <span>10:00</span>
-                  <span className="ml-4">1h</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Leonard Reynolds</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <span>1:00</span>
-                  <span className="ml-4">1h</span>
-                </div>
-              </div>
-              <Link href="/student-services/my-calendar">
-                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  My Calendar
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+                <Link href="/student-services/my-calendar">
+                  <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    My Calendar
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          {/* Services Pending Approval */}
-          <Card className="overflow-hidden border-teal-200">
-            <CardHeader className="bg-teal-50 border-b border-teal-200">
-              <CardTitle className="text-base text-teal-800">Services Pending Approval</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3">
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Johnson, Michael</span>
+            {/* Assigned Practitioners */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Assigned Practitioners</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Sarah Johnson</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>Active</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>4/20</span>
-                  <span className="ml-4">Speech</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Michael Davis</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>Active</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Davis, Sarah</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Emma Wilson</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>Active</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>4/19</span>
-                  <span className="ml-4">OT</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Carlos Martinez</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>Active</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Wilson, Emma</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <span>4/18</span>
-                  <span className="ml-4">PT</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Martinez, Carlos</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <span>4/17</span>
-                  <span className="ml-4">Psych</span>
-                </div>
-              </div>
+                <Link href="/assigned-practitioners">
+                  <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Practitioners
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
 
-              <Link href="/student-services/supervisor-logs">
-                <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Review & Approve
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+          {/* Second Row: Services Pending Approval and Caseload */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Services Pending Approval */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Services Pending Approval</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Johnson, Michael</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>4/20</span>
+                    <span className="ml-4">Speech</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Davis, Sarah</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>4/19</span>
+                    <span className="ml-4">OT</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Wilson, Emma</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>4/18</span>
+                    <span className="ml-4">PT</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Martinez, Carlos</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>4/17</span>
+                    <span className="ml-4">Psych</span>
+                  </div>
+                </div>
+
+                <Link href="/student-services/supervisor-logs">
+                  <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Review & Approve
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Caseload */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Caseload</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Total Students</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>48 students</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Active Groups</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>12 groups</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Team Members</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>8 practitioners</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Pending Assignments</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>3 pending</span>
+                  </div>
+                </div>
+                <Link href="/caseload">
+                  <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    View Caseload
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
@@ -259,102 +367,159 @@ export default function DashboardPage() {
       )}
 
       {accountType === "practitioner" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Today's Schedule */}
-          <Card className="overflow-hidden border-teal-200">
-            <CardHeader className="bg-teal-50 border-b border-teal-200">
-              <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3">
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Samantha Greenfield</span>
+        <div className="space-y-6">
+          {/* First Row: Today's Schedule and Services That Require Action */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Today's Schedule */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Today's Schedule</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Samantha Greenfield</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>8:00</span>
+                    <span className="ml-4">1h</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>8:00</span>
-                  <span className="ml-4">1h</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Nicole Walker</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>9:30</span>
+                    <span className="ml-4">30min</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Nicole Walker</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Zachary Gulgowski</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>10:00</span>
+                    <span className="ml-4">1h</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>9:30</span>
-                  <span className="ml-4">30min</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Zachary Gulgowski</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <span>10:00</span>
-                  <span className="ml-4">1h</span>
-                </div>
-              </div>
-              <Link href="/student-services/my-calendar">
-                <Button className="w-full mt-4 bg-white text-teal-600 border border-teal-600 hover:bg-teal-50">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  My Calendar
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+                <Link href="/student-services/my-calendar">
+                  <Button className="w-full mt-4 bg-white text-teal-600 border border-teal-600 hover:bg-teal-50">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    My Calendar
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          {/* Services That Require Action */}
-          <Card className="overflow-hidden border-orange-200">
-            <CardHeader className="bg-orange-50 border-b border-orange-200">
-              <CardTitle className="text-base text-orange-800">Services That Require Action</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3">
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Missing Case Notes</span>
+            {/* Services That Require Action */}
+            <Card className="overflow-hidden border-orange-200">
+              <CardHeader className="bg-orange-50 border-b border-orange-200">
+                <CardTitle className="text-base text-orange-800">Services That Require Action</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Missing Case Notes</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>2 services</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>2 services</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Incomplete Services</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>1 service</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Incomplete Services</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Pending Review</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>2 services</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>1 service</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Needs Attention</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>1 service</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Pending Review</span>
+                <Link href="/student-services/all-services">
+                  <Button className="w-full mt-4 bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">
+                    <FileText className="w-4 h-4 mr-2" />
+                    All Services
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Second Row: Caseload */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Caseload */}
+            <Card className="overflow-hidden border-teal-200">
+              <CardHeader className="bg-teal-50 border-b border-teal-200">
+                <CardTitle className="text-base text-teal-800">Caseload</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">My Students</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>12 students</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>2 services</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Active Groups</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>3 groups</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center text-gray-900">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                  <span className="text-sm font-medium">Needs Attention</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Services This Week</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>18 scheduled</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <span>1 service</span>
+                <div className="flex justify-between items-center text-gray-900">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Pending Documentation</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span>2 pending</span>
+                  </div>
                 </div>
-              </div>
-              <Link href="/student-services/all-services">
-                <Button className="w-full mt-4 bg-white text-orange-600 border border-orange-600 hover:bg-orange-50">
-                  <FileText className="w-4 h-4 mr-2" />
-                  All Services
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+                <Link href="/caseload">
+                  <Button className="bg-white text-teal-600 border border-teal-600 hover:bg-teal-50 w-full mt-4">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    View Caseload
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 

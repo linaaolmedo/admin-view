@@ -8,13 +8,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { MoreHorizontal, Eye, Upload, FileText, Users } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { MoreHorizontal, Eye, Upload, FileText, Users, Loader2, CheckCircle, Search } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 type OrganizationType = "fee-schedule" | "lea-bop"
 
@@ -750,6 +758,13 @@ const memberBatchReceivedFiles = [
 export default function ManageOrganizationsPage() {
   const [activeTab, setActiveTab] = useState("payer-type-info")
   const [selectedOrganization, setSelectedOrganization] = useState<OrganizationType>("fee-schedule")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [isProcessed, setIsProcessed] = useState(false)
+  const [isBatchUploadModalOpen, setIsBatchUploadModalOpen] = useState(false)
+  const [isBatchProcessing, setIsBatchProcessing] = useState(false)
+  const [isBatchProcessed, setIsBatchProcessed] = useState(false)
   const router = useRouter()
 
   // Get selected organization from localStorage
@@ -776,6 +791,11 @@ export default function ManageOrganizationsPage() {
     }
   }, [selectedOrganization])
 
+  // Clear search term when switching tabs
+  useEffect(() => {
+    setSearchTerm("")
+  }, [activeTab])
+
   const getCurrentData = () => {
     switch (activeTab) {
       case "qualifications":
@@ -792,6 +812,8 @@ export default function ManageOrganizationsPage() {
   const getCurrentPayerData = () => {
     return selectedOrganization === "fee-schedule" ? feeSchedulePayerData : leaBopPayerData
   }
+
+
 
   const getStatusBadge = (status: string) => {
     const baseClasses = "font-medium"
@@ -826,6 +848,58 @@ export default function ManageOrganizationsPage() {
 
   const handlePreview = (fileName: string) => {
     console.log(`Preview file: ${fileName}`)
+  }
+
+  const handleUploadSPI = () => {
+    setIsUploadModalOpen(true)
+    setIsProcessing(true)
+    setIsProcessed(false)
+    
+    // Simulate file processing
+    setTimeout(() => {
+      setIsProcessing(false)
+      setIsProcessed(true)
+    }, 3000)
+  }
+
+  const handleConfirmUpload = () => {
+    setIsUploadModalOpen(false)
+    setIsProcessing(false)
+    setIsProcessed(false)
+    // Here you would typically handle the actual file upload confirmation
+    console.log("SPI file upload confirmed")
+  }
+
+  const handleCancelUpload = () => {
+    setIsUploadModalOpen(false)
+    setIsProcessing(false)
+    setIsProcessed(false)
+  }
+
+  const handleUploadBatch = () => {
+    setIsBatchUploadModalOpen(true)
+    setIsBatchProcessing(true)
+    setIsBatchProcessed(false)
+    
+    // Simulate file processing
+    setTimeout(() => {
+      setIsBatchProcessing(false)
+      setIsBatchProcessed(true)
+    }, 3000)
+  }
+
+  const handleConfirmBatchUpload = () => {
+    setIsBatchUploadModalOpen(false)
+    setIsBatchProcessing(false)
+    setIsBatchProcessed(false)
+    // Here you would typically handle the actual batch file upload confirmation
+    console.log("Batch file upload confirmed")
+  }
+
+  const handleCancelBatchUpload = () => {
+    setIsBatchUploadModalOpen(false)
+    setIsBatchProcessing(false)
+    setIsBatchProcessed(false)
   }
 
   const renderFileTable = (files: any[], title: string) => (
@@ -951,7 +1025,10 @@ export default function ManageOrganizationsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white mb-4">
+            <Button 
+              onClick={handleUploadSPI}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white mb-4"
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload SPI File
             </Button>
@@ -973,7 +1050,10 @@ export default function ManageOrganizationsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-teal-600 hover:bg-teal-700 text-white mb-4">
+            <Button 
+              onClick={handleUploadBatch}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white mb-4"
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload Batch File
             </Button>
@@ -1037,6 +1117,8 @@ export default function ManageOrganizationsPage() {
           </TabsList>
         </div>
 
+
+
         <TabsContent value={activeTab} className="mt-0">
           {activeTab === "payer-type-info" ? (
             renderPayerTypeInfo()
@@ -1046,174 +1128,350 @@ export default function ManageOrganizationsPage() {
             renderPayerTypeInfo()
           ) : activeTab === "billing-codes" ? (
             <div className="space-y-4">
-              <div className="flex justify-end">
+              <div className="flex justify-end items-center gap-4">
+                <div className="relative w-80">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
+                  />
+                </div>
                 <Button className="bg-teal-600 hover:bg-teal-700 text-white">
                   Add Billing Code
                 </Button>
               </div>
               <div className="bg-white rounded-lg border">
                 <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold text-gray-900">Code</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Type</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Description</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Unit</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Rate</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(selectedOrganization === "fee-schedule" ? feeScheduleBillingCodes : leaBopBillingCodes).map((item) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{item.code}</TableCell>
-                      <TableCell className="font-medium">{item.type}</TableCell>
-                      <TableCell className="max-w-md">{item.description}</TableCell>
-                      <TableCell className="font-medium">{item.unit}</TableCell>
-                      <TableCell className="font-medium text-green-600">{item.rate}</TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="text-sm text-gray-600 line-clamp-2">
-                          {item.eligiblePractitioners}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className={getStatusBadge(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
-                              {item.status === "Active" ? "Archive" : "Activate"}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold text-gray-900">Code</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Type</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Description</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Unit</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Rate</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                      <TableHead className="w-12"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {(selectedOrganization === "fee-schedule" ? feeScheduleBillingCodes : leaBopBillingCodes).filter((item) => {
+                      if (!searchTerm.trim()) return true
+                      const lowercaseSearch = searchTerm.toLowerCase()
+                      return [
+                        item.code?.toLowerCase(),
+                        item.description?.toLowerCase(),
+                        item.type?.toLowerCase(),
+                        item.status?.toLowerCase(),
+                        item.unit?.toLowerCase(),
+                        item.rate?.toLowerCase(),
+                        item.eligiblePractitioners?.toLowerCase()
+                      ].filter(Boolean).some(field => field.includes(lowercaseSearch))
+                    }).map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">{item.code}</TableCell>
+                        <TableCell className="font-medium">{item.type}</TableCell>
+                        <TableCell className="max-w-md">{item.description}</TableCell>
+                        <TableCell className="font-medium">{item.unit}</TableCell>
+                        <TableCell className="font-medium text-green-600">{item.rate}</TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="text-sm text-gray-600 line-clamp-2">
+                            {item.eligiblePractitioners}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={getStatusBadge(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                {item.status === "Active" ? "Archive" : "Activate"}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           ) : activeTab === "service-types" ? (
-            <div className="bg-white rounded-lg border">
+            <div className="space-y-4">
+              {/* Search bar for service-types */}
+              <div className="flex justify-end">
+                <div className="relative w-80">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
+                  />
+                </div>
+              </div>
+              <div className="bg-white rounded-lg border">
                 <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold text-gray-900">Code</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Type</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Description</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(selectedOrganization === "fee-schedule" ? feeScheduleServiceTypes : leaBopServiceTypes).map((item) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{item.code}</TableCell>
-                      <TableCell className="font-medium">{item.type}</TableCell>
-                      <TableCell className="max-w-md">{item.description}</TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="text-sm text-gray-600 line-clamp-2">
-                          {item.eligiblePractitioners}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className={getStatusBadge(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="text-teal-600">
-                              {item.status === "Active" ? "Deactivate" : "Activate"}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold text-gray-900">Code</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Type</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Description</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Eligible Practitioners</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                      <TableHead className="w-12"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {(selectedOrganization === "fee-schedule" ? feeScheduleServiceTypes : leaBopServiceTypes).filter((item) => {
+                      if (!searchTerm.trim()) return true
+                      const lowercaseSearch = searchTerm.toLowerCase()
+                      return [
+                        item.code?.toLowerCase(),
+                        item.description?.toLowerCase(),
+                        item.type?.toLowerCase(),
+                        item.status?.toLowerCase(),
+                        item.eligiblePractitioners?.toLowerCase()
+                      ].filter(Boolean).some(field => field.includes(lowercaseSearch))
+                    }).map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">{item.code}</TableCell>
+                        <TableCell className="font-medium">{item.type}</TableCell>
+                        <TableCell className="max-w-md">{item.description}</TableCell>
+                        <TableCell className="max-w-xs">
+                          <div className="text-sm text-gray-600 line-clamp-2">
+                            {item.eligiblePractitioners}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={getStatusBadge(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem className="text-teal-600">
+                                {item.status === "Active" ? "Deactivate" : "Activate"}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
-              {activeTab === "qualifications" && (
-                <div className="flex justify-end">
-                  <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                    Add Qualification
-                  </Button>
+              {/* Search and Add button row for qualifications and permission-types */}
+              {["qualifications", "permission-types"].includes(activeTab) && (
+                <div className="flex justify-end items-center gap-4">
+                  <div className="relative w-80">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
+                    />
+                  </div>
+                  {activeTab === "qualifications" && (
+                    <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                      Add Qualification
+                    </Button>
+                  )}
                 </div>
               )}
               <div className="bg-white rounded-lg border">
                 <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold text-gray-900">Type</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Code</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Description</TableHead>
-                    <TableHead className="font-semibold text-gray-900">Status</TableHead>
-                    <TableHead className="w-12"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(activeTab === "qualifications" 
-                    ? (selectedOrganization === "fee-schedule" ? feeScheduleQualifications : leaBopQualifications)
-                    : activeTab === "permission-types" 
-                    ? permissionTypesData
-                    : []
-                  ).map((item) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium">{item.type}</TableCell>
-                      <TableCell className="font-medium">{item.code}</TableCell>
-                      <TableCell className="max-w-md">{item.description}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className={getStatusBadge(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
-                              {item.status === "Active" ? "Archive" : "Activate"}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold text-gray-900">Type</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Code</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Description</TableHead>
+                      <TableHead className="font-semibold text-gray-900">Status</TableHead>
+                      <TableHead className="w-12"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {(activeTab === "qualifications" 
+                      ? (selectedOrganization === "fee-schedule" ? feeScheduleQualifications : leaBopQualifications)
+                      : activeTab === "permission-types" 
+                      ? permissionTypesData
+                      : []
+                    ).filter((item) => {
+                      if (!searchTerm.trim()) return true
+                      const lowercaseSearch = searchTerm.toLowerCase()
+                      return [
+                        item.code?.toLowerCase(),
+                        item.description?.toLowerCase(),
+                        item.type?.toLowerCase(),
+                        item.status?.toLowerCase()
+                      ].filter(Boolean).some(field => field.includes(lowercaseSearch))
+                    }).map((item) => (
+                      <TableRow key={item.id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium">{item.type}</TableCell>
+                        <TableCell className="font-medium">{item.code}</TableCell>
+                        <TableCell className="max-w-md">{item.description}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={getStatusBadge(item.status)}>
+                            {item.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4 text-gray-400" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                {item.status === "Active" ? "Archive" : "Activate"}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Upload SPI File Modal */}
+      <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-teal-600" />
+              Upload SPI File
+            </DialogTitle>
+            <DialogDescription>
+              {isProcessing 
+                ? "Processing your SPI file upload..." 
+                : isProcessed 
+                ? "Your SPI file has been processed successfully!"
+                : "Processing SPI file upload"
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center py-6">
+            {isProcessing ? (
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-teal-600" />
+                <p className="text-sm text-gray-600 text-center">
+                  Please wait while we process your file...
+                </p>
+              </div>
+            ) : isProcessed ? (
+              <div className="flex flex-col items-center space-y-4">
+                <CheckCircle className="h-12 w-12 text-green-600" />
+                <p className="text-sm text-gray-600 text-center">
+                  File processed successfully! Click confirm to complete the upload.
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelUpload}
+              disabled={isProcessing}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmUpload}
+              disabled={isProcessing || !isProcessed}
+              className="bg-teal-600 hover:bg-teal-700 text-white"
+            >
+              Confirm Upload
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upload Batch File Modal */}
+      <Dialog open={isBatchUploadModalOpen} onOpenChange={setIsBatchUploadModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-teal-600" />
+              Upload Batch File
+            </DialogTitle>
+            <DialogDescription>
+              {isBatchProcessing 
+                ? "Processing your batch file upload..." 
+                : isBatchProcessed 
+                ? "Your batch file has been processed successfully!"
+                : "Processing batch file upload"
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center py-6">
+            {isBatchProcessing ? (
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-teal-600" />
+                <p className="text-sm text-gray-600 text-center">
+                  Please wait while we process your batch file...
+                </p>
+              </div>
+            ) : isBatchProcessed ? (
+              <div className="flex flex-col items-center space-y-4">
+                <CheckCircle className="h-12 w-12 text-green-600" />
+                <p className="text-sm text-gray-600 text-center">
+                  Batch file processed successfully! Click confirm to complete the upload.
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelBatchUpload}
+              disabled={isBatchProcessing}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmBatchUpload}
+              disabled={isBatchProcessing || !isBatchProcessed}
+              className="bg-teal-600 hover:bg-teal-700 text-white"
+            >
+              Confirm Upload
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 } 
