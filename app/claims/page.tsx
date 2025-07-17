@@ -788,37 +788,40 @@ export default function ClaimsPage() {
     "asc"
   )
 
-  const filteredData = allSortedData.filter((claim: any) => {
+  // Filter function
+  const filterClaims = (claim: any) => {
     // Search filter
     if (searchTerm !== "") {
-      let searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid']
+      let searchableFields = ['claimNumber', 'serviceDate', 'carelonId', 'bicNumber', 'district', 'practitionerNPI', 'practitioner', 'studentName', 'ssid'];
       
       // Add remittance-specific searchable fields
       if (activeTab === "remittance") {
-        searchableFields = ['dateSubmitted', 'batchNumber', 'totalClaimsSubmitted', 'claimsPaid', 'deniedClaims']
+        searchableFields = ['dateSubmitted', 'batchNumber', 'totalClaimsSubmitted', 'claimsPaid', 'deniedClaims'];
       }
       
       const matchesSearch = searchableFields.some(field => {
-        const fieldValue = claim[field]
-        return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      })
-      if (!matchesSearch) return false
+        const fieldValue = claim[field];
+        return fieldValue?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+      });
+      if (!matchesSearch) return false;
     }
 
     // Status filter
-    const { status } = filterState
-    const hasAnyStatusFilter = Object.values(status).some(Boolean)
+    const { status } = filterState;
+    const hasAnyStatusFilter = Object.values(status).some(Boolean);
     if (hasAnyStatusFilter) {
       if (!status[claim.status as keyof typeof status]) {
-        return false
+        return false;
       }
     }
 
-    return true
-  }))
+    return true;
+  };
+
+  const filteredData = allSortedData.filter(filterClaims);
 
   const handleSelectClaim = (index: number) => {
-    setSelectedClaims((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]))
+    setSelectedClaims((prev) => (prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]));
   }
 
   const handleSelectAll = () => {
